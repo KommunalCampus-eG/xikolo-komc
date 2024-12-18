@@ -1,0 +1,314 @@
+/* -------------------------------------------- *\
+    $CONTENTS
+
+    KommunalCampus specific startpage styles
+\* -------------------------------------------- */
+
+/* stylelint-disable plugin/stylelint-bem-namics */
+%homepage-button {
+  display: inline-block;
+  padding: 15px 40px;
+  border: 2px solid $tertiary-500;
+  border-radius: 15px;
+  background-color: $gray-600;
+  color: $white;
+  font-size: 18pt;
+
+  &:hover,
+  &:focus {
+    background-color: $gray-500;
+    color: $black;
+    text-decoration: none;
+  }
+
+  @media (max-width: $xs-to-sm) {
+    width: 100%;
+    margin: 0 0 15px;
+  }
+
+  &:focus {
+    box-shadow: 0 0 2pt 1pt $gray-900;
+  }
+}
+/* stylelint-enable plugin/stylelint-bem-namics */
+
+$news-preview-height: 120px;
+
+.start-section {
+  position: relative;
+  height: calc(100vh + #{$news-preview-height});
+  margin-top: -$navbar-height;
+
+  @include small {
+    height: 100vh;
+  }
+
+  // See https://codepen.io/abennington/pen/ZONqqv
+  &__video-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    width: 100%;
+    height: calc(100vh + #{$news-preview-height});
+    @include small {
+      height: 100%;
+    }
+
+    &__video-loop {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vw;
+      min-width: 177.77vh; /* The inverse of the video's aspect ratio */
+      height: 56.25vw; /* The video's aspect ratio */
+      min-height: 100vh;
+      transform: translateX(-50%) translateY(-50%);
+    }
+
+    &__overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      background-color: #4b4b4b;
+    }
+
+    &[data-state="loaded"] &__overlay {
+      background-color: rgba(0, 0, 0, 0.2);
+      transition: background-color 0.5s ease-in-out;
+    }
+
+    &__video-modal {
+      width: 95%;
+
+      &__video {
+        width: 100%;
+        height: 90vh;
+      }
+    }
+  }
+
+  &__text-wrapper {
+    position: relative;
+    height: 100vh;
+
+    @include small {
+      height: calc(100vh - #{$news-preview-height});
+    }
+  }
+
+  &__text-container {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    display: flex;
+    width: fit-content;
+    flex-direction: column;
+    align-items: center;
+    color: $white;
+    text-align: center;
+    transform: translateX(-50%);
+
+    h1 {
+      font-size: 2.8em;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 14pt;
+    }
+
+    .buttons {
+      display: flex;
+      width: fit-content;
+      margin-top: 60px;
+
+      @media (max-width: $xs-to-sm) {
+        flex-direction: column;
+        margin-top: $navbar-height / 2;
+      }
+    }
+  }
+
+  &__cta-button {
+    @extend %homepage-button;
+
+    margin-right: 1em;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+  }
+
+  &__scroll-hint {
+    position: absolute;
+    bottom: calc(#{$news-preview-height} + 40px);
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    font-size: 14pt;
+    transform: translateX(-50%);
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: white;
+    }
+
+    &:active {
+      text-decoration: none;
+    }
+
+    &:focus {
+      outline: 1px dotted $gray-100;
+      text-decoration: none;
+    }
+
+    &__arrow {
+      width: 20px;
+      height: 20px;
+      border-bottom: 1px solid white;
+      border-left: 1px solid white;
+      transform: rotate(-45deg);
+    }
+  }
+}
+
+.news-preview {
+  position: absolute;
+  bottom: 0;
+  min-width: 100%;
+  height: $news-preview-height;
+  background-color: $gray-900;
+
+  @include small {
+    background-color: rgba($black, 0.6);
+  }
+
+  &__container {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    font-size: 11pt;
+    white-space: nowrap;
+  }
+
+  &__item {
+    display: inline-flex;
+    width: 100%;
+    height: $news-preview-height;
+    align-items: center;
+    white-space: normal;
+
+    @include small {
+      width: 50.15%;
+    }
+
+    @include medium {
+      width: 33.4%;
+    }
+
+    &__text-container {
+      height: 62px;
+      flex: auto;
+      padding: 0 8%;
+      overflow-y: hidden;
+
+      @include small {
+        padding: 0 80px;
+        border-right: 2px solid black;
+      }
+    }
+
+    &:last-child &__text-container {
+      border-right: none;
+    }
+
+    &__date {
+      height: 20px;
+      color: $tertiary-500;
+    }
+
+    &__title {
+      height: 45px;
+
+      a {
+        color: white;
+      }
+    }
+  }
+}
+
+.home-controller .wrapper {
+  background-color: $white;
+}
+
+.home-section {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  background-color: $white;
+
+  &__cta-button {
+    @extend %homepage-button;
+
+    background-color: $white;
+    color: $primary-600;
+
+    &:hover,
+    &:focus {
+      background-color: $gray-250;
+    }
+  }
+
+  &__lernpfade,
+  &__explore {
+    h2 {
+      color: $black;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+  }
+
+  &__lernpfade {
+    padding-left: 0;
+    @include medium {
+      display: flex;
+    }
+
+    &__text {
+      padding: 80px;
+
+      h2 {
+        margin-top: 0;
+      }
+
+      a,
+      p {
+        font-size: 13pt;
+      }
+    }
+  }
+
+  &__explore {
+    padding: 100px 20px;
+    background-color: $primary-600;
+    color: $white;
+    text-align: center;
+
+    h2 {
+      margin-bottom: 30px;
+      color: $white;
+      text-align: center;
+    }
+
+    p {
+      margin-bottom: 30px;
+      font-size: 13pt;
+    }
+  }
+}

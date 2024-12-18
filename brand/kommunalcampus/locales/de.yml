@@ -1,0 +1,171 @@
+de:
+  default_title: KommunalCampus - Digitale Kompetenzen für die öffentliche Verwaltung
+  header:
+    navigation:
+      courses: LernAngebot
+      channels: CampusTreff
+
+  home:
+    courses: Aktuelle und zukünftige Lerneinheiten
+    list_all_courses: Alle Lerneinheiten zeigen »
+
+  startpage:
+    headline: Digitalisierung lernen
+    slogan: Bedarfsorientierte Weiterbildung für digitale Kompetenzen in kommunalen Verwaltungen
+    play_video: Begrüßungsvideo
+    browse_courses: Zur Kursauswahl
+    explanation:
+      read_more: Mehr Informationen
+      visual_description: |
+        Nach einer Soll-/Ist-Analyse führt ihr individueller Lernpfad sie über
+        Basis-, Intensiv- und Bonusmodule bis zum Abschluss.
+      title: Ein individueller Lernpfad
+      paragraph_1: |
+        Die Innovation unserer Plattform steckt in der Granularität des Angebots. Alle Anbieter
+        präsentieren die Inhalte in Lerneinheiten mit einem Workload von 8 Stunden. Dadurch sind
+        wir in der Lage, den Teilnehmer:innen ein Kursangebot zusammenzustellen, mit dem sie wirklich
+        vorankommen - effizient und nachhaltig. Ihren individuellen Lernpfad bauen wir aus bis zu 5
+        Lerneinheiten aus drei Kategorien zusammen: Basismodul, Intensivmodul und Bonusmodul.
+      paragraph_2: Jedes Lernmodul beinhaltet mindestens zwei oder mehrere Lerneinheiten.
+    explore:
+      title: Erkunden Sie die Vielfalt des KommunalCampus
+      text: |
+        Wir bieten Lernangebote zum Thema Digitalisierung &mdash; Kurse, Videos, Podcasts<br />
+        und viele weitere interaktive Formate für die öffentliche Verwaltung.
+      take_part: Jetzt teilnehmen
+
+  account:
+    accounts:
+      new:
+        privacy: "<b>Bitte beachten Sie:</b> Ihre personenbezogenen Daten werden auf KommunalCampus unter den Bedingungen unserer <a href='https://www.kommunalcampus.net/datenschutz' target='_blank'>Datenschutzbestimmungen</a> verarbeitet. Mit der Registrierung eines Benutzerkontos auf KommunalCampus erkennen Sie diese <a href='https://www.kommunalcampus.net/datenschutz' target='_blank'>Datenschutzbestimmungen</a> an."
+    shared:
+      consent:
+        user_profile:
+          label: Benutzerprofil
+          text: >
+            Ich erlaube dem KommunalCampus das von mir angegebene Benutzerprofil zu speichern. Teile dieses Profils
+            können in Foren und Kursen von anderen Nutzern eingesehen werden. Dies umfasst den Klarnamen, insofern
+            kein Anzeigename eingetragen wurde. Auch ein optionales Profilbild ist einzusehen.
+        marketing:
+          label: Allgemeines Marketing
+          text: >
+            Hiermit erlaube ich dem KommunalCampus mich via E-Mail über neue Funktionen und neue Lernangebote
+            auf der Plattform zu informieren.
+        personalized_marketing:
+          label: Personalisiertes Marketing
+          text: >
+            Hiermit erlaube ich dem KommunalCampus mich via E-Mail über neuen Lernangebote zu informieren, die auf
+            der Basis meiner Präferenzen und Lernhistorie zusammengestellt wurden.
+  course:
+    courses:
+      index:
+        filter:
+          channel: CampusTreff
+        loading: Lerneinheiten werden geladen...
+        empty_state: Es sind noch keine Lerneinheiten verfügbar.
+        empty: Leider konnten wir keine Lerneinheiten finden, die zu dieser Suche passen.
+        action: Alle Lerneinheiten anzeigen
+        current: LernAngebot
+        upcoming: ZertifikatsModule
+        archive: ThemenSchwerpunkte
+        load_more: Mehr Lerneinheiten laden
+        error: Beim Laden zusätzlicher Lerneinheiten ist ein Fehler aufgetreten. Bitte versuchen Sie es später noch einmal.
+      show:
+        reactivate_course:
+          headline: Digi-Check durchführen und Leistungsnachweis erhalten
+          notice: |
+            Wenn Sie die Unterlagen zum Digi-Check durchgearbeitet haben, können Sie Ihr Digitalwissen testen. Auf dieser
+            Basis erhalten Sie exklusive Handlungsempfehlungen für Fort- und Weiterbildungen im KommunalCampus. Die
+            Leistungseinschätzung ist kostenpflichtig und kann über einen Gutschein-Code
+          upgrade_now: aktiviert werden.
+    redeem_voucher:
+      course_reactivation:
+        title: Digi-Check durchführen und Leistungsnachweis erhalten!
+        text: |
+          Wenn Sie die Unterlagen zum Digi-Check durchgearbeitet haben, können Sie Ihr Digitalwissen testen. Auf dieser
+          Basis erhalten Sie exklusive Handlungsempfehlungen für Fort- und Weiterbildungen im KommunalCampus. Die
+          Leistungseinschätzung ist kostenpflichtig und kann über einen Gutschein-Code aktiviert werden. Die Auswertung
+          der Leistungseinschätzung ist ausschließlich für SIE, die Informationen werden nicht an die Personalabteilung
+          oder Ihre Fachvorgesetzten weitergeleitet.
+        info_title: Sie haben noch keinen Gutschein?
+        info_text: Den Gutschein-Code erhalten Sie bei Ihrer Personalabteilung.
+    card:
+      button_reactivate_course: Digi-Check durchführen
+
+  courses:
+    preview:
+      button_reactivate_course: Digi-Check durchführen
+      unenrollment_disabled: Um sich vom Kurs abzumelden, wenden Sie sich bitte bis 14 Tage vor dem Live-Tutorium an den KommunalCampus.
+
+  channels:
+    view_all: Alle Lerneinheiten anzeigen
+    show_details: Details
+    show:
+      about: "<b>%{name}</b>"
+
+  dashboard:
+    profile:
+      kommune: Kommune
+      organisation: Organisation / Abteilung
+      settings:
+        kommune:
+          bad_duerkheim: Bad Dürkheim (Landkreis)
+          bensheim: Bensheim (Stadt)
+          bergstrasse: Bergstraße (Landkreis)
+          biblis: Biblis (Gemeinde)
+          darmstadt_lk: Darmstadt-Dieburg (Landkreis)
+          fulda: Fulda (Stadt)
+          fulda_lk: Fulda (Landkreis)
+          germersheim: Germersheim (Landkreis)
+          gross_gerau: Groß-Gerau (Landkreis)
+          hattersheim: Hattersheim (Main, Stadt)
+          heidelberg: Heidelberg (Stadt)
+          kelsterbach: Kelsterbach (Stadt)
+          kempten: Kempten (Stadt)
+          landau: Landau (Pfalz, Stadt)
+          limburg: Limburg (Lahn, Stadt)
+          ludwigshafen: Ludwigshafen (Stadt)
+          mannheim: Mannheim (Stadt)
+          marburg: Marburg (Stadt)
+          marburg_biedenkopf: Marburg-Biedenkopf (Landkreis)
+          neustadt: Neustadt (Weinstraße, Stadt)
+          odenwaldkreis: Odenwaldkreis (Landkreis)
+          raunheim: Raunheim (Stadt)
+          rhein_neckar_kreis: Rhein-Neckar-Kreis (Landkreis)
+          rhein_pfalz_kreis: Rhein-Pfalz-Kreis (Landkreis)
+          viernheim: Viernheim (Stadt)
+          wetzlar: Wetzlar (Stadt)
+          worms: Worms (Stadt)
+          academa: Academa (Bildungsanbieter)
+          behoerdenspiegel: Behördenspiegel (Bildungsanbieter)
+          cpc: CPC Unternehmensmanagement AG (Bildungsanbieter)
+          dhbw: DHBW Duale Hochschule Baden-Württemberg (Bildungsanbieter)
+          dufvs: Deutsche Universität für Verwaltungswissenschaften Speyer (Bildungsanbieter)
+          e_gov_campus: eGovCampus (Bildungsanbieter)
+          ekom: Ekom 21 (Bildungsanbieter)
+          ekom21: ekom21 (Andere)
+          geno_akademie: Geno Akademie (ehemals BWGV) (Bildungsanbieter)
+          hdwm: HDWM Hochschule der Wirtschaft für Management (Bildungsanbieter)
+          hessischer_landkreistag: Hessischer Landkreistag (Andere)
+          hochschule_worms: Hochschule Worms (Bildungsanbieter)
+          hoems: HÖMS Hessische Hochschule für öffentliches Management und Sicherheit (Bildungsanbieter)
+          hoev_rlp: HöV-RLP Hochschule für öffentliche Verwaltung Rheinland-Pfalz (Bildungsanbieter)
+          holger_stein_beratung: Holger Stein Beratung (Bildungsanbieter)
+          iubh: IUBH Internationale Hochschule (Bildungsanbieter)
+          ki_campus: KI-Campus (Bildungsanbieter)
+          kommone: KommOne (Bildungsanbieter)
+          kommunal_campus: KommunalCampus e.G.
+          marken_factory: MarkenFactory GmbH (Bildungsanbieter)
+          matchplan: Matchplan Connect GmbH (Bildungsanbieter)
+          more_business: MoreBusiness GmbH &Co (Bildungsanbieter)
+          mrn: Metropolregion Rhein Neckar GmbH (Andere)
+          sgs: SGS Serious Gaming & Simulations (Bildungsanbieter)
+          srh: SRH Hochschule Heidelberg (Mobile University) (Bildungsanbieter)
+          stein_beratung: Stein Beratungsgesellschaft mbH (Bildungsanbieter)
+          studieninstitut: Studieninstitut Rhein-Neckar gGmbH (Bildungsanbieter)
+          tgim: TGiM Thank Good it´s Monday (Bildungsanbieter)
+          vrrn: Verband Region Rhein-Neckar (Andere)
+          vwa: VWA Württembergische Verwaltungs- und Wirtschafts-Akademie e. V. (Bildungsanbieter)
+          wertekultur: Wertekultur (Bildungsanbieter)
+          zde: ZDE Zentrum für digitale Entwicklung (Bildungsanbieter)
+          other: Kein Mitglied / Kein Partner

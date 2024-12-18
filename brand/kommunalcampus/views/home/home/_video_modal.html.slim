@@ -1,0 +1,39 @@
+.modal.fade#videoModal role='dialog' tabindex='-1'
+  .modal-dialog.start-section__video-container__video-modal role='document'
+    .modal-content
+      .modal-body
+        iframe.start-section__video-container__video-modal__video#fullVideo src="https://player.vimeo.com/video/686426293" frameborder="0" allow="autoplay; fullscreen" allowfullscreen=true
+
+script src="https://player.vimeo.com/api/player.js"
+javascript:
+  (function () {
+    var loopVideo = document.getElementById('loopVideo');
+    var fullVideo = document.getElementById('fullVideo');
+
+    window.onload = function () {
+      // Using $.data() would not reflect the data attribute in the DOM, which is needed for CSS to take effect
+      $(loopVideo).closest('.start-section__video-container').attr('data-state', 'loaded');
+    };
+
+    ready(function () {
+      var loopPlayer = new Vimeo.Player(loopVideo);
+      var fullPlayer = new Vimeo.Player(fullVideo);
+
+      $('#videoModal').on('show.bs.modal', function () {
+        loopPlayer.pause();
+      });
+
+      $('#videoModal').on('shown.bs.modal', function () {
+        fullPlayer.play();
+      });
+
+      $('#videoModal').on('hide.bs.modal', function () {
+        fullPlayer.pause();
+        loopPlayer.play();
+      });
+
+      fullPlayer.on('ended', function () {
+        $('#videoModal').delay(600).modal('hide');
+      });
+    });
+  })();

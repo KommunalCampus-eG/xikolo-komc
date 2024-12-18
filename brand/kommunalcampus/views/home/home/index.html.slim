@@ -1,0 +1,45 @@
+section.start-section
+  .start-section__video-container
+    iframe.start-section__video-container__video-loop#loopVideo src="https://player.vimeo.com/video/692282622?background=1" tabindex="-1" frameborder="0" allow="autoplay; fullscreen" allowfullscreen=true
+    = render partial: 'home/home/video_modal'
+    .start-section__video-container__overlay
+      .start-section__text-wrapper
+        .start-section__text-container.container
+          h1 = t(:'startpage.headline')
+          p = t(:'startpage.slogan')
+          .buttons
+            = link_to t(:'startpage.play_video'), '#', class: 'start-section__cta-button nowrap', data: {toggle: 'modal', target: '#videoModal'}
+            = link_to t(:'startpage.browse_courses'), courses_path, class: 'start-section__cta-button nowrap'
+      a.start-section__scroll-hint.hidden-xs href="#lernpfade"
+        .start-section__scroll-hint__text
+          = t(:'startpage.explanation.read_more')
+        .start-section__scroll-hint__arrow
+    - if @posts.any?
+      .news-preview
+        .container
+          .news-preview__container
+            - @posts.take(3).each do |post|
+              .news-preview__item
+                .news-preview__item__text-container
+                  .news-preview__item__date
+                    = render Util::RelativeTimeTag.new(post.publish_at, limit: 10.days.ago)
+                  .news-preview__item__title
+                    = link_to post.title, "#{news_index_path}#post_#{post.id}"
+
+section.home-section.home-section__lernpfade.container#lernpfade
+  .col-md-7.responsive-images
+    = image_tag image_path('lernpfade.png'), alt: t(:'startpage.explanation.visual_description')
+  .col-md-5.home-section__lernpfade__text
+    h2 = t(:'startpage.explanation.title')
+    p = t(:'startpage.explanation.paragraph_1')
+    p = t(:'startpage.explanation.paragraph_2')
+
+section.home-section.home-section__explore
+  h2 = t(:'startpage.explore.title')
+  p = t(:'startpage.explore.text')
+  = link_to t(:'startpage.explore.take_part'), courses_path, class: 'home-section__cta-button nowrap'
+
+.home-courses
+  .container
+    - @categories.each do |category|
+      = render category

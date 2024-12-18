@@ -1,0 +1,34 @@
+@import "theme/colors";
+
+// Color schema definition
+@import "theme/color_schema";
+
+// Variables, mixin and function declarations
+@import "stylesheets/theme/common/variables";
+@import "stylesheets/theme/common/helpers";
+
+// Extracted common design parts for easier reusability and change
+@import "theme/design";
+
+// Font
+$basefont: "Roboto-Condensed", sans-serif;
+$corporatefont: $basefont;
+
+// Page sizing
+$navbar-height: 60px;
+
+/* ------------------------------------ *\
+    $DEFAULT-VARIABLES
+\* ------------------------------------ */
+
+// MAIN navigation
+$navigation-logo-height: 40px;
+
+$navbar-breakpoint-m: 1200px;
+$navbar-breakpoint-s: 670px;
+
+// Footer
+$xi-footer-background: $white;
+$xi-footer-color: $text-color;
+$xi-footer-box-shadow: none;
+$xi-footer-link-hover-color: $secondary-color;

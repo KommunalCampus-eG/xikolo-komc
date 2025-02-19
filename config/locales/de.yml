@@ -2597,7 +2597,7 @@ de:
 
     documents:
       my_documents: Meine Leistungsnachweise
-      text: "Hier finden Sie alle Leistungsnachweise aus Ihren Kursen gesammelt (Leistungsnachweise und Teilnahmebestätigungen). Sie qualifizieren Sich für einen benoteten <i>Leistungsnachweis</i>, wenn Sie mindestens %{roa_threshold}%% der Gesamtpunktzahl aus Hausaufgaben und Abschlussklausur erreichen. Sie können eine <i>Teilnahmebestätigung</i> herunterladen, wenn Sie mehr als %{cop_threshold}%% der Lernmaterialien eines Kurses bearbeitet haben. Weitere Informationen finden Sie bei den <a href='/pages/roa_guidelines'>Richtlinien für Leistungsnachweise</a>."
+      text: "Hier finden Sie Ihre <i>Leistungsnachweise</i> und <i>Teilnahmebestätigungen</i> aus den Lerneinheiten, die Sie erfolgreich abgeschlossen haben, zum Download. Detaillierte Informationen zu den Anforderungen und Bedingungen für die Zertifikate finden Sie in den <a href='/pages/roa_guidelines'>Richtlinien für Leistungsnachweise</a>."
       show_birthdate: "Geburtsdatum auf meinen Leistungsnachweisen anzeigen"
       no_documents: Es sind noch keine Leistungsnachweise verfügbar.
       my_upcoming_courses: Meine zukünftigen Kurse

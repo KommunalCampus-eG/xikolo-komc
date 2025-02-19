@@ -3,6 +3,8 @@
 class Email < ApplicationRecord
   self.table_name = 'news_emails'
 
+  enum :status, %i[pending sent canceled]
+
   belongs_to :announcement,
     class_name: 'News',
     foreign_key: 'news_id',

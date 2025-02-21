@@ -1442,6 +1442,7 @@ de:
       save: Speichern
       save_and_send: Speichern und senden
       save_and_test: Speichern und Testmail senden
+      confirm_send: Möchten Sie diese Ankündigung speichern und an alle Kursteilnehmer per E-Mail senden?
     no_news: Es gibt an dieser Stelle noch keine Beiträge. Probieren Sie es später noch einmal.
     see_older: Ältere Ankündigungen ansehen
     older: Ältere Ankündigungen

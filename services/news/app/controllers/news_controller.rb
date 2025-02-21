@@ -79,6 +79,12 @@ class NewsController < ApplicationController
           announcement.upload_via_id(params[:visual_upload_id])
         end
         announcement.save if announcement.errors.empty?
+
+        if params[:notification] == 'send'
+          announcement.emails.create
+        elsif params[:notification] == 'test'
+          announcement.emails.create(test_recipient: announcement.author_id)
+        end
       end
     end
     respond_with announcement
@@ -87,24 +93,34 @@ class NewsController < ApplicationController
   def update
     announcement = News.find UUID4(params[:id]).to_s
 
-    announcement.assign_attributes announcement_params
-    if translations?
-      announcement.translations = all_translations.map do |locale, translation|
-        NewsTranslation.new(
-          locale:,
-          title: translation[:title],
-          text: translation[:text]
-        )
+    News.transaction do
+      announcement.assign_attributes announcement_params
+      if translations?
+        announcement.translations = all_translations.map do |locale, translation|
+          NewsTranslation.new(
+            locale:,
+            title: translation[:title],
+            text: translation[:text]
+          )
+        end
+      end
+
+      if announcement.valid?
+        if params[:visual_uri].present?
+          announcement.upload_via_uri(params[:visual_uri])
+        else
+          announcement.upload_via_id(params[:visual_upload_id])
+        end
+      end
+      announcement.save if announcement.errors.empty?
+
+      announcement.cancel_pending_emails
+      if params[:notification] == 'send'
+        announcement.emails.create
+      elsif params[:notification] == 'test'
+        announcement.emails.create(test_recipient: announcement.author_id)
       end
     end
-    if announcement.valid?
-      if params[:visual_uri].present?
-        announcement.upload_via_uri(params[:visual_uri])
-      else
-        announcement.upload_via_id(params[:visual_upload_id])
-      end
-    end
-    announcement.save if announcement.errors.empty?
     respond_with announcement
   end
 

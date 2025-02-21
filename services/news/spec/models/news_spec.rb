@@ -138,4 +138,23 @@ describe News, type: :model do
       }
     end
   end
+
+  describe '#cancel_pending_emails' do
+    it 'cancels all pending emails' do
+      create_list(:email, 3, announcement: news, status: :pending)
+      news.cancel_pending_emails
+
+      expect(news.emails.pending).to be_empty
+      expect(news.emails.canceled.count).to eq 3
+    end
+
+    it 'does not change status of non-pending emails' do
+      create_list(:email, 3, announcement: news, status: :sent)
+      create_list(:email, 3, announcement: news, status: :canceled)
+      news.cancel_pending_emails
+
+      expect(news.emails.canceled.count).to eq 3
+      expect(news.emails.sent.count).to eq 3
+    end
+  end
 end

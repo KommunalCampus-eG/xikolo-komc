@@ -190,6 +190,12 @@ class News < ApplicationRecord
     retry
   end
 
+  def cancel_pending_emails
+    # rubocop:disable Rails/SkipsModelValidations
+    Email.pending.update_all(status: :canceled)
+    # rubocop:enable Rails/SkipsModelValidations
+  end
+
   private
 
   def revision(visual_uri)

@@ -50,18 +50,18 @@ class Course::AnnouncementsController < Abstract::FrontendController
 
     @announcement = Course::Admin::AnnouncementForm.from_params(params)
 
-    # re-render creation form if announcement is invalid
-    return render(action: :new) unless @announcement.valid?
+    # re-render the creation form if the announcement is invalid or the user does not have permission to send emails
+    return render(action: :new) unless @announcement.valid? && can_send_emails?
 
-    announcement = news_service
+    news_service
       .rel(:news_index)
       .post(@announcement.to_resource.merge(
         'course_id' => course_id,
-        'author_id' => current_user.id
+        'author_id' => current_user.id,
+        'notification' => params[:notification]
       )).value!
 
-    announcement.rel(:email).post(email_params).value! if send_emails?
-
+    add_flash_message(:success, t(:'flash.success.announcement_saved'))
     redirect_to(action: :index)
   rescue Restify::UnprocessableEntity => e
     @announcement.remote_errors e.errors
@@ -83,8 +83,11 @@ class Course::AnnouncementsController < Abstract::FrontendController
     # re-render edit form if announcement is invalid
     return render(action: :edit) unless @announcement.valid?
 
-    announcement.rel(:self).patch(@announcement.to_resource).value!
-    announcement.rel(:email).post(email_params).value! if send_emails?
+    announcement
+      .rel(:self)
+      .patch(@announcement.to_resource.merge(
+        'notification' => params[:notification]
+      )).value!
 
     add_flash_message(:success, t(:'flash.success.announcement_saved'))
     redirect_to course_announcements_path
@@ -128,9 +131,11 @@ class Course::AnnouncementsController < Abstract::FrontendController
     raise Status::Unauthorized
   end
 
-  def send_emails?
-    (current_user.allowed?('news.announcement.send') && params[:notification] == 'send') ||
-      (current_user.allowed?('news.announcement.send_test') && params[:notification] == 'test')
+  def can_send_emails?
+    return current_user.allowed?('news.announcement.send') if params[:notification] == 'send'
+    return current_user.allowed?('news.announcement.send_test') if params[:notification] == 'test'
+
+    true
   end
 
   def email_params

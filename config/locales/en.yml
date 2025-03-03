@@ -418,6 +418,7 @@ en:
       lti_provider_deleted: The LTI provider has successfully been deleted.
       course_archived: The course was successfully marked as completed.
       recalculation_triggered: The recalculation of learners' progresses for this course has been started.
+      quiz_answer: The answer was successfully deleted.
       quiz_attempt_added: The additional attempt for quiz was granted.
       fudge_points_added: The grading was updated.
       video_provider_deleted: The video provider has been deleted.
@@ -558,6 +559,7 @@ en:
       download_not_refreshed: A valid download link could not be requested from the video provider. Please try again later.
       recalculation_failed: The recalculation of learners' progresses for this course could not be started. Please try again later.
       recalculation_rejected: The recalculation of learners' progresses for this course has been recently triggered. Please try again later.
+      quiz_answer: An error occurred while deleting the answer.
       quiz_attempt_failed: An additional attempt for the quiz could not be granted.
       fudge_points_failed: The grading could not be updated.
       video_provider_not_deleted: The video provider could not be deleted as corresponding streams are still referenced.
@@ -577,6 +579,9 @@ en:
   components:
     actions_dropdown:
       aria_label: More actions
+    clipboard:
+      copy: Copy to clipboard
+      copied: Copied!
     countdown:
       time_remaining: "Time remaining:"
     custom_select:
@@ -593,6 +598,10 @@ en:
       link: Show policy
       accept: I have read and agree to the data protection policy.
       enroll: Enroll me for this course
+    ical_feed:
+      text: You can subscribe to this feed by copying the iCal URL and importing it into your calendar application.
+      label: Copy iCal URL
+      summary: Add dates to your calendar
     markdown_editor:
       expand: Expand editor
       collapse: Collapse editor
@@ -969,6 +978,9 @@ en:
         notice: Please check your spam folder if you did not receive the confirmation email.
     shared:
       consent:
+        marketing:
+          label: marketing
+          text: USED IN TESTS ONLY
         user_profile:
           label: User Profile
           text: "I allow %{brand} to store the user profile I have created. Some elements of this profile will be visible to other users of the platform in discussion forums or other collaborative tools. These include my <i>real name</i>, if I have not created a dedicated <i>display name</i>, as well as an optional profile photo."
@@ -1306,19 +1318,19 @@ en:
       submission_statistics: # Do not translate
         title: Quiz Details (Deprecated) # Do not translate
         submissions: Submission # Do not translate
-        total_submissions: "Total Submissions: " # Do not translate
-        distinct: "Submitting users: " # Do not translate
-        total_points: "Total points: " # Do not translate
+        total_submissions: "Total Submissions:" # Do not translate
+        distinct: "Submitting users:" # Do not translate
+        total_points: "Total points:" # Do not translate
         please_select: "Please select..." # Do not translate
         correct: Correct # Do not translate
         wrong: Wrong # Do not translate
         total: total # Do not translate
         student_performance: Student performance # Do not translate
-        average_time: "Average time: " # Do not translate
-        average_points: "Average points: " # Do not translate
-        percent_of: "% of " # Do not translate
-        seconds: " seconds" # Do not translate
-        limit: " limit" # Do not translate
+        average_time: "Average time:" # Do not translate
+        average_points: "Average points:" # Do not translate
+        percent_of: "% of" # Do not translate
+        seconds: seconds # Do not translate
+        limit: limit # Do not translate
       dashboard: # Do not translate
         title: Course Dashboard # Do not translate
         more_details: More details # Do not translate
@@ -2276,7 +2288,8 @@ en:
       cop: Confirmation of Participation
       roa: Record of Achievement
       qc_html: Certificate / ECTS
-      language_and_subtitles: "%{language} + %{subtitle_languages} subtitles"
+      subtitles_more: "%{subtitle_languages} + %{count} more"
+      subtitles: "%{subtitle_languages}"
       button_details: Details
       button_enroll: Enroll
       button_resume: Resume
@@ -2285,7 +2298,8 @@ en:
       date: Course dates
       classifiers: Course classifiers
       certificate: Highest achievable certificate
-      language: Course language and subtitles available
+      language: Course language
+      available_subtitles: Available subtitles
       buttons_menu:
         details: Show details
       label:
@@ -2383,7 +2397,12 @@ en:
     progress:
       learner_dashboard: My learning progress
       graded_score: Graded points
+      graded: "%{achieved} of %{available}"
+      bonus_points:
+        one: "You got 1 point and earned %{bonus_points} extra"
+        other: "You got %{count} points and earned %{bonus_points} extra"
       selftest_score: Self-test points
+      selftest: "%{achieved} of %{available}"
       visited_score: Visited items
       visited_items: "%{visited} of %{available} items visited"
       visited_empty: No available items
@@ -2392,26 +2411,25 @@ en:
         graded: "Graded: "
         selftests: "Self-tests: "
         visits: "Visited: "
-      section_material: Section material
-      section_statistics: Section statistics
+      section_material_empty: No available items
       statistics:
         main: Assignments
         bonus: Bonus
         selftests: Self-tests
+        points_achieved: "%{submitted_points} of %{max_points} points"
         items_taken: "%{taken} of %{total} taken"
-      progress_table: # deprecated
-        assignments: Assignments
-        bonus: Bonus
-        selftests: Self-tests
-        visited: Visited
-        total: Total
+        empty_state_points: No points
+      legend:
+        show: Show explanation
+        hide: Hide explanation
+        completed: Content completed
+        not_completed: Content not completed
+        warning: Sufficient score achieved
+        critical: Low score, revisit if possible
+        optional: Optional content, does not affect score
 
       show:
-        item_locked: " (locked)"
-        points: Points
         empty_msg: "There are no items yet, so we cannot show you any progress now. Come back later."
-        quizzes_taken: "%{taken} of %{count} taken"
-        items_visited: "%{visited} of %{existing} visited"
       records:
         documents_headline: My course certificates
         documents_intro: As soon as the course has finished (and the teaching staff have published the final results), you can download your certificates here.
@@ -2664,6 +2682,8 @@ en:
     new: Add section
     show_uuids: Show UUIDs
     hide_uuids: Hide UUIDs
+    course_uuid: Copy course ID
+    section_uuid: Copy section ID
     item:
       delete: Delete item
       create: Add item
@@ -2671,6 +2691,8 @@ en:
       edit_headline: Edit item "%{item}"
       edit: Edit item
       edit_subtitles: Edit subtitles
+      copy_id: Copy ID
+      copy_content_id: Copy content ID
       unpublished: Item is not published
       locked_until: "Item will be unlocked in %{date}"
       locked_since: "Item was locked %{date}"
@@ -2804,7 +2826,6 @@ en:
       question_alert: Review this question!
       show_question_explanation: Show Explanation
       hide_question_explanation: Hide Explanation
-      actions: Actions
       edit_question: Edit question
       move_question_up: Move question up
       move_question_down: Move question down
@@ -2813,6 +2834,8 @@ en:
       delete_question: Delete question
       delete_question_confirm: Are you sure you want to delete this question?
       add_answer: Add answer
+      delete_answer_confirm_title: Are you sure you want to delete this answer?
+      delete_answer_confirm_text: This action cannot be undone. It can have unforeseeable consequences if the quiz has been published.
       question_type: Question type
       select_question_type: Please select a question type to add question to this quiz
       enter_question: Enter your question here
@@ -2820,6 +2843,7 @@ en:
       points: Points
       shuffle_answers: Shuffle answers
       answer: Answer text
+      answers: Answers
       answer_type: Answer type
       select_answer_type: Please select an answer type
       enter_answer: Enter your answer here
@@ -2969,6 +2993,7 @@ en:
     more_courses: 'Hint: You can still find all other courses you are not yet enrolled for in <a href="/courses">the course archive</a> and register for self-study (without Record of Achievement).'
     sidebar:
       dates: Next dates per course
+      dates_empty: You don't have any upcoming dates.
       recommendations: Course Recommendations
     starting_soon: Starting soon
     started: Started
@@ -3454,12 +3479,6 @@ en:
           answer: Answer
           comment: Comment
     sticky: Sticky
-    admin_tags:
-      title: Tags
-      id: ID
-      name: Name
-      resource: R Resource
-      type: Type
     errors:
       loading: An error occurred while loading.
       already_voted: You can only vote once.
@@ -3599,10 +3618,6 @@ en:
       btn_submit: Submit answers
       btn_cancel: Cancel
 
-  social:
-    allow_detection_via_name: Allow other users to find me via name
-    allow_detection_via_email: Allow other users to find me via e-mail
-
   learning_rooms:
     name: Name
     calendar:
@@ -3622,7 +3637,6 @@ en:
       dashboard: View recent activity
       discussions: Discuss with your team
       etherpad: Collaborate on texts
-      video_chat: Start a video chat
       files: Share files
       tpa: "Submit your team work and evaluate your peers (%{title})"
       administration: Manage your Collab Space
@@ -3645,6 +3659,7 @@ en:
     my_rooms: My Collab Spaces
     my_rooms_empty_state: You have not joined a Collab Space yet.
     list_empty_state: There are no Collab Spaces for this course yet.
+    memberships_empty_state: No members have joined the Collab Space yet.
     create: Create new Collab Space
     create_button: Create Collab Space
     update_button: Update Collab Space
@@ -3690,36 +3705,6 @@ en:
       is_open: This Collab Space is open
       mail_to_member: Write a mail to member
       mail: Dear %{recipient}, Best regards %{sender}
-
-    video_chats:
-      headline: Video chat
-      btn_txt: Start video chat on Jitsi Meet
-      note: "Note: When you start the video chat, you will be directed to a third-party provider (“Jitsi Meet“). <br>Jitsi Meet is an open-source project. We will not pass on any of your data. <br>You do not need to create an account on Jitsi Meet."
-      description: Arrange a meeting time with your teammates and decide who should share the link to the video chat.
-      start_chat:
-        headline: Before the video chat
-        how_to: "How to create and share a meeting link:"
-        list_text:
-          - Press the “Start video chat on Jitsi Meet” button. A new window or tab opens.
-          - Press the “Start Meeting” button. A new window opens.
-          - Copy the meeting link. You’ll find it in the address bar of the browser.
-          - Share the meeting link with your teammates. You can use the discussion forum in your Collab Space to share the link.
-      chat_info:
-        headline: When the meeting takes place
-        list_text:
-          - Follow the meeting link.
-          - Enter the username that you want to use during the meeting.
-          - Press the “Join meeting“ button.
-          - You are now in the video chat.
-          - - "At the bottom of the screen, you will find a menu bar with useful functions such as:"
-            - Microphone (mute / unmute)
-            - Camera (start / stop)
-            - Screen sharing (start / stop)
-            - Chat window (open / close)
-            - Raise your hand (on / off)
-            - Participants (show / stop showing)
-            - And many more functions
-          - To be seen, you need to start your camera. To be heard, you have to unmute your microphone.
     flash_messages:
       success:
         delete_room: The Collab Space has been successfully deleted.
@@ -4535,7 +4520,7 @@ en:
       refid: Referral ID
       gallery_entries: Gallery candidates flagged
       rate: Rate
-      availalbe_submissions: Available submissions
+      available_submissions: Available submissions
       final_submissions: Final Submissions
       votes: Vote(s)
       your_vote: You rated %{votes} stars for this submission.
@@ -4966,24 +4951,18 @@ en:
   pages:
     show:
       edit_translation:
-        cn: Edit Chinese translation "%{title}"
         de: Edit German translation "%{title}"
         en: Edit English translation "%{title}"
         es: Edit Spanish translation "%{title}"
         fr: Edit French translation "%{title}"
         nl: Edit Dutch translation "%{title}"
-        pt-BR: Edit Brazilian portuguese translation "%{title}"
-        ru: Edit Russian translation "%{title}"
         uk: Edit Ukrainian translation "%{title}"
       new_translation:
-        cn: Add Chinese translation
         de: Add German translation
         en: Add English translation
         es: Add Spanish translation
         fr: Add French translation
         nl: Add Dutch translation
-        pt-BR: Add Brazilian portuguese translation
-        ru: Add Russian translation
         uk: Add Ukrainian translation
       last_changed: This page was last changed at %{date}.
     not_found:
@@ -5038,7 +5017,6 @@ en:
       icon:
         name: x-twitter
         style: brands
-      share_course: "I enrolled in the #%{site} course %{title}"
       share_certificate: "I successfully completed the course %{title} on #%{site}!"
     mail:
       button: Mail
@@ -5046,15 +5024,6 @@ en:
       icon:
         name: envelope
         style: solid
-      share_course:
-        subject: "Join me and learn with %{site}"
-        body: |
-          Hello  ,
-
-          I enrolled in the %{site} course %{title}: %{url}.
-          All you need to sign up is a valid email address and you can learn from anywhere in the world, at any time.
-
-          Best regards,
       share_certificate:
         subject: "I successfully completed a course on %{site}"
         body: |

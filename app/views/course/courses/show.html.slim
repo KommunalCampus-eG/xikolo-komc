@@ -9,7 +9,7 @@
 
 / Main Container
 .container
-  = render 'course_preview_large', course: @large_preview, social_sharing: @social_sharing
+  = render 'course_preview_large', course: @large_preview
 
   - if @course_presenter.prerequisites?
     .row
@@ -122,3 +122,4 @@
 
 - if @course_presenter.open_mode?
   = render Course::Popover.new(t(:'course.courses.show.open_mode.text'), 'popover-openmode', cookie_name: 'hide_openmode_hint')
+  = render Course::Popover.new(t(:'course.courses.show.open_mode.text'), 'popover-openmode--mobile', cookie_name: 'hide_openmode_hint')

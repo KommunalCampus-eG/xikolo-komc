@@ -7,100 +7,147 @@
 
   &__content {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column-reverse;
     justify-content: space-between;
-    padding: 10px;
+    padding: 20px;
+    gap: 40px;
 
-    .section-material {
-      max-width: 50%;
-      margin: 10px;
+    @include screen-size-sm-and-up {
+      flex-direction: row;
+      gap: 20px;
+    }
+  }
 
-      &__items {
-        display: flex;
-        flex-wrap: wrap;
-      }
+  &__material-items {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    gap: 5px;
 
-      &__item {
-        @mixin item-background($color) {
-          background:
-            linear-gradient($color, $color) left bottom / 100% var(--percentage),
-            $gray-100;
-          background-clip: padding-box;
-          background-repeat: no-repeat;
-        }
+    a {
+      text-decoration: none;
+    }
+  }
 
-        display: flex;
+  &__material-item {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    background-color: $gray-100;
 
-        width: 25px;
-        height: 25px;
-        align-items: center;
-        justify-content: center;
-        margin-top: 5px;
-        margin-right: 5px;
-        background-color: $gray-50;
-
-        a {
-          color: $text-color;
-        }
-
-        &--completed {
-          @include item-background($success-500);
-        }
-
-        &--critical {
-          @include item-background($error-500);
-        }
-
-        &--warning {
-          @include item-background($information-500);
-        }
-
-        &--optional {
-          border: 1px, dashed, $gray-500;
-          background-color: $gray-50;
-        }
-      }
+    @mixin item-background($color) {
+      background:
+        linear-gradient($color, $color) left bottom / 100% var(--percentage),
+        $gray-100;
+      background-clip: padding-box;
+      background-repeat: no-repeat;
     }
 
-    .section-statistics {
-      margin: 10px;
+    .xi-icon {
+      color: $text-color;
+      font-size: 16px;
+    }
 
-      .section-progress {
-        &__statistic {
-          margin-bottom: 20px;
+    &--completed {
+      @include item-background($success-500);
+    }
 
-          @include screen-size-s-and-up {
-            display: grid;
-            align-items: center;
-            margin-bottom: 0px;
-            column-gap: 10px;
-            grid-template-columns: 20px auto 120px 100px;
-            grid-template-rows: 30px;
-            row-gap: 15px;
+    &--critical {
+      @include item-background($error-500);
+    }
 
-            .item {
-              align-self: center;
-            }
-          }
+    &--warning {
+      @include item-background($information-500);
+    }
 
-          .item__data {
-            align-self: center;
-            font-size: $font-size-xs;
-          }
-        }
+    &--optional {
+      border: 1px, dashed, $gray-500;
+      background-color: $gray-50;
+    }
+  }
+
+  &__statistics {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    @include screen-size-s-and-up {
+      flex-direction: row;
+    }
+    @include screen-size-sm-and-up {
+      flex-direction: column;
+    }
+  }
+
+  &__statistic-percentage {
+    @include font-m;
+    display: flex;
+    align-items: center;
+    color: $gray-800;
+    text-align: right;
+    @include screen-size-sm-and-up {
+      justify-content: flex-end;
+    }
+
+    span {
+      color: $gray-800;
+      @include font-sm;
+      @include screen-size-sm-and-up {
+        padding-right: 5px;
+        border-right: 2px solid $gray-250;
       }
     }
   }
 
-  &__titlebar {
+  &__statistic {
+    display: grid;
+    grid-template-columns: auto;
+    @include screen-size-sm-and-up {
+      gap: 10px;
+      grid-template-columns: auto 230px;
+    }
+  }
+
+  &__statistic-item {
     display: flex;
-    width: 100%;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 15px 0px 10px;
+    color: $gray-800;
+    font-weight: bold;
+    gap: 5px;
+  }
+
+  &__statistic-item-data {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    @include screen-size-sm-and-up {
+      flex-wrap: nowrap;
+    }
+  }
+
+  &__titlebar {
+    display: grid;
+    width: 100%;
+    padding: 10px;
     border: none;
-    background-color: $gray-50;
+    background-color: $gray-100;
+    gap: 10px;
+    grid-template-areas:
+      "title"
+      "info"
+      "score-bars";
+
+    @include screen-size-sm-and-up {
+      grid-template-areas:
+        "title info"
+        "score-bars score-bars";
+    }
+
+    @include screen-size-m-and-up {
+      grid-template-areas: "title score-bars info";
+      grid-template-columns: 300px auto 180px;
+    }
 
     &[aria-expanded="false"] {
       + .section-progress__content {
@@ -134,53 +181,126 @@
 
   &__trigger {
     display: flex;
-    width: 250px;
     align-items: center;
-    margin-bottom: 10px;
+    font-weight: bold;
+    grid-area: title;
+  }
 
-    span {
-      font-weight: bold;
-    }
+  &__title {
+    text-align: left;
+    @include truncate-text(1);
   }
 
   &__score-bar {
     display: flex;
-    flex-grow: 1;
-    flex-wrap: wrap;
+    width: 100%;
+    flex-direction: column;
+    align-items: end;
+    margin: 0 auto;
+    gap: 10px;
+    grid-area: score-bars;
+    @include screen-size-sm-and-up {
+      flex-direction: row;
+      margin: 0 auto;
+    }
+
+    @include screen-size-m-and-up {
+      justify-content: center;
+      margin: 0;
+    }
   }
 
   &__score {
     display: flex;
-    align-items: center;
-    margin-right: 20px;
-    margin-bottom: 10px;
-
-    label {
-      margin: 0 5px;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin: 0;
+    gap: 3px;
+    > label {
+      margin-top: 0;
       font-weight: normal;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    @include screen-size-sm-and-up {
+      flex-direction: column;
+      > label {
+        min-width: auto;
+      }
+    }
+
+    @include screen-size-m-and-up {
+      width: auto;
+      flex-direction: row;
+      justify-content: flex-end;
     }
   }
 
-  &__score-empty {
-    width: 150px;
+  &__score-empty,
+  &__score-progress {
+    width: 100%;
+    p {
+      margin-bottom: 0;
+    }
 
+    @include screen-size-sm-and-up {
+      min-width: 150px;
+    }
+  }
+
+  &__visited-items {
+    color: $gray-600;
+    grid-area: info;
+    white-space: nowrap;
+    @include screen-size-sm-and-up {
+      justify-self: end;
+    }
     p {
       margin-bottom: 0;
     }
   }
 
-  &__score-progress {
-    width: 150px;
+  &__legend {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 
-  &__visited-items {
+  &__legend-item {
     display: flex;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 5px;
+  }
 
-    .pill {
-      background-color: $gray-500;
-      color: white;
-      font-size: 12px;
+  &__legend-icon {
+    min-width: 20px;
+    min-height: 20px;
+    margin-right: 10px;
+
+    background-color: $gray-100;
+
+    &--completed {
+      background-color: $success-500;
+    }
+
+    &--critical {
+      background: linear-gradient(to top, $error-500 20%, $gray-100 0);
+    }
+
+    &--warning {
+      background: linear-gradient(to top, $information-500 50%, $gray-100 0);
+    }
+
+    &--optional {
+      border: 1px, dashed, $gray-500;
+      background-color: $gray-50;
+    }
+
+    span {
+      margin-left: 5px;
     }
   }
 }

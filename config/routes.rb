@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Sitemap served from S3 bucket
-  get '/sitemap.xml.gz', to: 'files#sitemap'
-
   resources :reports, only: %i[index create destroy], module: 'admin'
 
   resources :documents, controller: 'admin/documents' do
@@ -106,15 +103,15 @@ Rails.application.routes.draw do
   get '/verify/:id', to: 'course/certificates#verify', as: :certificate_verification, module: 'course'
 
   # Open Badges
-  scope :openbadges do
-    get 'issuer', to: 'open_badges#issuer', as: :openbadges_issuer
-    get 'public_key', to: 'open_badges#public_key', as: :openbadges_public_key
-    get 'revocation_list', to: 'open_badges#revocation_list', as: :openbadges_revocation_list
+  namespace :openbadges, module: :open_badges do
+    get 'issuer', to: 'open_badges#issuer'
+    get 'public_key', to: 'open_badges#public_key'
+    get 'revocation_list', to: 'open_badges#revocation_list'
 
-    scope :v2, module: :open_badges do
-      get 'issuer', to: 'open_badges#issuer', as: :openbadges_issuer_v2
-      get 'public_key', to: 'open_badges#public_key', as: :openbadges_public_key_v2
-      get 'revocation_list', to: 'open_badges#revocation_list', as: :openbadges_revocation_list_v2
+    scope path: :v2, module: :v2 do
+      get 'issuer', to: 'open_badges#issuer', as: :issuer_v2
+      get 'public_key', to: 'open_badges#public_key', as: :public_key_v2
+      get 'revocation_list', to: 'open_badges#revocation_list', as: :revocation_list_v2
     end
   end
 
@@ -179,7 +176,7 @@ Rails.application.routes.draw do
   end
 
   scope module: 'peer_assessment' do
-    resources :peer_assessments, except: %i[index] do
+    resources :peer_assessments, only: %i[show edit update] do
       member do
         post :start_assessment
         get :files
@@ -188,7 +185,7 @@ Rails.application.routes.draw do
         put :advance
       end
 
-      resources :conflicts do
+      resources :conflicts, only: %i[index show] do
         member do
           post :reconcile
           put :reconcile # to use the create_review stuff with no_review conflicts
@@ -216,9 +213,9 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :error, only: [:show]
+      resource :error, only: %i[show]
 
-      resources :rubrics do
+      resources :rubrics, except: %i[show] do
         member do
           post :moveup
           post :movedown
@@ -226,14 +223,14 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :team_evaluation_rubrics, except: %i[edit update] do
+      resources :team_evaluation_rubrics, except: %i[show edit update] do
         member do
           post :moveup
           post :movedown
         end
       end
 
-      resources :train_samples do
+      resources :train_samples, except: %i[show create] do
         collection do
           post :open_training
         end
@@ -245,12 +242,11 @@ Rails.application.routes.draw do
       end
 
       # Controllers handling the individual steps
-      resources :steps do
+      resources :steps, only: %i[index show] do
         member do
           get :locked
           get :deadline_passed
           get :inaccessible
-          # get :skip    # Decision whether to advance or skip will be made in the peer assessment service
           get :advance
         end
 
@@ -259,7 +255,7 @@ Rails.application.routes.draw do
           post :update
         end
 
-        resource :submission do
+        resource :submission, only: %i[show new update] do
           member do
             # Advancement is handled through the update method
             get :additional_attempt
@@ -281,7 +277,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :reviews do
+        resources :reviews, except: %i[create destroy] do
           member do
             patch :autosave
             post :extend_deadline
@@ -293,7 +289,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :self_assessments do
+        resource :self_assessments, only: %i[show new update] do
           member do
             # Advancement is handled through the update method
             patch :autosave
@@ -301,7 +297,7 @@ Rails.application.routes.draw do
           end
         end
 
-        resource :results do
+        resource :results, only: %i[show] do
           collection do
             # No advancement required
             post :report
@@ -314,7 +310,7 @@ Rails.application.routes.draw do
     end
 
     # Notes are somewhat separate from the rest of the peer assessment components
-    resources :notes
+    resources :notes, only: %i[create update destroy], as: :peer_assessment_notes
   end
 
   resources :channels, only: %i[create update new edit destroy], module: 'admin'
@@ -336,19 +332,20 @@ Rails.application.routes.draw do
     get 'certificate', to: 'course/certificates#show', as: :certificate, module: 'course'
 
     # Open Badges
-    get 'badge', to: 'open_badges#badge_class', as: :badge_class
-    get 'assertion/:id', to: 'open_badges#assertion', as: :assertion
+    scope module: :open_badges do
+      get 'assertion/:id', to: 'open_badges#assertion', as: :openbadges_assertion
+      get 'badge', to: 'open_badges#badge_class', as: :openbadges_class
 
-    namespace :openbadges, module: :open_badges do
-      scope :v2 do
-        get 'class', to: 'open_badges#badge_class', as: :class_v2
+      namespace :openbadges, path: 'openbadges/v2', module: :v2 do
         get 'assertion/:id', to: 'open_badges#assertion', as: :assertion_v2
+        get 'class', to: 'open_badges#badge_class', as: :class_v2
       end
     end
 
+    # Make peer assessments available as /courses/:course_id/peer_assessments
     resources :peer_assessments, only: %i[index], module: 'peer_assessment'
-    # make course announcements availabe as /courses/[id]/announcements
-    resources :announcements, except: [:show], module: 'course'
+    # Make course announcements available as /courses/:course_id/announcements
+    resources :announcements, except: %i[show], module: 'course'
     resources :lti_providers, except: %i[edit new show]
 
     get 'book/:product', to: 'course/voucher_redemptions#new', as: 'redeem_voucher'
@@ -392,11 +389,11 @@ Rails.application.routes.draw do
         member do
           post :move
         end
-        resources :quiz_questions, except: %i[index new], as: :quiz_questions do
+        resources :quiz_questions, except: %i[index new show], as: :quiz_questions do
           member do
             post :move
           end
-          resources :quiz_answers, except: [:index], as: :quiz_answers do
+          resources :quiz_answers, except: %i[index show], as: :quiz_answers do
             member do
               post :move
             end
@@ -414,7 +411,6 @@ Rails.application.routes.draw do
       resources :calendar_events, only: %i[index update], controller: 'ajax/calendar_events', constraints: ->(r) { r.xhr? }
       resources :calendar_events, only: %i[new create edit update destroy]
       resources :files, only: %i[index create destroy]
-      get '/video_chat', to: 'video_chat#index', as: :video_chat
       resources :memberships, only: %i[create destroy update]
     end
   end
@@ -425,7 +421,7 @@ Rails.application.routes.draw do
     post '/tool_grading', to: 'lti#tool_grading', as: :tool_grading_course_item, defaults: {format: 'xml'}
     get '/tool_return', to: 'lti#tool_return', as: :tool_return_course_item, defaults: {format: 'xml'}
   end
-  # legacy paths:
+  # Legacy item routes:
   scope '/courses/:course_id/sections/:section_id/items/:id' do
     get '/tool_launch', to: 'lti#tool_launch', as: nil
     post '/tool_grading', to: 'lti#tool_grading', as: nil, defaults: {format: 'xml'}
@@ -442,15 +438,15 @@ Rails.application.routes.draw do
     get '/enrollments', to: 'enrollments#create', as: 'create_enrollment'
   end
 
-  # legacy route
+  # Legacy course route:
   get '/course/:id', to: 'course/courses#show'
-  get '/pinboard_tags', to: 'pinboard#tags'
-  get 'dbpb', to: 'pinboard#admin_tags'
-  delete '/tag/:id', to: 'pinboard#destroy', as: :tag_delete
-  resources :ping, only: [:index]
 
-  post '/helpdesk', to: 'helpdesk#send_helpdesk'
+  get '/pinboard_tags', to: 'pinboard#tags'
+  delete '/tag/:id', to: 'pinboard#destroy', as: :tag_delete
+
   get '/helpdesk', to: 'helpdesk#show'
+  post '/helpdesk', to: 'helpdesk#send_helpdesk'
+
   get '/dashboard', to: 'dashboard#dashboard'
   get '/dashboard/achievements', to: 'dashboard#achievements'
   get '/dashboard/documents', to: 'dashboard#documents'
@@ -477,7 +473,6 @@ Rails.application.routes.draw do
   get '/news/:id/', to: 'home/announcements#index' # as we dont have a index route yet
   get '/courses/:course_id/announcements/:id', to: 'course/announcements#index'
   get '/courses/:course_id/overview', to: 'course/syllabus#show', as: :course_overview
-  root to: 'home/home#index'
 
   # The web manifest (for home screen installation on mobile devices)
   get '/web_manifest.json', to: 'web_manifest#show'
@@ -505,18 +500,21 @@ Rails.application.routes.draw do
   resource :notification_user_disables, path: '/notification_user_settings/disable', only: %i[show create]
 
   resources :user_tests, module: 'admin'
-  patch 'user_tests/:identifier/finish', to: 'admin/user_tests#finish'
 
   get '/learn', to: 'learning_mode#index'
   get '/learn/review', to: 'learning_mode#review'
 
-  resources :video_providers, module: 'admin' do
+  resources :video_providers, except: %i[show], module: 'admin' do
     member do
       resource :sync, only: %i[create], controller: 'video_provider_sync', as: :sync_video_provider
     end
   end
 
   get 'ical', to: 'ical#index'
+
+  # Private API endpoints used by the frontend only. Must shadow the
+  # deprecated public API below.
+  post 'api/tracking-events', to: 'api/tracking_events#create'
 
   # mount Rack based API app
   mount Xikolo::API => '/api'
@@ -533,7 +531,7 @@ Rails.application.routes.draw do
       get '/classifiers/order', to: 'cluster/classifiers_order#index'
       post '/classifiers/order', to: 'cluster/classifiers_order#update'
     end
-    resources :lti_providers, except: [:show]
+    resources :lti_providers, except: %i[show]
     resources :announcements, except: %i[show destroy] do
       member do
         resource :email, as: 'announcement_email', controller: 'announcement_emails', only: %i[show new create]
@@ -579,6 +577,10 @@ Rails.application.routes.draw do
         resource :ticket_stats, controller: 'course_ticket_stats', only: %i[show]
         resource :open_badge_stats, controller: 'course_open_badge_stats', only: %i[show]
       end
+
+      scope 'videos/:video_id' do
+        resource :video_stats, controller: 'video_stats', only: %i[show]
+      end
     end
 
     scope 'moochub', module: :mooc_hub, as: 'moochub' do
@@ -600,6 +602,9 @@ Rails.application.routes.draw do
       resources :vouchers, only: %i[index create]
     end
   end
+
+  resources :ping, only: %i[index]
+  root to: 'home/home#index'
 
   if Rails.env.development?
     mount Lookbook::Engine, at: '/rails/components'

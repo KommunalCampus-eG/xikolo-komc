@@ -330,6 +330,7 @@ de:
       lti_provider_deleted: Der LTI-Provider wurde erfolgreich gelöscht.
       course_archived: Der Kurs wurde erfolgreich als abgeschlossen markiert.
       recalculation_triggered: Die Neuberechnung der Lernfortschritte für diesen Kurs wurde gestartet.
+      quiz_answer: Die Antwort wurde erfolgreich gelöscht.
       quiz_attempt_added: Der zusätzliche Versuch für ein Quiz wurde gewährt.
       fudge_points_added: Die Bewertung wurde aktualisiert.
       video_provider_deleted: Der Video-Provider wurde gelöscht.
@@ -468,6 +469,7 @@ de:
       download_not_refreshed: Es konnte kein gültiger Download-Link vom Videoanbieter angefordert werden. Bitte versuchen Sie es später noch einmal.
       recalculation_failed: Die Neuberechnung der Lernfortschritte für diesen Kurs konnte nicht gestartet werden. Bitte versuchen Sie es später noch einmal.
       recalculation_rejected: Die Neuberechnung der Lernfortschritte für diesen Kurs wurde bereits vor kurzem gestartet. Bitte versuchen Sie es später noch einmal.
+      quiz_answer: Beim Löschen der Antwort ist ein Fehler aufgetreten.
       quiz_attempt_failed: Ein weiterer Versuch für das Quiz konnte nicht gewährt werden.
       fudge_points_failed: Die Bewertung konnte nicht aktualisiert werden.
       video_provider_not_deleted: Der Video-Provider konnte nicht gelöscht werden, da zugehörige Videostreams noch verwendet werden.
@@ -487,6 +489,9 @@ de:
   components:
     actions_dropdown:
       aria_label: Weitere Aktionen
+    clipboard:
+      copy: In die Zwischenablage kopieren
+      copied: Kopiert!
     countdown:
       time_remaining: "Verbleibende Zeit:"
     custom_select:
@@ -503,6 +508,10 @@ de:
       link: Datenschutzvereinbarung anzeigen
       accept: Ich akzeptiere die Datenschutzvereinbarung.
       enroll: Für den Kurs einschreiben
+    ical_feed:
+      text: Sie können diesen Feed abonnieren, indem Sie die iCal-URL kopieren und sie in Ihre Kalenderanwendung importieren.
+      summary: Termine in den Kalender eintragen
+      label: iCal-URL kopieren
     markdown_editor:
       expand: Editor aufklappen
       collapse: Editor zuklappen
@@ -1189,19 +1198,19 @@ de:
       submission_statistics:
         title: "Einreichungs-Statistik"
         submissions: Einreichungen
-        total_submissions: "Einreichungen gesamt: "
-        distinct: "Einreichende Nutzer: "
-        total_points: "Punkte gesamt: "
+        total_submissions: "Einreichungen gesamt:"
+        distinct: "Einreichende Nutzer:"
+        total_points: "Punkte gesamt:"
         please_select: "Bitte wählen Sie..."
         correct: Richtig
         wrong: Falsch
         total: gesamt
         student_performance: Kursteilnehmer-Leistung
-        average_time: "Zeit im Durchschnitt: "
-        average_points: "Punkte im Durchschnitt: "
-        percent_of: "% von "
-        seconds: " Sekunden"
-        limit: " Limit"
+        average_time: "Zeit im Durchschnitt:"
+        average_points: "Punkte im Durchschnitt:"
+        percent_of: "% von"
+        seconds: Sekunden
+        limit: Limit
     dashboard:
       nav:
         title: Statistiken
@@ -1569,7 +1578,10 @@ de:
       cop: Teilnahmebestätigung
       roa: Leistungsnachweis
       qc_html: Zertifikat / ECTS
-      language_and_subtitles: "%{language} + %{subtitle_languages} Untertitel"
+      subtitles_more:
+        one: "%{subtitle_languages} + %{count} weiterer"
+        other: "%{subtitle_languages} + %{count} weitere"
+      subtitles: "%{subtitle_languages}"
       button_details: Details
       button_enroll: Einschreiben
       button_resume: Fortsetzen
@@ -1578,7 +1590,8 @@ de:
       date: Kursdaten
       classifiers: Kurs-Klassifizierung
       certificate: Höchstes zu erreichendes Zertifikat
-      language: Kurssprache und verfügbare Untertitel
+      language: Kurssprache
+      available_subtitles: Verfügbare Untertitel
       buttons_menu:
         details: Details zeigen
       label:
@@ -1677,7 +1690,12 @@ de:
     progress:
       learner_dashboard: Mein Lernfortschritt
       graded_score: Bewertete Punkte
+      graded: "%{achieved} von %{available}"
+      bonus_points:
+        one: "Du hast 1 Punkt bekommen und %{bonus_points} extra verdient"
+        other: "Du hast %{count} Punkte bekommen und %{bonus_points} extra verdient"
       selftest_score: Selbsttests
+      selftest: "%{achieved} von %{available}"
       visited_score: Besuchte Inhalte
       visited_items: "%{visited} von %{available} besucht"
       visited_empty: Keine Inhalte verfügbar
@@ -1686,26 +1704,17 @@ de:
         graded: "Bewertet: "
         selftests: "Selbsttests: "
         visits: "Besucht: "
-      section_material: Wocheninhalte
-      section_statistics: Wochenstatistiken
+      section_material_empty: Keine Inhalte verfügbar
       statistics:
         main: Hausaufgaben
         bonus: Bonus
         selftests: Selbsttests
+        points_achieved: "%{submitted_points} von %{max_points} Punkte"
         items_taken: "%{taken} von %{total} bearbeitet"
-      progress_table: # deprecated
-        assignments: Hausaufgaben
-        bonus: Bonus
-        selftests: Selbsttests
-        visited: Besucht
-        total: Gesamt
+        empty_state_points: Keine Punkte
 
       show:
-        item_locked: " (gesperrt)"
-        points: Punkte
         empty_msg: Es gibt noch keine Inhalte in diesem Kurs, daher auch noch keine Fortschrittsanzeige.
-        quizzes_taken: "%{taken} von %{count} bearbeitet"
-        items_visited: "%{visited} von %{existing} besucht"
       records:
         documents_headline: Meine Leistungsnachweise
         documents_intro: Sobald ein Kurs beendet ist (und der Lehrkörper die Abschlussergebnisse veröffentlicht hat), können Sie Ihre Leistungsnachweise hier herunterladen.
@@ -1717,6 +1726,14 @@ de:
           item: Für diese Lerneinheit gibt es keine Vorschau. Bitte schreiben Sie sich für den Kurs ein, um fortzufahren.
         empty_msg: Die Übersicht ist für diesen Kurs nicht verfügbar.
         continue: Weiterlernen
+      legend:
+        show: Erklärung anzeigen
+        hide: Erklärung ausblenden
+        completed: Inhalt abgeschlossen
+        not_completed: Inhalt nicht abgeschlossen
+        warning: Ausreichende Punktzahl erreicht
+        critical: Niedrige Punktzahl, wenn möglich wiederholen
+        optional: Optionaler Inhalt, beeinflusst die Punktzahl nicht
 
     admin:
       page_header: Kursadministration
@@ -1908,6 +1925,8 @@ de:
     new: Neue Section
     show_uuids: UUIDs zeigen
     hide_uuids: UUIDs ausblenden
+    course_uuid: Kurs-ID kopieren
+    section_uuid: Section-ID kopieren
     item:
       delete: Item löschen
       create: Neues Item
@@ -1915,6 +1934,8 @@ de:
       edit_headline: Item bearbeiten "%{item}"
       edit: Item bearbeiten
       edit_subtitles: Untertitel bearbeiten
+      copy_id: ID kopieren
+      copy_content_id: Content-ID kopieren
       unpublished: Item ist nicht veröffentlicht
       locked_until: "Item ist bis %{date} gesperrt"
       locked_since: "Item ist bis %{date} gesperrt"
@@ -2045,6 +2066,8 @@ de:
       delete_question: Frage löschen
       delete_question_confirm: Sind Sie sicher, dass Sie diese Frage löschen wollen?
       add_answer: Neue Antwort
+      delete_answer_confirm_title: Sind Sie sicher, dass Sie diese Antwort löschen möchten?
+      delete_answer_confirm_text: Diese Aktion kann nicht rückgängig gemacht werden. Sie kann unvorhersehbare Folgen haben, wenn das Quiz bereits veröffentlicht wurde.
       question_type: Fragentyp
       select_question_type: Bitte wählen Sie einen Fragentyp aus, um eine neue Frage hinzuzufügen
       enter_question: Geben Sie Ihre Frage ein
@@ -2052,6 +2075,7 @@ de:
       points: Punkte
       shuffle_answers: Antworten mischen
       answer: Antwort
+      answers: Antworten
       answer_type: Antwort-Typ
       select_answer_type: Bitte wählen Sie einen Antwort-Typ aus
       enter_answer: Geben Sie Ihre Antwort ein
@@ -2208,6 +2232,7 @@ de:
     more_courses: 'Tipp: Sie können immer alle abgeschlossenen Kurse, für die Sie noch nicht eingeschrieben sind, im <a href="/courses">Kursarchiv</a> finden und sich für ein Selbststudium (ohne Leistungsnachweis) anmelden.'
     sidebar:
       dates: Nächste Termine pro Kurs
+      dates_empty: Es gibt keine bevorstehenden Termine.
       recommendations: Kurs-Empfehlungen
     starting_soon: Startet bald
     started: Gestartet
@@ -2694,12 +2719,6 @@ de:
           answer: Answer
           comment: Comment
     sticky: Sticky
-    admin_tags:
-      title: Tags
-      id: ID
-      name: Name
-      resource: R Resource
-      type: Typ
     errors:
       loading: Es ist ein Fehler beim Laden aufgetreten.
       already_voted: Sie können nur einmal abstimmen.
@@ -2840,10 +2859,6 @@ de:
       btn_submit: Antworten abschicken
       btn_cancel: Abbrechen
 
-  social:
-    allow_detection_via_name: Andere Nutzer können mich über meinen Namen finden
-    allow_detection_via_email: Andere Nutzer können mich finden, wenn sie meine E-Mail-Adresse kennen
-
   learning_rooms:
     name: Name
     calendar:
@@ -2864,7 +2879,6 @@ de:
       dashboard: Letzte Aktivitäten ansehen
       discussions: Mit der Gruppe diskutieren
       etherpad: Gemeinsam Texte bearbeiten
-      video_chat: Video-Chat starten
       files: Dateien teilen
       tpa: "Teamarbeit abgeben und Arbeiten anderer Teams bewerten (%{title})"
       administration: Lernraum verwalten
@@ -2885,8 +2899,9 @@ de:
       confirm_delete: Möchten Sie diese Datei wirklich vom Server löschen?
     list: Liste der Lernräume
     my_rooms: Meine Lernräume
-    list_empty_state: Für diesen Kurs gibt es noch keine Lernräume.
     my_rooms_empty_state: Sie sind noch keinem Lernraum beigetreten.
+    list_empty_state: Für diesen Kurs gibt es noch keine Lernräume.
+    memberships_empty_state: Dem Lernraum sind noch keine Mitglieder beigetreten.
     create: Neuen Lernraum anlegen
     create_button: Lernraum anlegen
     update_button: Lernraum aktualisieren
@@ -2932,36 +2947,6 @@ de:
       is_open: Dieser Lernraum ist offen
       mail_to_member: E-Mail an Mitglied schreiben
       mail: Sehr geehrte/r Frau/Herr %{recipient}, Viele Grüße %{sender}
-
-    video_chats:
-      headline: Video-Chat
-      btn_txt: Video-Chat auf Jitsi Meet starten
-      note: "Hinweis: Wenn Sie den Video-Chat starten, werden Sie zu einem Drittanbieter (“Jitsi Meet“) weitergeleitet. <br>Jitsi Meet ist ein Open Source Projekt. Wir geben keine Ihrer Daten weiter. <br>Sie müssen auf Jitsi Meet keinen Account anlegen."
-      description: Vereinbaren Sie mit den anderen Teammitgliedern einen Termin für Ihren Video-Chat und legen Sie fest, wer den Link zum Video-Chat teilen soll.
-      start_chat:
-        headline: Vor dem Video-Chat
-        how_to: "So erzeugen und teilen Sie einen Konferenzlink:"
-        list_text:
-          - Drücken Sie die Schaltfläche „Video-Chat auf Jitsi Meet starten“. Ein neues Fenster oder Tab öffnet sich.
-          - Drücken Sie die Schaltfläche „Meeting starten“. Ein neues Fenster öffnet sich.
-          - Kopieren Sie den Konferenzlink. Sie finden ihn in der Adressleiste des Browsers.
-          - Teilen Sie den Konferenzlink mit Ihren Teammitgliedern. Sie können das Diskussionsforum Ihres Lernraums zum Teilen nutzen.
-      chat_info:
-        headline: "Wenn das Meeting stattfindet"
-        list_text:
-          - Folgen Sie dem Konferenzlink.
-          - Geben Sie den Benutzernamen ein, den Sie während der Konferenz nutzen wollen.
-          - Drücken Sie die Schaltfläche „Konferenz beitreten“.
-          - Sie befinden sich jetzt im Video-Chat.
-          - - "Am unteren Bildschirmrand finden Sie eine Menüleiste mit nützlichen Funktionen, wie:"
-            - Mikrofon (an / aus)
-            - Kamera (an / aus)
-            - Bildschirmteilen (an / aus)
-            - Chat-Fenster (öffnen / schließen)
-            - Handheben (ein / aus)
-            - Anwesende anzeigen (an / aus)
-            - Und viele weitere Funktionen
-          - Um gesehen zu werden, müssen Sie Ihre Kamera anschalten. Um gehört zu werden müssen Sie Ihr Mikrofon anschalten.
     flash_messages:
       success:
         delete_room: Der Lernraum wurde erfolgreich gelöscht.
@@ -3782,7 +3767,7 @@ de:
       refid: Referral-ID
       gallery_entries: Kennzeichnung der Kandidaten für die Best-of Galerie
       rate: Bewertung des Feedbacks
-      availalbe_submissions: Angelegte Entwürfe
+      available_submissions: Angelegte Entwürfe
       final_submissions: Abgegebene Lösungen
       votes: Stimme(n)
       your_vote: Sie haben %{votes} Stern(e) für das Feedback vergeben.
@@ -4220,7 +4205,6 @@ de:
       icon:
         name: x-twitter
         style: brands
-      share_course: "Ich habe mich in den #%{site}-Kurs %{title} eingeschrieben."
       share_certificate: "Ich habe den Kurs %{title} auf #%{site} erfolgreich abgeschlossen!"
     mail:
       button: Mail
@@ -4228,15 +4212,6 @@ de:
       icon:
         name: envelope
         style: solid
-      share_course:
-        subject: "Ich lerne bei %{site}, mach doch mit!"
-        body: |
-          Hallo ,
-
-          Ich habe mich in den %{site}-Kurs %{title} eingeschrieben: %{url}.
-          Um dich anzumelden, brauchst Du nur eine gültige E-Mail-Adresse und schon kann es losgehen. Lerne von überall und jederzeit mit %{site}.
-
-          Viele Grüße,
       share_certificate:
         subject: "Ich habe einen Kurs auf %{site} erfolgreich abgeschlossen"
         body: |

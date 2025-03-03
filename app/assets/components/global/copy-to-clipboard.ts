@@ -7,10 +7,49 @@
  * Add data-behavior='copy-to-clipboard' to the element that should trigger the copy action.
  * Add data-text='value' to the element containing the value to be copied.
  *
+ * This code is also used for the component Global::CopyToClipboard
+ *
  */
 
 import handleError from '../../util/error';
 import ready from '../../util/ready';
+import I18n from '../../i18n/i18n';
+
+const showSuccessMessage = (element: Element) => {
+  const tooltip = element.querySelector<HTMLElement>(
+    "[data-behavior='clipboard-tooltip']",
+  );
+
+  const label = element.querySelector<HTMLElement>(
+    "[data-behavior='clipboard-label']",
+  );
+
+  if (tooltip) {
+    const originalText = tooltip.textContent;
+    if (originalText != I18n.t('components.clipboard.copied')) {
+      tooltip.textContent = I18n.t('components.clipboard.copied');
+      tooltip.style.display = 'block';
+
+      // Restore original text after 1 second
+      setTimeout(() => {
+        tooltip.textContent = originalText;
+        tooltip.style.removeProperty('display');
+      }, 1000);
+    }
+  }
+
+  if (label) {
+    const originalLabel = label.textContent;
+    if (originalLabel != I18n.t('components.clipboard.copied')) {
+      label.textContent = I18n.t('components.clipboard.copied');
+
+      // Restore original text after 1 second
+      setTimeout(() => {
+        label.textContent = originalLabel;
+      }, 1000);
+    }
+  }
+};
 
 ready(() => {
   document
@@ -23,6 +62,7 @@ ready(() => {
           if (!value) throw new Error('No data-text attribute found');
 
           await navigator.clipboard.writeText(value);
+          showSuccessMessage(element);
         } catch (e) {
           handleError(undefined, e);
         }

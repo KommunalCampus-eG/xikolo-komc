@@ -6,14 +6,9 @@ def headless?
   %w[0 n no off false].exclude?(ENV.fetch('HEADLESS', '1').downcase)
 end
 
-BROWSER_DEFAULT_DIMENSIONS = {
-  width: 1024,
-  height: 768,
-}.freeze
-
 Capybara.register_driver :firefox do |app|
   options = Selenium::WebDriver::Firefox::Options.new
-  options.add_argument("--window-size=#{BROWSER_DEFAULT_DIMENSIONS[:width]},#{BROWSER_DEFAULT_DIMENSIONS[:height]}")
+  options.add_argument('--window-size=1280,1024')
   options.add_argument('-headless') if headless?
 
   options.add_preference('intl.accept_languages', 'en')
@@ -23,8 +18,9 @@ end
 
 Capybara.register_driver :chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
-  options.add_argument("--window-size=#{BROWSER_DEFAULT_DIMENSIONS[:width]},#{BROWSER_DEFAULT_DIMENSIONS[:height]}")
-  options.add_argument('--headless=old') if headless?
+  options.add_argument('--no-sandbox') if ENV.key?('GITLAB_CI')
+  options.add_argument('--window-size=1280,1024')
+  options.add_argument('--headless=new') if headless?
   options.add_argument('--incognito')
   options.add_argument('--disable-site-isolation-trials')
   options.add_argument('--disable-search-engine-choice-screen')
@@ -42,7 +38,10 @@ case ENV.fetch('BROWSER', 'chrome')
 end
 
 Capybara.configure do |config|
-  # Some of our form fields are visually hidden and replaced by "prettier" alternatives.
+  # Some of our form fields are visually hidden and replaced by
+  # "prettier" alternatives. When set to true, capybara will attempt to
+  # click the associated <label> element if the checkbox/radio button
+  # are non-visible.
   config.automatic_label_click = true
 end
 
@@ -55,11 +54,12 @@ RSpec.configure do |config|
   # "has_link?".
   config.include Capybara::RSpecMatchers, type: :request
 
-  config.before(type: :feature) do
+  config.before(type: :system) do
+    # Always run with a full browser to ensure the page behavior is like
+    # a real browser.
+    driven_by(Capybara.default_driver)
+
     # Reset browser size to desktop view
-    Capybara.page.driver.browser.manage.window.resize_to(
-      BROWSER_DEFAULT_DIMENSIONS[:width].to_s,
-      BROWSER_DEFAULT_DIMENSIONS[:height].to_s
-    )
+    Capybara.page.driver.browser.manage.window.resize_to(1280, 1024)
   end
 end

@@ -17,9 +17,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) {|f| File.basename(f) }
   spec.require_paths = %w[lib]
 
-  spec.required_ruby_version = '>= 3.3'
+  spec.required_ruby_version = '>= 3.4'
 
-  spec.add_dependency 'acfs', '~> 1.0'
+  spec.add_dependency 'acfs', '~> 2.0'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'xikolo-quiz', '>= 2.0'
 end

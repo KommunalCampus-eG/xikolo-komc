@@ -7,7 +7,8 @@ base_url: http://localhost:3000
 mailsender: '"Xikolo" <xikolo@localhost>'
 email:
   smtp:
-    address: mailout.openhpi.net
+    address: mailpit
+    port: 1025
 
 statistics_email_recipients:
   - admin@localhost
@@ -37,7 +38,7 @@ s3:
     # http_continue_timeout: 0
 
 locales:
-  available: [cn, de, en, es, fr, nl, pt-BR, ru, uk]
+  available: [de, en, es, fr, nl, uk]
   default: en
 
 course_details:
@@ -81,9 +82,6 @@ imgproxy_url: ~
 
 chatbot:
   bridge_public_keys: []
-  version2:
-    href:
-      de: https://support-chatbot-de.kommunalcampus.xikolo.de/webhooks/rest/webhook
 
 moochub_api:
   enabled: false

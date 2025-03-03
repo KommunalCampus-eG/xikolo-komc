@@ -1,5 +1,5 @@
 - content_for :head_assets
-  = javascript_include_tag 'course-admin'
+  = javascript_include_tag 'course-admin', crossorigin: 'anonymous', integrity: true, async: true, debug: false
   = javascript_include_tag 'teacher', crossorigin: 'anonymous', integrity: true, async: true, debug: false
 
 - content_for :course_area_header
@@ -45,6 +45,7 @@
 
   span.label.label-info.ml10.uuid hidden='true'
     = @course_presenter.id
+    = render Global::CopyToClipboard.new(@course_presenter.id, tooltip: t(:'sections.course_uuid'))
 
 .col-md-12
   #add_section_form.form_wrapper hidden=true

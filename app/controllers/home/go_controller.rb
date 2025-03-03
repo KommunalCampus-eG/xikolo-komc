@@ -4,12 +4,11 @@ class Home::GoController < Abstract::FrontendController
   include TracksReferrers
 
   skip_around_action :auth_middleware, except: :survey
-  skip_auto_login!
 
   # safe redirect to external URLs from inside the application
   def redirect
     if valid_link?
-      return redirect_to params[:url] if redirect_now
+      return redirect_external(params[:url]) if redirect_now
 
       @target_name = params[:target] || params[:url]
       @target_url = params[:url]
@@ -68,10 +67,10 @@ class Home::GoController < Abstract::FrontendController
         end
       end
 
-    uri = Addressable::URI.parse Xikolo.config.limesurvey_url
+    uri = Addressable::URI.parse(Xikolo.config.limesurvey_url)
     uri.query_values = query_params
 
-    redirect_to uri.to_s
+    redirect_external(uri.to_s)
   end
 
   private

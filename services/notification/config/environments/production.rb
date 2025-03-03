@@ -33,6 +33,13 @@ Rails.application.configure do
   # Compress CSS
   config.assets.css_compressor = :sass
 
+  # Ignore bad email addresses and do not raise email delivery errors. Set this
+  # to true and configure the email server for immediate delivery to raise
+  # delivery errors.
+  config.action_mailer.raise_delivery_errors = true
+
+  config.action_mailer.perform_caching = false
+
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
@@ -61,19 +68,31 @@ Rails.application.configure do
   config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info')
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  redis = Rails.application.config_for(:cache_redis)
+  config.cache_store = :redis_cache_store, {
+    url: redis.fetch(:url),
+    expires_in: 1.day,
+  }
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
   # config.active_job.queue_name_prefix = "xikolo_news_service_production"
 
   # Configure SMTP mailer from configuration
-  if (smtp_host = Xikolo.config.email.dig('smtp', 'address'))
+  if (address = Xikolo.config.email.dig('smtp', 'address')).present?
+    smtp = Xikolo.config.email['smtp']
+
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
-      address: smtp_host,
+      address:,
+      port: smtp['port'].presence,
+      domain: smtp['domain'].presence,
+      user_name: smtp['username'].presence,
+      password: smtp['password'].presence,
+      authentication: smtp['authentication'].presence&.to_sym,
+      tls: smtp['tls'].presence,
       enable_starttls_auto: true,
-    }
+    }.compact
   end
 
   # Disable caching for Action Mailer templates even if Action Controller

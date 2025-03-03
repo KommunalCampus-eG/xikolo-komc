@@ -2,14 +2,14 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.3.0'
+ruby '~> 3.4.0'
 
 # Rails
 gem 'rails', '~> 7.2.0'
 gem 'rails-i18n'
 gem 'slim'
-gem 'sprockets', '~> 3.2'
-gem 'sprockets-rails', '~> 3.2'
+gem 'sprockets', '~> 4.2'
+gem 'sprockets-rails', '~> 3.5'
 
 gem 'drb'
 gem 'json'
@@ -39,13 +39,14 @@ gem 'redcarpet'
 gem 'msgr', '~> 1.5'
 
 gem 'activerecord-postgres_enum', '~> 2.0'
-gem 'fx', '~> 0.8.0'
+gem 'fx', '~> 0.9.0'
 gem 'pg'
 gem 'redis', '~> 5.0'
 gem 'scenic', '~> 1.5'
 
 # App servers
 gem 'puma'
+gem 'thruster'
 
 # Xikolo
 gem 'xikolo-common', path: './gems/xikolo-common'
@@ -68,12 +69,13 @@ gem 'svg-graph', '~> 2.1', require: 'svggraph'
 gem 'sass-rails'
 
 group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+
   gem 'letter_opener'
   gem 'listen', '~> 3.9.0'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'rspec', '~> 3.10'
-  gem 'rspec-rails', '~> 6.0'
+  gem 'rspec-rails', '~> 7.0'
   gem 'rspec-teamcity', require: false
 end
 

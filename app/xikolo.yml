@@ -4,7 +4,7 @@
 
 # Overridden until XI-4438 is fixed
 locales:
-  available: [cn, de, en, es, fr, nl, pt-BR, ru, uk]
+  available: [de, en, es, fr, nl, uk]
   default: en
 
 # The SMTP server where outgoing emails should be delivered
@@ -118,7 +118,7 @@ course_details:
 # Which languages can be selected for course content? These will also be
 # available for filtering in the course list.
 # NOTE: Platform locales are not automatically part of this list.
-course_languages: [cn, de, en, es, fr, pt-BR, ru, uk]
+course_languages: [de, en, es, fr, uk]
 
 # List of custom fields for which the statistics should be shown on
 # the course dashboard. The values must be the names of the
@@ -221,14 +221,6 @@ video:
 #######################
 ### Auth
 #######################
-
-# Automatic authentication with TLS certificates
-auto_login:
-  enabled: false
-  # Domain of the issuer of SSL client certificates to consider
-  issuer_domain: "example.com"
-  # Name of the corresponding authentication provider
-  auth_provider: "example"
 
 # List of global groups that users can be added to
 global_permission_groups: ["gdpr_admins", "admins", "helpdesk"]
@@ -419,9 +411,9 @@ footer:
   social_media:
     headline: { en: "Follow us", de: "Folgen Sie uns" }
     links:
-      - href: "https://twitter.com"
-        text: { en: "X", de: "X" }
-        type: "square-x-twitter"
+      - href: "https://www.instagram.com"
+        text: { en: "Instagram", de: "Instagram" }
+        type: "square-instagram"
       - href: "https://www.facebook.com"
         text: { en: "Facebook", de: "Facebook" }
         type: "facebook"
@@ -431,7 +423,6 @@ footer:
       en: "Xikolo is the educational online platform of the Hasso Plattner Institute, Potsdam."
       de: "Xikolo ist die pädagogische Online-Plattform des Hasso-Plattner-Instituts, Potsdam."
       es: "Xikolo es la plataforma educativa en línea del Instituto Hasso Plattner, Potsdam."
-      zh: "Xikolo 是波茨坦哈索普拉特纳研究所的在线教育平台。"
   copyright:
     start_year: 2012
     owner:

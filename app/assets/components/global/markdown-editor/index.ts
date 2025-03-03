@@ -14,16 +14,14 @@
 import '@toast-ui/editor/dist/i18n/de-de';
 import '@toast-ui/editor/dist/i18n/es-es';
 import '@toast-ui/editor/dist/i18n/fr-fr';
-import '@toast-ui/editor/dist/i18n/pt-br';
-import '@toast-ui/editor/dist/i18n/ru-ru';
 import '@toast-ui/editor/dist/i18n/uk-ua';
-import '@toast-ui/editor/dist/i18n/zh-cn';
 
 import ToastUi from '@toast-ui/editor';
 import ToastUiType from '@toast-ui/editor/types/index';
 import { Pos } from '@toast-ui/editor/types/toastmark';
 
 import ready from '../../../util/ready';
+import I18n from '../../../i18n/i18n';
 import parseMarkdownToHTML from './html-parser';
 import setResizeBtn from './resize-editor';
 

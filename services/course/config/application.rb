@@ -5,7 +5,7 @@ require_relative 'boot'
 require 'rails'
 # Pick the frameworks you want:
 require 'active_model/railtie'
-# require 'active_job/railtie'
+require 'active_job/railtie'
 require 'active_record/railtie'
 # require 'active_storage/engine'
 require 'action_controller/railtie'
@@ -53,13 +53,14 @@ module Xikolo::CourseService
     # Prepend all log lines with the following tags.
     config.log_tags = [:request_id]
 
-    config.i18n.available_locales = %i[cn de en es fr nl pt-BR ru uk]
+    config.i18n.available_locales = %i[de en es fr nl uk]
     config.i18n.default_locale = :en
     config.i18n.fallbacks = %i[en]
 
     ActiveSupport::JSON::Encoding.time_precision = 0
 
     # Configure Telegraf event collection
+    config.telegraf.connect = ENV.fetch('TELEGRAF_CONNECT', nil)
     config.telegraf.tags = {application: 'course'}
 
     # Our paper trail setup uses YAML serialization into a text column,

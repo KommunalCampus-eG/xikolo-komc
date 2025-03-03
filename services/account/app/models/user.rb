@@ -44,6 +44,7 @@ class User < ApplicationRecord
   after_create { notify(:create) }
   after_update { notify(:update) }
   after_destroy { notify(:destroy) }
+  after_find :sanitize_language
 
   after_update do
     # We do not emit :confirmed if the record was created, and updated
@@ -148,20 +149,6 @@ class User < ApplicationRecord
       ].reduce(:or)
     end
 
-    def search(query)
-      query = query.gsub(%r{[/%_]}) {|m| "\\#{m}" }
-      query = "%#{query}%"
-
-      where [
-        pref('social.allow_detection_via_display_name')
-          .and(t[:display_name].matches(query)),
-        pref('social.allow_detection_via_name')
-          .and(t[:full_name].matches(query)),
-        pref('social.allow_detection_via_email')
-          .and(t[:id].in(Email.address_matches(query).select(:user_id).arel)),
-      ].reduce(:or)
-    end
-
     def auth_uid(query)
       joins(:authorizations).where(authorizations: {uid: query.to_s})
     end
@@ -192,13 +179,6 @@ class User < ApplicationRecord
     end
 
     alias t arel_table
-
-    def pref(preference)
-      col   = t[:preferences]
-      quote = Arel::Nodes.build_quoted("#{preference}=>false", col)
-
-      Arel::Nodes::InfixOperation.new('@>', col, quote).not
-    end
   end
 
   def avatar_url
@@ -349,5 +329,16 @@ class User < ApplicationRecord
 
   def publish_notify(action)
     Msgr.publish(decorate.as_event, to: "xikolo.account.user.#{action}")
+  end
+
+  def sanitize_language
+    # If the stored language is no longer valid, reset it to trigger auto-detection
+    # in the frontend.
+    # Do not explicitly save the record here to avoid unexpected changes in e.g.
+    # other transactions only accessing users.
+    # The record will be saved when it is updated for other reasons.
+    if language.present? && Xikolo.config.locales['available'].exclude?(language)
+      self.language = nil
+    end
   end
 end

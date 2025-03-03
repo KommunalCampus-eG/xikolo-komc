@@ -1,11 +1,11 @@
-# syntax = docker/dockerfile:1.12-labs@sha256:5a2914b8a3ae788a4b8874f80dddde9fdf932e1d224fab8bab669bd18f251f9a
+# syntax = docker/dockerfile:1.14-labs@sha256:16aafd1d331afa5f314579cc4faf5ceb0e3ae15812d2a9da926c14175da73dc7
 
 #
 # Assets build environment (with NodeJS)
 #
 # * Compile and bundle web assets
 #
-FROM timbru31/ruby-node:3.3-slim-20@sha256:13964e49372594bf4fa74a1d58d29b3ed294fff1bba19a90364c0514e057a5f7 AS assets
+FROM timbru31/ruby-node:3.4-slim-22@sha256:d84ff32fb6fac66efa09628110705a522f914918af4102f9e3eb7a1f294c15aa AS assets
 
 ARG BRAND=xikolo
 ARG TARGETARCH
@@ -33,6 +33,7 @@ RUN <<EOF
     libpq-dev \
     libsodium23 \
     libtool \
+    libyaml-dev \
     pax-utils \
     pkg-config \
     shared-mime-info \
@@ -55,10 +56,10 @@ RUN <<EOF
   corepack yarn install
 EOF
 
-COPY --exclude=docker/rootfs --exclude=services . /app/
+COPY --exclude=docker --exclude=services . /app/
 
-RUN <<EOF
-  make --jobs="$(./docker/tool/njobs)" all
+RUN --mount=type=bind,target=/docker,source=/docker <<EOF
+  make --jobs="$(/docker/bin/njobs)" all
 EOF
 
 #
@@ -68,7 +69,7 @@ EOF
 # * Collect required native dependencies for gems
 # * Clean up application directory
 #
-FROM ruby:3.3.6-slim@sha256:655ed7e1f547cfe051ec391e5b55a8cb5a1450f56903af9410dd31a6aedc5681 AS build
+FROM ruby:3.4.2-slim@sha256:cdc00623487445d99f3de3923b97463a15e2ce9045ea679f224f361eec7512c1 AS build
 
 ARG BRAND=xikolo
 ARG TARGETARCH
@@ -93,6 +94,7 @@ RUN <<EOF
     libidn11-dev \
     libpq-dev \
     libsodium23 \
+    libyaml-dev \
     pax-utils \
     shared-mime-info \
     tzdata
@@ -138,9 +140,12 @@ EOF
 #
 # Runtime image
 #
-FROM docker.io/ruby:3.3.6-slim@sha256:655ed7e1f547cfe051ec391e5b55a8cb5a1450f56903af9410dd31a6aedc5681
+FROM docker.io/ruby:3.4.2-slim@sha256:cdc00623487445d99f3de3923b97463a15e2ce9045ea679f224f361eec7512c1
 
 ARG BRAND=xikolo
+ARG BUILD_REF_NAME
+ARG BUILD_COMMIT_SHA
+ARG BUILD_COMMIT_SHORT_SHA
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -149,6 +154,10 @@ ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
 ENV RAILS_LOG_TO_STDOUT=1
+
+ENV BUILD_REF_NAME=$BUILD_REF_NAME
+ENV BUILD_COMMIT_SHA=$BUILD_COMMIT_SHA
+ENV BUILD_COMMIT_SHORT_SHA=$BUILD_COMMIT_SHORT_SHA
 
 RUN mkdir --parents /app/
 WORKDIR /app/
@@ -160,20 +169,13 @@ RUN useradd --create-home --shell /bin/bash xikolo
 RUN <<EOF
   apt-get --yes --quiet update
   apt-get --yes --quiet --no-install-recommends install \
-    curl \
     ffmpeg \
-    git \
     libcurl4 \
     libsodium23 \
-    nginx \
     shared-mime-info \
     tzdata \
     xz-utils
 EOF
-
-COPY docker/rootfs/web/ /
-COPY docker/bin/ /docker/bin
-RUN /docker/bin/install-s6-overlay
 
 # Copy installed gems and config from `build` stage above
 COPY --from=build /usr/local/bundle /usr/local/bundle
@@ -187,7 +189,9 @@ EOF
 # Copy application files from build stage
 COPY --from=build /app/ /app/
 
+USER 1000:1000
+
 EXPOSE 80/tcp
 
 CMD [ "server" ]
-ENTRYPOINT [ "/init", "with-contenv", "/app/bin/entrypoint" ]
+ENTRYPOINT [ "/app/bin/entrypoint" ]

@@ -445,6 +445,7 @@ uk:
   components:
     actions_dropdown:
       aria_label: Більше дій
+    clipboard: Зрозумів!
     countdown:
       time_remaining: "Залишилось часу:"
     enrollment_dialog:
@@ -469,6 +470,10 @@ uk:
           many: "%{count} курсів"
           other: "%{count} курси"
         adjust: Налаштувати
+    ical_feed:
+      text: Ви можете підписатися на цю стрічку, скопіювавши URL-адресу iCal та імпортувавши її у свій календарний додаток.
+      summary: Додайте дати до свого календаря
+      label: Скопіювати URL-адресу iCal
     date_time_picker:
       today: Налаштовано на сьогодні
       clear: Очистити
@@ -1113,19 +1118,19 @@ uk:
       submission_statistics: # Do not translate
         title: Quiz Details (Deprecated) # Do not translate
         submissions: Submission # Do not translate
-        total_submissions: "Total Submissions: " # Do not translate
-        distinct: "Submitting users: " # Do not translate
-        total_points: "Total points: " # Do not translate
+        total_submissions: "Total Submissions:" # Do not translate
+        distinct: "Submitting users:" # Do not translate
+        total_points: "Total points:" # Do not translate
         please_select: "Please select..." # Do not translate
         correct: Correct # Do not translate
         wrong: Wrong # Do not translate
         total: total # Do not translate
         student_performance: Student performance # Do not translate
-        average_time: "Average time: " # Do not translate
-        average_points: "Average points: " # Do not translate
-        percent_of: "% of " # Do not translate
-        seconds: " seconds" # Do not translate
-        limit: " limit" # Do not translate
+        average_time: "Average time:" # Do not translate
+        average_points: "Average points:" # Do not translate
+        percent_of: "% of" # Do not translate
+        seconds: seconds # Do not translate
+        limit: limit # Do not translate
       policy_url: Policy URL
 
     users:
@@ -1438,7 +1443,8 @@ uk:
       cop: Підтвердження участі
       roa: Відомість досягнень
       qc_html: Сертифікат/ECTS
-      language_and_subtitles: "%{language} + %{subtitle_languages} субтитри"
+      subtitles_more: "%{subtitle_languages} + %{count} ще"
+      subtitles: "%{subtitle_languages}"
       button_details: Подробиці
       button_enroll: Зарахувати
       button_resume: Резюме
@@ -1447,7 +1453,8 @@ uk:
       date: Дати курсу
       classifiers: Класифікатори курсу
       certificate: Найвищий досяжний сертифікат
-      language: Мова курсу та доступні субтитри
+      language: Мова курсу
+      available_subtitles: доступні субтитри
       buttons_menu:
         details: Показати деталі
       label:
@@ -1544,7 +1551,12 @@ uk:
     progress:
       learner_dashboard: Мій прогрес у навчанні
       graded_score: Оцінки за балами
+      graded: "%{achieved} від %{available}"
+      bonus_points:
+        one: "Ви отримали 1 бал і заробили %{bonus_points} додаткових"
+        other: "Ви отримали %{count} балів і заробили %{bonus_points} додаткових"
       selftest_score: Бали за самоперевірку
+      selftest: "%{achieved} від %{available}"
       visited_score: Відвідані предмети
       visited_items: "%{visited} від %{available} відвіданих пунктів"
       visited_empty: немає доступних товарів
@@ -1553,26 +1565,17 @@ uk:
         graded: "Оцінено: "
         selftests: "Самоперевірка: "
         visited: "Відвідано: "
-      section_material: Матеріали розділу
-      section_statistics: Статистика розділу
+      section_material_empty: Немає доступних товарів
       statistics:
         main: Завдання
         bonus: Бонус
         selftests: Самоперевірка
+        points_achieved: "%{submitted_points} з %{max_points} балів"
         items_taken: "%{taken} від %{total} складено"
-      progress_table: # deprecated
-        assignments: Завдання
-        bonus: Бонус
-        selftests: Самоперевірка
-        visited: Відвідано
-        total: Разом
+        empty_state_points: Немає балів
 
       show:
-        item_locked: " (заблоковано)"
-        points: Бали
         empty_msg: "Поки що немає пунктів, тому ми не можемо показати вам прогрес. Повертайтеся пізніше."
-        quizzes_taken: "%{taken} з %{count} пройдено"
-        items_visited: "%{visited} з %{existing} відвідано"
       records:
         documents_headline: Мої сертифікати курсу
         documents_intro: Як тільки курс закінчиться (і викладачі опублікують остаточні результати), ви зможете завантажити тут свої сертифікати.
@@ -1584,6 +1587,14 @@ uk:
           item: Цей навчальний блок неможливо попередньо переглянути. Будь ласка, зареєструйтеся на курс, щоб продовжити.
         empty_msg: Для цього курсу немає огляду.
         continue: Продовжити навчання
+      legend:
+        show: Показати пояснення
+        hide: Приховати пояснення
+        completed: Вміст завершено
+        not_completed: Вміст не завершено
+        warning: Досягнуто достатній бал
+        critical: Низький бал, повторити за можливості
+        optional: Необов'язковий вміст, не впливає на оцінку
 
     admin:
       certificate_templates:
@@ -2034,6 +2045,7 @@ uk:
     # EN-fallback more_courses: 'Hint: You can still find all other courses you are not yet enrolled for in <a href="/courses">the course archive</a> and register for self-study (without Record of Achievement).'
     sidebar:
       dates: Наступні дати на курс
+      dates_empty: У вас немає запланованих зустрічей.
       recommendations: Рекомендації по курсам
     starting_soon: Скоро почнуться
     started: Почалися
@@ -2522,12 +2534,6 @@ uk:
           answer: Відповідь
           comment: Коментар
     sticky: Потребує уваги
-    admin_tags:
-      title: Теги
-      id: ID
-      name: Ім'я
-      resource: R Resource
-      type: Тип
 
   pinboard_comment:
     update: Зберегти зміни
@@ -2673,10 +2679,6 @@ uk:
       btn_submit: Надіслати відповіді
       btn_cancel: Скасувати
 
-  social:
-    allow_detection_via_name: Дозволити іншим користувачам знаходити мене за іменем
-    allow_detection_via_email: Дозволити іншим користувачам знайти мене за допомогою адерси електронної пошти
-
   learning_rooms:
     name: Ім'я
     calendar:
@@ -2696,7 +2698,6 @@ uk:
       dashboard: Переглянути останні дії
       discussions: Обговорити зі своєю командою
       etherpad: Співпрацювати над текстами
-      video_chat: Почати відеочат
       files: Поділитися файлами
       tpa: "Подати свою командну роботу та оцінити своїх однокурсників (%{title})"
       administration: Керувати своїм простором співпраці
@@ -2717,8 +2718,8 @@ uk:
       confirm_delete: Ви дійсно хочете видалити цей файл із сервера?
     list: Список Collab Space
     my_rooms: Мої Collab Space
-    list_empty_state: Для цього курсу ще немає навчальних просторів.
     my_rooms_empty_state: Ви ще не приєдналися до навчального простору.
+    list_empty_state: Для цього курсу ще немає навчальних просторів.
     create: Створити Collab Space
     create_button: Створити Collab Space
     update_button: Оновити Collab Space
@@ -2764,36 +2765,6 @@ uk:
       is_open: Цей Collab Space відкритий
       mail_to_member: Написати листа учаснику
       mail: Дорогий(а) %{recipient}, З найкращими побажаннями %{sender}
-
-    video_chats:
-      headline: Відеочат
-      btn_txt: Почати відеочат на Jitsi Meet
-      note: "Примітка: коли ви почнете відеочат, ви будете спрямовані до стороннього постачальника (“Jitsi Meet“). <br>Jitsi Meet - це проект з відкритим кодом. Ми не передаємо жодних ваших даних. <br>Вам не потрібно створювати обліковий запис на Jitsi Meet."
-      description: Домовтеся про зустріч із товаришами по команді та вирішіть, хто має поділитися посиланням на відеочат.
-      start_chat:
-        headline: Перед відеочатом
-        how_to: "Як створити посилання на зустріч і поділитися ним:"
-        list_text:
-          - Натисніть кнопку "Почати відеочат на Jitsi Meet". Відкриється нове вікно або вкладка.
-          - Натисніть кнопку "Почати зустріч". Відкриється нове вікно.
-          - Скопіюйте посилання на зустріч. Ви знайдете його в адресному рядку браузера.
-          - Поділіться посиланням на зустріч зі своїми товаришами по команді. Ви можете використовувати дискусійний форум у своєму Collab Space, щоб поділитися посиланням.
-      chat_info:
-        headline: Коли відбудеться зустріч
-        list_text:
-          - Перейдіть за посиланням на зустріч.
-          - Введіть ім'я користувача, яке ви хочете використовувати під час зустрічі.
-          - Натисніть кнопку "Приєднатися до зустрічі".
-          - Ви зараз у відеочаті.
-          - - "У нижній частині екрана ви знайдете рядок меню з такими корисними функціями, як:"
-            - Мікрофон (вимкнути / увімкнути)
-            - Камера (почати / зупинити)
-            - Спільний доступ до екрана (почати / зупинити)
-            - Вікно чату (відкрити / закрити)
-            - Підніміть руку (вкл. / викл.)
-            - Учасники (показати / припинити показ)
-            - І багато інших функцій
-          - Щоб вас бачили, вам потрібно запустити камеру. Щоб бути почутим, потрібно увімкнути мікрофон.
     flash_messages:
       success:
         delete_room: Collab Space було успішно видалено.
@@ -3595,7 +3566,7 @@ uk:
       refid: Ідентифікатор направлення
       gallery_entries: Відмічені кандидати до галереї
       rate: Оцінка
-      availalbe_submissions: Доступні роботи
+      available_submissions: Доступні роботи
       final_submissions: Остаточні роботи
       votes: Голос(и)
       your_vote: Ви поставили %{votes} зірок цій роботі.
@@ -4005,21 +3976,15 @@ uk:
   pages:
     show:
       edit_translation:
-        cn: Редагувати переклад китайською "%{title}"
         de: Редагувати переклад німецькою "%{title}"
         en: Редагувати переклад англійською "%{title}"
         es: Редагувати переклад іспанською "%{title}"
         fr: Редагувати переклад французькою "%{title}"
-        pt-BR: Редагувати переклад бразильською португальською "%{title}"
-        ru: Редагувати переклад російською "%{title}"
       new_translation:
-        cn: Додати переклад китайською
         de: Додати переклад німецькою
         en: Додати переклад англійською
         es: Додати переклад іспанською
         fr: Додати переклад французькою
-        pt-BR: Додати переклад бразильською португальською
-        ru: Додати переклад російською
       last_changed: Остання сторінка була змінена %{date}.
     not_found:
       message: Ця статична сторінка невідома. Перевірте URL-адресу/ім'я. Якщо вміст відсутній, ви можете створити нові переклади.
@@ -4073,7 +4038,6 @@ uk:
       icon:
         name: x-twitter
         style: brands
-      share_course: "Я зарахований на #%{site} курс %{title}"
       share_certificate: "Я успішно закінчив курс %{title} на %{site}!"
     mail:
       button: Пошта
@@ -4081,15 +4045,6 @@ uk:
       icon:
         name: envelope
         style: solid
-      share_course:
-        subject: "Приєднуйтесь до мене та навчайтеся з %{site}"
-        body: |
-          Привіт,
-
-          Я зарахований на %{site} курс %{title}: %{url}.
-          Все, що вам потрібно для реєстрації, це дійсна адреса електронної пошти, і ви можете навчатися з будь-якої точки світу в будь-який час.
-
-          З повагою,
       share_certificate:
         subject: "Я успішно закінчив курс на %{site}"
         body: |

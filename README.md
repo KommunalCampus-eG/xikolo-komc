@@ -1,10 +1,14 @@
 # The openHPI Platform Core
 
-The open-source core of the openHPI platform.
+![Documentation](https://github.com/openHPI/xikolo-core/actions/workflows/docs.yml/badge.svg)
+
+The open-source core of the [openHPI](https://open.hpi.de/) platform.
+Please refer to the [documentation](https://openhpi.github.io/xikolo-core/)
+for details.
 
 ## License
 
-Copyright © Hasso-Plattner-Institut für Digital Engineering gGmbH
+Copyright © Hasso Plattner Institute for Digital Engineering gGmbH
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as

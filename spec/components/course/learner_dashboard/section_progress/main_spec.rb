@@ -72,20 +72,72 @@ describe Course::LearnerDashboard::SectionProgress::Main, type: :component do
   it 'shows information about the section material' do
     render_inline(component)
 
-    expect(page).to have_content 'Section material'
     expect(page).to have_css '[aria-label="Week 1: Quiz 1"]'
     expect(page).to have_css '[aria-label="Week 1: Quiz 2"]'
+    expect(page).to have_content 'Show explanation'
   end
 
   it 'shows information about the section statistics' do
     render_inline(component)
 
-    expect(page).to have_content 'Section statistics'
-    expect(page).to have_content 'Assignments22.0 / 26.0 (84%)'
+    expect(page).to have_content '84%Assignments22 of 26 points'
     expect(page).to have_content '3 of 4 taken'
-    expect(page).to have_content 'Bonus5.0 / 8.0 (62%)'
+    expect(page).to have_content '62%Bonus5 of 8 points'
     expect(page).to have_content '1 of 1 taken'
-    expect(page).to have_content 'Self-tests4.0 / 4.0 (100%)'
+    expect(page).to have_content '100%Self-tests4 of 4 points'
     expect(page).to have_content '2 of 2 taken'
+  end
+
+  context 'with no progress for a certain type of section material' do
+    let(:section_progress) { super().merge('bonus_exercises' => nil, 'selftest_exercises' => nil) }
+
+    it 'only shows relevant statistics' do
+      render_inline(component)
+
+      within('.section-progress__statistics') do
+        expect(page).to have_content 'Assignments'
+
+        expect(page).to have_no_content 'Self-tests'
+        expect(page).to have_no_content 'Bonus'
+      end
+    end
+  end
+
+  context 'with no item relevant for the section statistics' do
+    let(:section_progress) { super().merge('main_exercises' => nil, 'bonus_exercises' => nil, 'selftest_exercises' => nil) }
+
+    it 'does not show the section statistics' do
+      render_inline(component)
+
+      expect(page).to have_content 'Section 1'
+      within('.section-progress__statistics') do
+        expect(page).to have_no_content 'Assignments'
+        expect(page).to have_no_content 'Self-tests'
+        expect(page).to have_no_content 'Bonus'
+      end
+    end
+  end
+
+  context 'with alternative sections' do
+    context 'with alternative state as parent' do
+      let(:section_progress) { super().merge('alternative_state' => 'parent', 'title' => 'Alternative section parent') }
+
+      it 'does not show the section' do
+        render_inline(component)
+
+        expect(page).to have_no_content 'Alternative section parent'
+        expect(page.text).to be_empty
+      end
+    end
+
+    context 'with alternative state as child' do
+      let(:section_progress) { super().merge('alternative_state' => 'child', 'title' => 'Alternative section child') }
+
+      it 'shows the section' do
+        render_inline(component)
+
+        expect(page).to have_content 'Alternative section child'
+      end
+    end
   end
 end

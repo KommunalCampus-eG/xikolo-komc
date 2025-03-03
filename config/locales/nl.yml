@@ -449,6 +449,9 @@ nl:
   components:
     actions_dropdown:
       aria_label: Meer acties
+    clipboard:
+      copy: Kopiëren naar klembord
+      copied: Gekopieerd!
     countdown:
       time_remaining: "Overgebleven tijd:"
     enrollment_dialog:
@@ -470,6 +473,10 @@ nl:
           one: "%{count} cursus"
           other: "%{count} cursussen"
         adjust: Aanpassen
+    ical_feed:
+      text: Je kunt je abonneren op deze feed door de iCal URL te kopiëren en deze te importeren in je agenda-applicatie.
+      summary: Voeg data toe aan je kalender
+      label: URL iCal kopiëren
     date_time_picker:
       today: Stel in op vandaag
       clear: Duidelijk
@@ -1107,19 +1114,19 @@ nl:
       submission_statistics: # Do not translate
         title: Quiz Details (Deprecated) # Do not translate
         submissions: Submission # Do not translate
-        total_submissions: "Total Submissions: " # Do not translate
-        distinct: "Submitting users: " # Do not translate
-        total_points: "Total points: " # Do not translate
+        total_submissions: "Total Submissions:" # Do not translate
+        distinct: "Submitting users:" # Do not translate
+        total_points: "Total points:" # Do not translate
         please_select: "Please select..." # Do not translate
         correct: Correct # Do not translate
         wrong: Wrong # Do not translate
         total: total # Do not translate
         student_performance: Student performance # Do not translate
-        average_time: "Average time: " # Do not translate
-        average_points: "Average points: " # Do not translate
-        percent_of: "% of " # Do not translate
-        seconds: " seconds" # Do not translate
-        limit: " limit" # Do not translate
+        average_time: "Average time:" # Do not translate
+        average_points: "Average points:" # Do not translate
+        percent_of: "% of" # Do not translate
+        seconds: seconds # Do not translate
+        limit: limit # Do not translate
       policy_url: Policy URL
 
     users:
@@ -1438,7 +1445,8 @@ nl:
       cop: Bevestiging van deelname
       roa: Record van Prestatie
       qc_html: Certificaat / ECTS
-      language_and_subtitles: "%{language} + %{subtitle_languages} ondertitels"
+      subtitles_more: "%{subtitle_languages} + %{count} meer"
+      subtitles: "%{subtitle_languages}"
       button_details: Details
       button_enroll: Inschrijven
       button_resume: Hervat
@@ -1447,7 +1455,8 @@ nl:
       date: Cursusdata
       classifiers: Classificaties
       certificate: Hoogst haalbare certificaat
-      language: Cursustaal en ondertitels beschikbaar
+      language: Cursustaal
+      available_subtitles: Beschikbare ondertitels
       buttons_menu:
         details: Toon details
       label:
@@ -1544,6 +1553,9 @@ nl:
     progress:
       learner_dashboard: Mijn leervorderingen
       graded_score: Gegradueerde punten
+      bonus_points:
+        one: "Je kreeg 1 punt en verdiende %{bonus_punten} extra"
+        other: "Je kreeg %{getal} punten en verdiende %{bonus_punten} extra"
       selftest_score: Zelftestpunten
       visited_score: Bezochte items
       visited_items: "%{visited} van %{available} items bezocht"
@@ -1554,25 +1566,16 @@ nl:
         selftests: "Zelftesten: "
         visits: "Bezocht: "
       section_material: Sectiemateriaal
+      section_material_empty: Geen items beschikbaar
       section_statistics: Sectiestatistieken
       statistics:
         main: Opdrachten
         bonus: Bonus
         selftests: Zelftests
         items_taken: "%{taken} van %{total} genomen"
-      progress_table: # deprecated
-        assignments: Opdrachten
-        bonus: Bonus
-        selftests: Quiz
-        visited: Bezocht
-        total: Totaal
 
       show:
-        item_locked: " (op slot)"
-        points: Punten
-        empty_msg: "Er zijn nog geen items, dus we kunnen je nu geen voortgang laten zien. Kom later terug."
         quizzes_taken: "%{taken} van %{count} genomen"
-        items_visited: "%{visited} van %{existing} bezocht"
       records:
         documents_headline: Mijn cursuscertificaten
         documents_intro: Zodra de cursus is afgelopen (en de docenten de eindresultaten hebben gepubliceerd), kun je hier je certificaten downloaden.
@@ -2026,6 +2029,7 @@ nl:
     # EN-fallback more_courses: 'Hint: You can still find all other courses you are not yet enrolled for in <a href="/courses">the course archive</a> and register for self-study (without Record of Achievement).'
     sidebar:
       dates: Volgende datums per cursus
+      dates_empty: Je hebt geen aankomende afspraken.
       recommendations: Cursusaanbevelingen
     starting_soon: Begint binnenkort
     started: Begonnen
@@ -2510,12 +2514,6 @@ nl:
           answer: Antwoord
           comment: Commentaar
     sticky: Kleverig
-    admin_tags:
-      title: Tags
-      id: ID
-      name: Naam
-      resource: R-bron
-      type: Type
 
   pinboard_comment:
     update: Wijzigingen opslaan
@@ -2653,10 +2651,6 @@ nl:
       btn_submit: Lever antwoorden in
       btn_cancel: Annuleren
 
-  social:
-    allow_detection_via_name: Sta andere gebruikers toe mij te vinden via naam
-    allow_detection_via_email: Sta andere gebruikers toe mij te vinden via e-mail
-
   learning_rooms:
     name: Naam
     calendar:
@@ -2676,7 +2670,6 @@ nl:
       dashboard: Recente activiteit bekijken
       discussions: Bespreek met je team
       etherpad: Samenwerken aan teksten
-      video_chat: Start een videochat
       files: Deel bestanden
       tpa: "Dien uw teamwerk in en evalueer uw peers (%{title})"
       administration: Beheer uw samenwerkingsruimte
@@ -2697,8 +2690,9 @@ nl:
       confirm_delete: Wilt u dit bestand echt van de server verwijderen?
     list: Lijst met samenwerkingsruimten
     my_rooms: Mijn samenwerkingsruimten
-    list_empty_state: Er zijn nog geen leerplekken voor deze cursus.
     my_rooms_empty_state: Je hebt je nog niet aangesloten bij een leerruimte.
+    list_empty_state: Er zijn nog geen leerplekken voor deze cursus.
+    memberships_empty_state: Er zijn nog geen leden lid geworden van de leerruimte.
     create: Nieuwe samenwerkingsruimte maken
     create_button: Samenwerkingsruimte maken
     update_button: Werk samenwerkruimte bij
@@ -2744,36 +2738,6 @@ nl:
       is_open: Deze samenwerkingsruimte is open
       mail_to_member: Schrijf een e-mail naar lid
       mail: Beste %{recipient}, Met vriendelijke groet %{sender}
-
-    video_chats:
-      headline: Videochat
-      btn_txt: Start een videochat op Jitsi Meet
-      note: "Opmerking: wanneer u de videochat start, wordt u doorverwezen naar een externe provider ('Jitsi Meet'). <br>Jitsi Meet is een open-sourceproject. We zullen uw gegevens niet doorgeven. <br>Je hoeft geen account aan te maken op Jitsi Meet."
-      description: Spreek een ontmoetingstijd af met je teamgenoten en bepaal wie de link naar de videochat moet delen.
-      start_chat:
-        headline: Voor de videochat
-        how_to: "Een vergaderlink maken en delen:"
-        list_text:
-          - Druk op de knop "Start videochat op Jitsi Meet". Er wordt een nieuw venster of tabblad geopend.
-          - Druk op de knop “Vergadering starten”. Er wordt een nieuw venster geopend.
-          - Kopieer de vergaderlink. Je vindt het in de adresbalk van de browser.
-          - Deel de meetinglink met je teamgenoten. U kunt het discussieforum in uw samenwerkingsruimte gebruiken om de link te delen.
-      chat_info:
-        headline: Wanneer de vergadering plaatsvindt
-        list_text:
-          - Volg de vergaderlink.
-          - Voer de gebruikersnaam in die u tijdens de vergadering wilt gebruiken.
-          - Druk op de knop "Deelnemen aan vergadering".
-          - Je bent nu in de videochat.
-          - - "Onderaan het scherm vind je een menubalk met handige functies zoals:"
-            - Microfoon (mute / unmute)
-            - Camera (start / stop)
-            - Scherm delen (start / stop)
-            - Chatvenster (openen / sluiten)
-            - Hand opsteken (aan/uit)
-            - Deelnemers (tonen / stoppen met tonen)
-            - En nog veel meer functies
-          - Om gezien te worden, moet je je camera starten. Om gehoord te worden, moet je de microfoon uitschakelen.
     flash_messages:
       success:
         delete_room: De samenwerkingsruimte is succesvol verwijderd.
@@ -3572,7 +3536,7 @@ nl:
       refid: Verwijzings-ID
       gallery_entries: Galerijkandidaten gemarkeerd
       rate: Tarief
-      availalbe_submissions: Beschikbare inzendingen
+      available_submissions: Beschikbare inzendingen
       final_submissions: Laatste inzendingen
       votes: Stem(men)
       your_vote: Je hebt %{votes} sterren beoordeeld voor deze inzending.
@@ -3973,24 +3937,18 @@ nl:
   pages:
     show:
       edit_translation:
-        cn: Bewerk Chinese vertaling "%{title}"
         de: Bewerk Duitse vertaling "%{title}"
         en: Bewerk Engelse vertaling "%{title}"
         es: Bewerk Spaanse vertaling "%{title}"
         fr: Bewerk Franse vertaling "%{title}"
         nl: Bewerk Vlaams vertaling "%{title}"
-        pt-BR: Bewerk Braziliaans-Portugese vertaling "%{title}"
-        ru: Bewerk Russische vertaling "%{title}"
         uk: Bewerk Oekraïens vertaling "%{title}"
       new_translation:
-        cn: Chinese vertaling toevoegen
         de: Duitse vertaling toevoegen
         en: Engelse vertaling toevoegen
         es: Spaanse vertaling toevoegen
         fr: Franse vertaling toevoegen
         nl: Vlaams vertaling toevoegen
-        pt-BR: Vertaling Braziliaans Portugees toevoegen
-        ru: Russische vertaling toevoegen
         uk: Oekraïens vertaling toevoegen
       last_changed: Deze pagina is voor het laatst gewijzigd op %{date}.
     not_found:
@@ -4045,7 +4003,6 @@ nl:
       icon:
         name: x-twitter
         style: solid
-      share_course: "Ik heb me ingeschreven voor de #%{site} cursus %{title}"
       share_certificate: "Ik heb de cursus %{title} succesvol afgerond op #%{site}!"
     mail:
       button: Mail
@@ -4053,15 +4010,6 @@ nl:
       icon:
         name: envelope
         style: solid
-      share_course:
-        subject: "Doe mee en leer met %{site}"
-        body: |
-          Hallo  ,
-
-          Ik heb me ingeschreven voor de %{site} cursus %{title}: %{url}.
-          Het enige dat u nodig hebt om u aan te melden, is een geldig e-mailadres en u kunt op elk moment van overal ter wereld leren.
-
-          Met vriendelijke groet,
       share_certificate:
         subject: "Ik heb een cursus succesvol afgerond op %{site}"
         body: |

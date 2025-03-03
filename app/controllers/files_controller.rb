@@ -14,9 +14,9 @@ class FilesController < ApplicationController
     end
     imagecrop_params = params.permit(:height, :width).to_h.compact
     if imagecrop_params.any?
-      redirect_to Imagecrop.transform url, {'gravity' => 'ce'}.merge(imagecrop_params)
+      redirect_external Imagecrop.transform(url, {'gravity' => 'ce'}.merge(imagecrop_params))
     else
-      redirect_to url
+      redirect_external(url)
     end
   end
 
@@ -24,19 +24,15 @@ class FilesController < ApplicationController
     expires_in 1.month, public: true
 
     if params[:email]
-      redirect_to view_context.image_url('logo_mail.png'), status: :found
+      redirect_external view_context.image_url('logo_mail.png'), status: :found
     else
-      redirect_to view_context.image_url('logo.png'), status: :found
+      redirect_external view_context.image_url('logo.png'), status: :found
     end
   end
 
   def favicon
     expires_in 1.month, public: true
-    redirect_to view_context.image_url('favicon.ico'), status: :found
-  end
-
-  def sitemap
-    redirect_to Xikolo::S3.bucket_for(:sitemaps).object('sitemaps/sitemap.xml.gz').public_url
+    redirect_external view_context.image_url('favicon.ico'), status: :found
   end
 
   private
@@ -46,6 +42,7 @@ class FilesController < ApplicationController
     'user_medium' => 100,
     'user_large'  => 200,
   }.freeze
+  private_constant :USER_IMAGE_SIZES
 
   def requested_user_image_size
     return 'user_medium' unless USER_IMAGE_SIZES.key? params[:size]

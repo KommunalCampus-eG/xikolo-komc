@@ -444,6 +444,9 @@ es:
   components:
     actions_dropdown:
       aria_label: Más acciones
+    clipboard:
+      copy: Copiar al portapapeles
+      copied: ¡Copiado!
     countdown:
       time_remaining: "Tiempo restante:"
     enrollment_dialog:
@@ -465,6 +468,10 @@ es:
           one: "%{count} curso"
           other: "%{count} cursos"
         adjust: Ajustar
+    ical_feed:
+      text: Puede suscribirse a este feed copiando la URL de iCal e importándola a su aplicación de calendario.
+      summary: Añade fechas a tu calendario
+      label: Copiar URL de iCal
     date_time_picker:
       today: Ajustar a hoy
       clear: Borrar
@@ -995,19 +1002,19 @@ es:
       submission_statistics:
         title: Estadísticas de las entregas
         submissions: Entrega
-        total_submissions: "Entregas totales: "
-        distinct: "Usuarios presentados: "
-        total_points: "Puntos totales: "
+        total_submissions: "Entregas totales:"
+        distinct: "Usuarios presentados:"
+        total_points: "Puntos totales:"
         please_select: "Por favor, seleccione..."
         correct: Correcto
         wrong: Incorrecto
         total: total
         student_performance: Resultado del estudiante
-        average_time: "Promedio de tiempo: "
-        average_points: "Promedio de puntos: "
-        percent_of: "% de "
-        seconds: " segundos"
-        limit: " límite"
+        average_time: "Promedio de tiempo:"
+        average_points: "Promedio de puntos:"
+        percent_of: "% de"
+        seconds: segundos
+        limit: límite
       policy_url: URL de política
 
     users:
@@ -1324,7 +1331,8 @@ es:
       cop: Confirmación de participación
       roa: Certificado de estudios
       qc_html: Certificado / ECTS
-      language_and_subtitles: "%{language} + %{subtitle_languages} subtítulos"
+      subtitles_more: "%{subtitle_languages} + %{count} más"
+      subtitles: "%{subtitle_languages}"
       button_details: Detalles
       button_enroll: Matricularme
       button_resume: Renaudar
@@ -1333,7 +1341,8 @@ es:
       date: Fechas del curso
       classifiers: Clasificadores del curso
       certificate: Certificado más alto que se puede obtener
-      language: Idioma del curso y subtítulos disponibles
+      language: Idioma del curso
+      available_subtitles: Subtítulos disponibles
       buttons_menu:
         details: Ver detalles
       label:
@@ -1427,7 +1436,12 @@ es:
     progress:
       learner_dashboard: Mi progreso de aprendizaje
       graded_score: Puntos calificados
+      graded: "%{achieved} de %{available}"
+      bonus_points:
+        one: "Has conseguido 1 punto y has ganado %{bonus_points} extra"
+        other: "Has conseguido %{count} puntos y has ganado %{bonus_points} extra"
       selftest_score: Puntos de autoevaluación
+      selftest: "%{achieved} de %{available}"
       visited_score: Elementos visitados
       visited_items: "%{visited} de %{available} elementos visitados"
       visited_empty: no hay artículos disponibles
@@ -1436,26 +1450,17 @@ es:
         graded: "Calificado: "
         selftests: "Autoevaluaciones: "
         visits: "Visitados: "
-      section_material: Material de sección
-      section_statistics: Estadísticas de sección
+      section_material_empty: Ningún elemento disponible
       statistics:
         main: Trabajos
         bonus: Extras
         selftests: Autoevaluaciones
+        points_achieved: "%{submitted_points} de %{max_points} puntos"
         items_taken: "%{taken} de %{total} tomado"
-      progress_table: # deprecated
-        assignments: Trabajos
-        bonus: Extras
-        selftests: Autoevaluaciones
-        visited: Visitados
-        total: Total
+        empty_state_points: Sin puntos
 
       show:
-        item_locked: " (bloqueado)"
-        points: Puntos
         empty_msg: "Todavía no hay ningún elemento, así que ahora no podemos mostrarle la evolución. Vuelva más tarde."
-        quizzes_taken: "%{taken} de %{count} hechos"
-        items_visited: "%{visited} de %{existing} visitados"
       records:
         documents_headline: Mis certificados del curso
         documents_intro: Tan pronto como el curso haya terminado (y el personal docente haya publicado los resultados finales), podrá descargarse sus certificados aquí.
@@ -1467,6 +1472,14 @@ es:
           item: Esta unidad de aprendizaje no se puede previsualizar. Por favor, inscríbase para poder continuar con el curso.
         empty_msg: No hay una visión general disponible para este curso.
         continue: Seguir aprendiendo
+      legend:
+        show: Mostrar explicación
+        hide: Ocultar explicación
+        completed: Contenido completado
+        not_completed: Contenido no completado
+        warning: Puntuación suficiente alcanzada
+        critical: Puntuación baja, revisar si es posible
+        optional: Contenido opcional, no afecta la puntuación
 
     admin:
       certificate_templates:
@@ -1892,6 +1905,7 @@ es:
     more_courses: 'Sugerencia: también puede encontrar todos los cursos en los que no se ha matriculado en <a href="/courses">el archivo de cursos</a> y puede darse de alta en modo de autoaprendizaje sin obtener un certificado de estudios.'
     sidebar:
       dates: Próximas fechas por curso
+      dates_empty: No tienes próximas citas.
       recommendations: Recomendaciones de cursos
     starting_soon: De próximo inicio
     started: Empezados
@@ -2375,12 +2389,6 @@ es:
           answer: Respuesta
           comment: Comentario
     sticky: Fijado
-    admin_tags:
-      title: Etiquetas
-      id: ID
-      name: Nombre
-      resource: Recurso R
-      type: Tipo
 
   pinboard_comment:
     update: Guardar cambios
@@ -2518,17 +2526,12 @@ es:
       btn_submit: Entregar respuestas
       btn_cancel: Cancelar
 
-  social:
-    allow_detection_via_name: Permitir que otros usuarios me encuentren por el nombre
-    allow_detection_via_email: Permitir que otros usuarios me encuentren por el correo electróncia
-
   learning_rooms:
     name: Nombre
     nav:
       dashboard: Ver actividad reciente
       discussions: Debatir con su equipo
       etherpad: Colaborar en los textos
-      video_chat: Empezar un videochat
       files: Compartir archivos
       tpa: "Entregar su trabajo en equipo y evaluar a sus pares(%{title})"
       administration: Administrar su espacio de colaboración
@@ -2548,8 +2551,9 @@ es:
       confirm_delete: ¿De verdad quiere eliminar este archivo del servidor?
     list: Lista de espacios de colaboración
     my_rooms: Mis espacios de colaboración
-    list_empty_state: Aún no hay espacios de colaboración para este curso.
     my_rooms_empty_state: Aún no te has unido a un espacio de colaboración.
+    list_empty_state: Aún no hay espacios de colaboración para este curso.
+    memberships_empty_state: Ningún miembro se ha unido aún al espacio de colaboración.
     create: Crear un nuevo espacio de colaboración
     create_button: Crear espacio de colaboración
     update_button: Actualizar espacio de colaboración
@@ -3394,7 +3398,7 @@ es:
       refid: ID de referencia
       gallery_entries: Candidatos a la galería señalados
       rate: Tasa
-      availalbe_submissions: Entregas disponibles
+      available_submissions: Entregas disponibles
       final_submissions: Entregas finales
       votes: Voto(s)
       your_vote: Ha valorado esta entrega con %{votes} estrellas.
@@ -3848,7 +3852,6 @@ es:
       icon:
         name: x-twitter
         style: brands
-      share_course: "Me he matriculado en el curso %{title} de #%{site}"
       share_certificate: "¡He finalizado con éxito el curso #%{title} en %{site}!"
     mail:
       button: Correo
@@ -3856,15 +3859,6 @@ es:
       icon:
         name: envelope
         style: solid
-      share_course:
-        subject: "Únete a mí y aprende con %{site}"
-        body: |
-          Hola  ,
-
-          Me matriculé en %{site} para el curso %{title}: %{url}.
-          Todo lo que necesitar para registrarte es una dirección válida de correo electrónico y ya puedes aprender desde cualquier lugar del mundo, cuando tú quieras.
-
-          Saludos cordiales,
       share_certificate:
         subject: "He finalizado con éxito un curso en %{site}"
         body: |

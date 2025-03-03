@@ -10,7 +10,6 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery with: :exception
   before_action { Acfs.runner.clear } # clear Acfs queue
-  before_action { I18n.locale = Xikolo.config.locales['default'] } # Reset locale between requests
   around_action :auth_middleware
   after_action  :remember_user
 
@@ -34,6 +33,13 @@ class ApplicationController < ActionController::Base
     super
   end
 
+  # Use this method when explicitly redirecting to an external URL that
+  # might have a different hostname. This makes bypassing the same-host
+  # protection of `#redirect_to` explicit.
+  def redirect_external(*, **)
+    redirect_to(*, **, allow_other_host: true)
+  end
+
   protected
 
   # Before helper to ensure privileges!
@@ -45,7 +51,7 @@ class ApplicationController < ActionController::Base
       add_flash_message :error, t(:'flash.error.login_to_proceed')
     end
 
-    redirect_to login_url
+    redirect_external login_url
     false
   end
 
@@ -142,6 +148,15 @@ class ApplicationController < ActionController::Base
   def auth_middleware(&app)
     request.env['xikolo_context'] = auth_context
 
+    # Check if an existing user is already signed in and trying to add a new identity to their account;
+    # the session ID is passed through the RelayState then (see the `XikoloSAML` strategy).
+    #
+    # If the RelayState contains a session ID, we pass it on, so that the middleware can find the current user.
+    # This is necessary to avoid creating a new user (when 'autocreate' is enabled) or redirect to `auth_connect`.
+    if request.params[:RelayState]
+      request.env['rack.session']['id'] = OmniAuth::NonceStore.pop(request.params.delete(:RelayState))
+    end
+
     Xikolo::Common::Auth::Middleware.new(app).call(request.env)
   end
 
@@ -168,17 +183,21 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    @current_user ||= if request.env['current_user']
-                        request.env['current_user'].value!
-                      else
-                        Xikolo::Common::Auth::CurrentUser.from_session(
-                          'user' => {
-                            'anonymous' => true,
-                            'language' => I18n.locale,
-                            'preferred_language' => nil,
-                          }
-                        )
-                      end
+    @current_user ||= begin # rubocop:disable Style/RedundantBegin
+      if request.env['current_user']
+        request.env['current_user'].value!
+      else
+        Xikolo::Common::Auth::CurrentUser.from_session(
+          'user' => {
+            'anonymous' => true,
+            'language' => I18n.locale,
+            'preferred_language' => nil,
+          }
+        )
+      end.tap do |user|
+        Sentry.set_user(id: user.id)
+      end
+    end
   rescue Restify::NotFound
     # If we get a 404 error here, we assume that this means the session has expired
     reset_session

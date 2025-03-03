@@ -22,9 +22,28 @@ export default async function entries() {
     user: 'user/user.ts',
     'video-player': 'video-player/video-player.js',
     'quiz-recap': 'quiz-recap/quiz-recap.ts',
+
+    // Legacy
     'lanalytics-framework': 'legacy/lanalytics/index.js',
     'lanalytics-pa-item': 'legacy/lanalytics/visits/peer_assessment_item.js',
     'lanalytics-pa-results':
       'legacy/lanalytics/visits/peer_assessment_results.js',
+    'account-profile': 'legacy/account-profile.js',
+    'result-box': 'legacy/quiz/result-box.js',
+    'peer-assessment-statistics': 'legacy/peer-assessment/statistics.js',
+    'admin-legacy': 'legacy/admin.js',
+    'course-admin': 'legacy/course.js',
+
+    // Libraries
+    dimple: 'legacy/libraries/dimple.js',
+    'bootstrap-editable': 'legacy/bootstrap-editable.js',
+
+    // Locales
+    'xikolo-locale-en': `i18n/translations/en.ts`,
+    'xikolo-locale-de': `i18n/translations/de.ts`,
+    'xikolo-locale-es': `i18n/translations/es.ts`,
+    'xikolo-locale-fr': `i18n/translations/fr.ts`,
+    'xikolo-locale-nl': `i18n/translations/nl.ts`,
+    'xikolo-locale-uk': `i18n/translations/uk.ts`,
   };
 }

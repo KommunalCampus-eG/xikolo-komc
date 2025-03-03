@@ -3,6 +3,7 @@ import toggleUuids from '../toggle-uuids';
 import initMarkdownEditorOnSelector from '../../util/markdown-editor';
 import upload from '../../util/forms/upload';
 import mdupload from '../../util/forms/mdupload';
+import initDropdownsOnSelector from '../../util/dropdown';
 
 const resetQuestionForm = () => {
   const activeQuestionForm = document.querySelector<HTMLElement>(
@@ -73,15 +74,6 @@ const toggleQuestionForm = (selector: HTMLSelectElement) => {
   }
 };
 
-const openQuestionsTab = (quizQuestionsTab: HTMLElement) => {
-  const questions = document.querySelectorAll(
-    "[data-behavior='quiz-question']",
-  );
-  if (questions.length > 0) {
-    quizQuestionsTab.click();
-  }
-};
-
 const setQuestionForm = (quizQuestions: HTMLElement) => {
   const questionTypeSelector = document.querySelector(
     '#meta_question_type',
@@ -96,6 +88,7 @@ const setQuestionForm = (quizQuestions: HTMLElement) => {
   upload.scan(quizQuestions);
   mdupload.scan(quizQuestions);
   initMarkdownEditorOnSelector(quizQuestions);
+  initDropdownsOnSelector(quizQuestions);
 };
 
 const setQuizQuestions = () => {
@@ -107,13 +100,8 @@ const setQuizQuestions = () => {
   const quizQuestions = document.querySelector(
     '#quiz_questions',
   ) as HTMLElement;
-  const quizQuestionsTab = document.querySelector(
-    "button[aria-controls='quiz_questions']",
-  ) as HTMLElement;
-
   const clonedTemplate = document.importNode(questionsWrapper.content, true);
   quizQuestions.appendChild(clonedTemplate);
-  openQuestionsTab(quizQuestionsTab!);
   setQuestionForm(quizQuestions);
   toggleUuids('#toggle_quiz_uuids');
 };

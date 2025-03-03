@@ -2,7 +2,6 @@
 
 class DashboardController < Abstract::FrontendController
   include ActionView::Helpers::TranslationHelper
-  include IcalHelper
 
   require_feature 'gamification', only: :achievements
 
@@ -73,6 +72,7 @@ class DashboardController < Abstract::FrontendController
   private
 
   Category = Struct.new(:title, :courses, :empty_msg, :completed_button)
+  private_constant :Category
 
   def categorize(courses, enrollments)
     [
@@ -107,8 +107,6 @@ class DashboardController < Abstract::FrontendController
     @my_promoted = fetch_promoted_courses
 
     next_dates = Xikolo.api(:course).value!.rel(:next_dates).get(user_id: current_user.id)
-
-    @ical_url = ical_url(current_user, full_path: true)
 
     Acfs.run
 

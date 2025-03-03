@@ -72,6 +72,17 @@ describe User, type: :model do
 
       it { is_expected.to be_nil }
     end
+
+    context 'when the user has an invalid language' do
+      before { Xikolo.config.locales['available'] = %w[en de] }
+
+      it 'sanitizes the language when the user is fetched' do
+        user = build(:user, language: 'zh')
+        user.save!(validate: false)
+
+        expect(User.find(user.id).language).to be_nil
+      end
+    end
   end
 
   describe '#preferences' do
@@ -311,73 +322,6 @@ describe User, type: :model do
         before { user.update! accepted_policy_version: policy.version }
 
         it { is_expected.to be_truthy }
-      end
-    end
-  end
-
-  describe '.search' do
-    subject(:results) { User.search query }
-
-    let! :users do
-      [
-        create(:user, full_name: 'Adolf Hubel', display_name: nil),
-        create(:user, full_name: 'John Smith', display_name: nil),
-        create(:user, full_name: 'Bill Johnson', display_name: nil),
-        create(:user, full_name: 'Kevin Zuhause', display_name: 'Allein'),
-      ]
-    end
-
-    describe 'filter by email' do
-      let(:query) { users[0].email }
-
-      it { expect(results.size).to eq 1 }
-
-      context 'when disallowed by setting' do
-        before do
-          users[0].update! preferences: users[0].preferences.merge('social.allow_detection_via_email' => false)
-        end
-
-        it { expect(results.size).to eq 0 }
-      end
-    end
-
-    describe 'filter by real name' do
-      let(:query) { 'john' }
-
-      it { expect(results.size).to eq 2 }
-
-      it 'matches first name' do
-        expect(results.pluck(:id)).to include users[1].id
-      end
-
-      it 'matches last name' do
-        expect(results.pluck(:id)).to include users[2].id
-      end
-
-      context 'when disallowed by setting' do
-        before do
-          users[1].update! preferences: users[1].preferences.merge('social.allow_detection_via_name' => false)
-        end
-
-        it { expect(results.pluck(:id)).to eq [users[2].id] }
-      end
-    end
-
-    describe 'filter by display name' do
-      let(:query) { 'allei' }
-
-      it { expect(results.size).to eq 1 }
-
-      it 'matches display name' do
-        expect(results.pluck(:id)).to include users[3].id
-      end
-
-      context 'when disallowed by setting' do
-        before do
-          users[3].update! preferences: users[3].preferences.merge('social.allow_detection_via_display_name' => false)
-        end
-
-        it { expect(results.size).to eq 0 }
       end
     end
   end

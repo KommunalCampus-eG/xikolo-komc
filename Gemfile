@@ -2,10 +2,10 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.3.0'
+ruby '~> 3.4.0'
 
 # Rails
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.2.0'
 
 gem 'base64'
 gem 'bigdecimal'
@@ -20,11 +20,10 @@ gem 'syslog'
 gem 'activerecord-postgres_enum', '~> 2.0'
 gem 'acts_as_list'
 gem 'awesome_nested_set', '~> 3.4'
-gem 'composite_primary_keys', '~> 13.0'
-gem 'fx', '~> 0.8.0'
+gem 'fx', '~> 0.9.0'
 gem 'groupdate', '~> 6.0'
 gem 'json-schema'
-gem 'paper_trail', '~> 15.0'
+gem 'paper_trail', '~> 16.0'
 gem 'pg', '~> 1.0'
 gem 'scenic', '~> 1.5'
 
@@ -33,13 +32,14 @@ gem 'redis', '~> 5.0'
 
 # App servers
 gem 'puma'
+gem 'thruster'
 
 # API & Messaging
-gem 'grape', '~> 1.6'
+gem 'grape', '~> 2.2', '< 2.3' # breaks deprecated API::V2
 gem 'grape-entity'
 gem 'msgr', '~> 1.5' # Connecting to RabbitMQ
 gem 'oj'
-gem 'rack', '~> 2.2.0'
+gem 'rack', '~> 3.1.0'
 gem 'rack-attack'
 gem 'rack-cors', '~> 2.0'
 gem 'restify', '~> 1.15'
@@ -61,27 +61,27 @@ gem 'view_component', '~> 3.0'
 # Helper
 gem 'addressable'
 gem 'browser', '~> 6.0'
+gem 'dry-validation'
 gem 'http_accept_language'
 gem 'idn-ruby', '~> 0.1.0' # Used by Addressable when available (for better performance)
 gem 'imgproxy'
 gem 'meta-tags', '~> 2.0', require: 'meta_tags'
 gem 'rack-link_headers', '~> 2.2'
-gem 'rubyzip', '~> 2.3.0', require: 'zip'
+gem 'rubyzip', '~> 2.4.0', require: 'zip'
 gem 'sanitize'
 gem 'simple_form', '~> 5.0'
-gem 'truncato'
+gem 'truncato', '~> 0.7.13'
 gem 'uuid4', '~> 1.4'
 gem 'xui-form', path: 'gems/xui-form'
 
 gem 'icalendar'
-gem 'sitemap_generator'
 
 gem 'countries', '~> 7.0' # ISO country codes
 gem 'i18n_data'
 gem 'maxminddb', '~> 0.1' # Location tracking
 
 # Xikolo service gems
-gem 'acfs', '~> 1.5', '>= 1.5.1'
+gem 'acfs', '~> 2.0', '>= 2.0.0'
 gem 'xikolo-account',         '~> 8.0',   path: 'clients/xikolo-account'
 gem 'xikolo-course',          '~> 12.0',  path: 'clients/xikolo-course'
 gem 'xikolo-peer_assessment', '~> 3.0',   path: 'clients/xikolo-peer_assessment'
@@ -106,7 +106,7 @@ gem 'rexml', '>= 3.2.1' # https://github.com/onelogin/ruby-saml/issues/516
 gem 'ruby-saml', '~> 1.14'
 
 # reCAPTCHA
-gem 'recaptcha'
+gem 'recaptcha', '5.19.0'
 
 # HTML Emails
 gem 'inky-rb', require: 'inky'
@@ -135,7 +135,7 @@ gem 'prawn-table'
 gem 'prawn-templates', '~> 0.1.0'
 
 # Monitoring
-gem 'mnemosyne-ruby', '~> 2.0'
+gem 'mnemosyne-ruby', '~> 2.1'
 gem 'sentry-rails', '~> 5.22.0'
 gem 'sentry-ruby', '~> 5.22.0'
 gem 'sentry-sidekiq', '~> 5.22.0'
@@ -147,14 +147,13 @@ gem 'jwt'
 
 # Assets
 gem 'rails-assets-manifest', '~> 3.0', '>= 3.0.1'
-gem 'sprockets', '~> 3.2'
-gem 'sprockets-rails', '~> 3.2'
+gem 'sprockets', '~> 4.2'
+gem 'sprockets-rails', '~> 3.5'
 
 group :assets do
-  gem 'bootstrap-x-editable-rails'
   gem 'dartsass-sprockets'
   gem 'highcharts-rails'
-  gem 'i18n-js', '~> 3.0', '>= 3.0.1'
+  gem 'i18n-js', '~> 4.2', '>= 4.2.3'
   gem 'jquery-rails'
   gem 'momentjs-rails'
   gem 'terser', '~> 1.1'
@@ -166,21 +165,22 @@ group :development do
 end
 
 group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+
   gem 'brakeman'
   gem 'letter_opener'
   gem 'listen', '~> 3.9.0'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'rspec', '~> 3.10'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 6.0'
-  gem 'rubocop', '~> 1.69.0'
+  gem 'rspec-rails', '~> 7.0'
+  gem 'rubocop', '~> 1.73.0'
   gem 'rubocop-capybara', '~> 2.21.0'
   gem 'rubocop-factory_bot', '~> 2.26.1'
-  gem 'rubocop-performance', '~> 1.23.0'
-  gem 'rubocop-rails', '~> 2.28.0'
-  gem 'rubocop-rspec', '~> 3.3.0'
+  gem 'rubocop-performance', '~> 1.24.0'
+  gem 'rubocop-rails', '~> 2.30.0'
+  gem 'rubocop-rspec', '~> 3.5.0'
   gem 'rubocop-rspec_rails', '~> 2.30.0'
   gem 'slim_lint'
 end

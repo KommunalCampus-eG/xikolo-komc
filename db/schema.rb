@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_01_084556) do
+ActiveRecord::Schema.define(version: 2025_03_12_111550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -996,6 +996,12 @@ ActiveRecord::Schema.define(version: 2024_08_01_084556) do
     t.string "type", default: "OpenBadge"
     t.index ["record_id", "template_id"], name: "index_open_badges_on_record_id_and_template_id"
     t.index ["type"], name: "index_open_badges_on_type"
+  end
+
+  create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "pages", id: :uuid, default: -> { "uuid_generate_v7ms()" }, force: :cascade do |t|

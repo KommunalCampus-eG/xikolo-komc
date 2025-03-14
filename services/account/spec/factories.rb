@@ -238,4 +238,8 @@ FactoryBot.define do
     value { true }
     created_at { 5.years.ago }
   end
+
+  factory :organization do
+    name { 'Organization' }
+  end
 end

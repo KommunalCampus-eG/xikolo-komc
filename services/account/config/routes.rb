@@ -32,6 +32,7 @@ Xikolo::Account::Application.routes.draw do
     resources :authorizations, except: %i[new edit]
     resources :password_resets, only: %i[create show update]
     resources :policies, only: %i[index show create update]
+    resources :organizations, only: %i[index create update destroy]
     resources :groups, only: %i[index create show update destroy],
       format: false,
       constraints: {id: /[\w.-]+/} do

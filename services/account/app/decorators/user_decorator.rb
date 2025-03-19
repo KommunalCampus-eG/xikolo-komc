@@ -24,6 +24,7 @@ class UserDecorator < ApplicationDecorator
     accepted_policy_version
     policy_accepted
     timezone
+    organization_id
 
     language
     preferred_language

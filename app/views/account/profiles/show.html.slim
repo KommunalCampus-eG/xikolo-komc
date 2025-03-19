@@ -102,6 +102,11 @@
         small
           = t(:'dashboard.profile.show_birthdate_on_record', url: dashboard_documents_path)
 
+    h4.pt5
+      = t(:'dashboard.profile.organization')
+    p
+      a#organization_id.status href='#' data-type='select' data-url=dashboard_profile_path data-name='organization_id' pk='organization_id' data-value=@profile.organization_id data-source=@profile.organizations_json data-emptytext=t(:'dashboard.profile.not_set') aria-describedby='description-edit'
+
     - if @profile.required_fields.any?
       h4.pt5
         = t(:'dashboard.profile.required_info')
@@ -340,6 +345,19 @@ javascript:
           },
           function(msg) {
             return $('#born_at').data("value", msg);
+          }
+        );
+      }
+    });
+    $("#organization_id").editable({
+      success: function(msg, newValue) {
+        return doAjaxRequest(
+          $("#organization_id"),
+          {
+            organization_id: newValue
+          },
+          function(msg) {
+            return $('#organization_id').html(msg.organization_id);
           }
         );
       }

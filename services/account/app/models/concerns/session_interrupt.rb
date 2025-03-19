@@ -10,6 +10,7 @@ module SessionInterrupt
       new_consents,
       new_policy,
       mandatory_profile_fields,
+      unselected_organization,
     ].compact
   end
 
@@ -21,6 +22,10 @@ module SessionInterrupt
 
   def new_policy
     'new_policy' unless user.policy_accepted?
+  end
+
+  def unselected_organization
+    'unselected_organization' unless user.organization
   end
 
   def mandatory_profile_fields

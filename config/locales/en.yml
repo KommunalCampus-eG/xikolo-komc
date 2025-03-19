@@ -571,6 +571,7 @@ en:
 
   interrupts:
     mandatory_profile_fields: To help us improve your learning experience, please fill out the required fields before proceeding on to your courses.
+    unselected_organization: To help us improve your learning experience, please select an organization before proceeding on to your courses.
 
   browser_warning:
     headline: Your browser is not supported!

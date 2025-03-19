@@ -29,7 +29,7 @@ class AccountConsumer < Msgr::Consumer
 
     features = user.rel(:features).get.value!
 
-    mandatory_fields = features.key?('account.profile.mandatory_completed')
+    mandatory_fields = features.key?('account.profile.mandatory_completed') && user.organization_id.present?
     url = payload[:confirmation_url]
 
     deliver AccountMailer.welcome_email(user, mandatory_fields, url)

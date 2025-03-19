@@ -94,6 +94,13 @@ describe 'Sessions: Show', type: :request do
       it { expect(resource['interrupt']).to be true }
       it { expect(resource['interrupts']).to eq ['mandatory_profile_fields'] }
     end
+
+    context 'with unselected organization' do
+      let(:session) { create(:session, user: create(:user, with_organization: false)) }
+
+      it { expect(resource['interrupt']).to be true }
+      it { expect(resource['interrupts']).to eq ['unselected_organization'] }
+    end
   end
 
   describe 'when masqueraded' do

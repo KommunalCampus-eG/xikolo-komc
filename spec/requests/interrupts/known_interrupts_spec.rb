@@ -47,6 +47,20 @@ describe 'Interrupts: Known interrupt types', type: :request do
     end
   end
 
+  context 'with unselected_organization interrupt' do
+    let(:interrupts) { ['unselected_organization'] }
+
+    context 'with the profile feature flipper' do
+      let(:features) { {'profile' => 'true'} }
+
+      it { is_expected.to redirect_to '/dashboard/profile' }
+    end
+
+    context 'without the profile feature flipper' do
+      it { is_expected.to have_http_status :ok }
+    end
+  end
+
   context 'with unsupported interrupt' do
     let(:interrupts) { ['2fa_upgrade'] }
 

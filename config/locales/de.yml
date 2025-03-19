@@ -296,6 +296,9 @@ de:
       classifier_created: Das Tag wurde angelegt.
       classifiers_order_updated: Die Reihenfolge der Tags wurde geändert.
       cluster_updated: Die Kategorie wurde geändert.
+      organization_created: Die Organisation wurde erfolgreich erstellt.
+      organization_updated: Die Organisation wurde erfolgreich aktualisiert.
+      organization_deleted: Die Organisation wurde erfolgreich gelöscht.
       poll_created: Die Umfrage wurde angelegt.
       poll_updated: Die Umfrage wurde gespeichert.
       poll_deleted: Die Umfrage wurde gelöscht.
@@ -381,6 +384,9 @@ de:
       cluster_not_updated: Die Kategorie wurde nicht geändert.
       classifier_not_deleted: Das Tag konnte nicht gelöscht werden.
       classifier_not_updated: Das Tag wurde nicht geändert.
+      organization_not_created: Die Organisation konnte nicht erstellt werden.
+      organization_not_updated: Die Organisation konnte nicht aktualisiert werden.
+      organization_not_deleted: Die Organisation konnte nicht gelöscht werden.
       poll_not_created: Die Umfrage wurde nicht angelegt.
       poll_not_updated: Die Umfrage wurde nicht gespeichert.
       poll_not_deleted: Die Umfrage wurde nicht gelöscht.
@@ -618,6 +624,7 @@ de:
         user_tests: Nutzertests
         vouchers: Vouchers
         lti_providers: LTI-Anbieter
+        organizations: Organisationen
       masquerade:
         copy_user_id: User ID to Clipboard
         copy_email: E-Mail to Clipboard
@@ -980,6 +987,15 @@ de:
         info: Sie können die Tags durch Ziehen und Ablegen sortieren. Die Reihenfolge wird überall dort verwendet, wo Tags aufgelistet sind, z.B. in den Kategorie-Filtern für die Kursliste.
         back_to_list: Zurück zur Kategorie
         empty_msg: Es gibt derzeit keine Tags für diese Kategorie.
+    organizations:
+      headline: Organisationen
+      name: Name
+      add: Neue Organisation hinzufügen
+      export: Organisationen exportieren
+      edit: Bearbeiten
+      delete: Löschen
+      confirm_delete: Diese Aktion kann nicht rückgängig gemacht werden und wird die Organisation dauerhaft löschen.
+      actions: Aktionen
     courses:
       new: Kurs erstellen
       update: Kurs aktualisieren

@@ -1,0 +1,30 @@
+- content_for :page_header_slim
+  = render Global::PageHeader.new(t(:'admin.organizations.headline'), subtitle: t(:'admin.page_header'), type: :slim)
+
+.container
+  .mt10.mb10.pull-right
+    - if @organizations.any?
+      = link_to t(:'admin.organizations.export'), export_admin_organizations_path, class: 'btn btn-default mr10'
+    = link_to t(:'admin.organizations.add'), new_admin_organization_path, class: 'btn btn-primary'
+
+  table.table.table-striped.mb15.mt15.full-width
+  table.table.table-striped.mb15.mt15.full-width
+    colgroup
+      col style="width: 80%"
+      col style="width: 20%"
+    thead
+      tr
+        th = t(:'admin.organizations.name')
+        th = t(:'admin.organizations.actions')
+    tbody
+      - @organizations.each do |organization|
+        tr
+          td = organization.name
+          td.nowrap
+            = link_to t(:'admin.organizations.edit'), edit_admin_organization_path(organization),
+              class: 'btn btn-primary btn-xs mr5'
+            = link_to t(:'admin.organizations.delete'), admin_organization_path(organization),
+              method: :delete,
+              class: 'btn btn-primary btn-xs',
+              data: {confirm: t(:'admin.organizations.confirm_delete')}
+  = will_paginate @organizations

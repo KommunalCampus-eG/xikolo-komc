@@ -179,4 +179,8 @@ FactoryBot.define do
       value { false }
     end
   end
+
+  factory :organization, class: 'Account::Organization' do
+    name { 'Organization' }
+  end
 end

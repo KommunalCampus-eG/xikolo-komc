@@ -542,6 +542,11 @@ Rails.application.routes.draw do
     namespace :announcement do
       resources :recipients, only: [:index]
     end
+    resources :organizations, except: [:show] do
+      collection do
+        get :export
+      end
+    end
   end
 
   # all routes for go, the shortcut for redirects etc.

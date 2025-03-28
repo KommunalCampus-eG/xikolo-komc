@@ -1,9 +1,10 @@
-require:
-  - rubocop-capybara
-  - rubocop-factory_bot
+plugins:
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
+require:
+  - rubocop-capybara
+  - rubocop-factory_bot
   - rubocop-rspec_rails
 
 inherit_from:
@@ -21,9 +22,8 @@ inherit_from:
   - .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 3.3
-  TargetRailsVersion: 6.1
-  UseCache: True
+  TargetRailsVersion: 7.2
+  TargetRubyVersion: 3.4
   NewCops: enable
   Exclude:
     - ".cache/**/*"

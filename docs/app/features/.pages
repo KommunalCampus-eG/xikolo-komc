@@ -3,8 +3,10 @@
 nav:
   - index.md
   - Platform:
-    - permissions.md
+    - Feature flippers: flippers
+    - permissions
     - course_list_banner.md
+    - system_alerts.md
   - courses
   - User profile: profile
   - Vouchers:

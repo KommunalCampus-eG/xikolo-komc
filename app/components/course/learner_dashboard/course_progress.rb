@@ -4,6 +4,9 @@ module Course
   module LearnerDashboard
     class CourseProgress < ApplicationComponent
       include ProgressHelper
+      include ActiveSupport::NumberHelper
+
+      EMPTY_STATE = '—'
 
       def initialize(progresses, course)
         @course_progress = progresses.pop
@@ -23,7 +26,9 @@ module Course
 
         return unless available_points&.positive?
 
-        "#{achieved_points} / #{available_points}"
+        achieved = number_to_rounded(achieved_points, strip_insignificant_zeros: true)
+        available = number_to_rounded(available_points, strip_insignificant_zeros: true)
+        t(:'course.progress.graded', achieved:, available:)
       end
 
       def selftest_score
@@ -34,11 +39,17 @@ module Course
 
         return unless available_points&.positive?
 
-        "#{achieved_points} / #{available_points}"
+        achieved = number_to_rounded(achieved_points, strip_insignificant_zeros: true)
+        available = number_to_rounded(available_points, strip_insignificant_zeros: true)
+        t(:'course.progress.selftest', achieved:, available:)
       end
 
-      def items_visited
-        @course_progress.dig('visits', :user).presence || 0
+      def completed_items_count
+        @section_progresses.sum {|section| section_completed_items_count(section) }
+      end
+
+      def completed_items_percentage
+        @completed_items_percentage ||= calc_progress(completed_items_count, items_available)
       end
 
       def items_available
@@ -58,8 +69,6 @@ module Course
       end
 
       def selftest_percentage
-        return if @course_progress['selftest_exercises'].blank?
-
         @selftest_percentage ||= begin
           achieved_points = @course_progress.dig('selftest_exercises', :submitted_points)
           available_points = @course_progress.dig('selftest_exercises', :max_points)
@@ -68,8 +77,35 @@ module Course
         end
       end
 
-      def visits_percentage
-        @visits_percentage ||= calc_progress(items_visited, items_available)
+      def bonus_points
+        points = @course_progress.dig('bonus_exercises', :submitted_points)
+        return if points.nil? || points.zero?
+
+        points.to_i
+      end
+
+      def main_points
+        @course_progress.dig('main_exercises', :submitted_points)&.to_i
+      end
+
+      private
+
+      def section_completed_items_count(section)
+        return 0 if section['discarded'] || section['items'].blank?
+
+        section['items'].count {|item| completed_item?(item) && !item['discarded'] }
+      end
+
+      def completed_item?(item)
+        if gradable_item?(item)
+          %w[graded submitted].include?(item['user_state'])
+        else
+          item['user_state'] == 'visited'
+        end
+      end
+
+      def gradable_item?(item)
+        %w[lti_exercise peer_assessment quiz].include?(item['content_type'])
       end
     end
   end

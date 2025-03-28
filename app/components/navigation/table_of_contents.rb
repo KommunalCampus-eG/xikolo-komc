@@ -192,7 +192,6 @@ module Navigation
         @request = request
       end
 
-      # rubocop:disable Metrics/BlockLength
       def build
         ::Navigation::TableOfContents.new.tap do |toc|
           # 1. Add general collabspace links.
@@ -218,13 +217,6 @@ module Navigation
             active: false
           )
           toc.with_section(
-            text: I18n.t(:'learning_rooms.nav.video_chat'),
-            link: {href: course_learning_room_video_chat_path(@context.course_code, @context.collabspace_id)},
-            tooltip: 'Jitsi Meet',
-            active: @context.current_page?(course_learning_room_video_chat_path(@context.course_code,
-              @context.collabspace_id))
-          )
-          toc.with_section(
             text: I18n.t(:'learning_rooms.nav.files'),
             link: {href: course_learning_room_files_path(@context.course_code, @context.collabspace_id)},
             tooltip: 'Files',
@@ -243,13 +235,6 @@ module Navigation
             )
           end
 
-          # 3. Add peer assessment links if the collabspace represents a group
-          # from a configured team peer assessment.
-          if @context.team?
-            TeamPeerAssessmentsToc.new(assessments: @context.team_peer_assessments)
-              .build { toc.with_section(**_1) }
-          end
-
           # 4. Add collabspace membership management links if the user is a
           # collabspace mentor or admin.
           if %w[admin mentor].include?(@context.membership.try(:[], 'status')) || @context.super_privileged
@@ -263,33 +248,11 @@ module Navigation
           end
         end
       end
-      # rubocop:enable Metrics/BlockLength
-
       private
 
       def etherpad_url
         template = Addressable::Template.new(Xikolo.config.etherpad_host_template)
         template.expand(id: Digest::MD5.hexdigest(@context.collabspace_id)).to_s
-      end
-
-      class TeamPeerAssessmentsToc
-        include UUIDHelper
-        include Rails.application.routes.url_helpers
-
-        def initialize(assessments:)
-          @assessments = assessments
-        end
-
-        def build
-          @assessments&.each do |tpa|
-            yield({
-              link: {href: peer_assessment_path(short_uuid(tpa['id']))},
-              text: I18n.t(:'learning_rooms.nav.tpa', title: tpa['title']),
-              tooltip: 'Team Peer Assessment',
-              active: false,
-            })
-          end
-        end
       end
     end
   end

@@ -48,13 +48,13 @@ Install RVM as described in
 === "Debian / Ubuntu"
 
     ```console
-    rvm install 3.3.4
+    rvm install 3.4.2
     ```
 
 === "Mac"
 
     ```console
-    rvm install 3.3.4
+    rvm install 3.4.2
     ```
 
 **Bundler**: Ruby's dependency manager
@@ -84,7 +84,7 @@ gem install bundler -v '~> 2.0'
         Follow install documentation [from `nvm` on GitHub](https://github.com/nvm-sh/nvm#installing-and-updating)
 
         ```console
-        nvm install lts/iron
+        nvm install
         ```
 
 === "Mac"
@@ -100,7 +100,7 @@ gem install bundler -v '~> 2.0'
     Follow install documentation [from nvm on GitHub](https://github.com/nvm-sh/nvm#installing-and-updating)
 
     ```console
-    nvm install lts/iron
+    nvm install
     ```
 
 **Yarn**: Another dependency manager for NodeJS
@@ -112,13 +112,13 @@ Since Node 16, manually installing `yarn` can be completely substituted by using
 yarn install
 ```
 
-!!! hint
+!!! note
 
     `--install-directory` can be used to install the stubs in a specific directory, such as `/usr/local/bin`, or without sudo `~/.local/bin`. This path must be in `PATH`.
 
 **RabbitMQ**: Asynchronous messaging / event broadcasting between services
 
-!!! hint
+!!! tip
 
     There is a RabbitMQ Web-UI (if you install it): [http://localhost:15672](http://localhost:15672/)
 
@@ -183,7 +183,7 @@ yarn install
 
 **Redis (7.0)**: A key-value store for caching and other use-cases
 
-!!! hint
+!!! note
     Increase database number (databases option) to >8000 (e.g. 8192)
 
 === "Debian / Ubuntu"
@@ -444,7 +444,7 @@ RAILS_ENV=production BRAND=brandname make assets
 
 EditorConfig is a standard for some generic auto-formatting options supported by many IDEs.
 
-!!! hint
+!!! tip
 
     Check <https://editorconfig.org/> for your IDE's built-in support. If not available, please install the corresponding add-on / editor plug-in.
 
@@ -452,7 +452,7 @@ EditorConfig is a standard for some generic auto-formatting options supported by
 
 Any push command which operates on the master branch will require confirmation.
 
-!!! hint
+!!! note
 
     1. Copy the snippet below to `.git/hooks/pre-push`
     2. Make the hook executable: `chmod +x .git/hooks/pre-push`
@@ -482,6 +482,34 @@ Any push command which operates on the master branch will require confirmation.
 A pre-commit hook should be automatically installed through `husky` when running `yarn install`. The hook will run several formatting checks and auto-fixes before a commit gets created.
 
 See `lint-staged` rules in `package.json` for applied commands.
+
+### Git commit message template
+
+You can add a git commit message template to help you always have the right format.
+
+Create a `commit-template.txt` file wherever you like.
+
+Add this to the file:
+
+```text
+# Use this format for the message header:
+# <type>[optional scope]: <description>
+# optional scopes are bound to our services e.g.
+# course, account, lanalytics and so on
+#| <----- Type Maximum 50 Characters here -----> |
+
+# The commit message body should contain the what and why, starting with a blank line
+# For more information, see our guidelines: https://xikolo.pages.xikolo.de/web/development/workflows/review/#commits
+#| <---- Try To Limit Each Line to a Maximum Of 70 Characters -----> |
+
+
+```
+
+Run the following command to set it up.
+
+```console
+git config --global commit.template <filepath/commit-template.txt>
+```
 
 ### Set up your local dev tooling
 
@@ -557,6 +585,14 @@ OVERMIND_ENV=.env.docker overmind start
 
 For many IDEs providing run configurations, you can set the environment variable in the IDE settings or the run configurations, e.g. in RubyMine.
 
+## Locales
+
+The project uses `i18n` for internationalization (i.e., localization of content), making these locales accessible to the frontend application using the `i18n-js` gem.
+This gem exports the locales into JSON format and stores them in `tmp/cache/xikolo/i18n` for each brand (configured in `./config/i18n`).
+These JSON objects are imported in the Webpack code, then, and consumed by the `i18n-js` npm package.
+
+To ensure that the locales are available when Webpack is built and to avoid potential build failures, execute the gem's CLI command (`i18n export`) before executing `yarn run build`. Alternatively, you can simply use `make assets`, which automates all the required steps.
+
 ## Seeds
 
 The `rake reset` command that is part of the installation instructions also "seeds" your databases, creating lots of example data (such as courses, course content, and user accounts).
@@ -592,25 +628,24 @@ If discrepancies are noticed when carrying your local setup, please update this 
 
 - The documentation can be found in the repository here: ``docs/app/development/local_setup/index.md``
 
-To view and edit this documentation locally, you need to install `pipenv` (if not already installed).
+To view and edit this documentation locally, you need to install `uv` (if not already installed).
 The following commands are to be run from the top-level project directory:
 
 === "Debian / Ubuntu"
 
     ```console
-    sudo apt install python-pip
-    python -m pip install --user pipenv
+    sudo apt install pipx
+    pipx install uv
     ```
 
 === "Mac"
 
     ```console
-    brew install pipenv
-    pipenv install
+    brew install uv
     ```
 
 To run the docs:
 
 ```console
-pipenv run mkdocs serve
+uv run mkdocs serve
 ```

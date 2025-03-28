@@ -52,8 +52,7 @@ module Collabspace
       @members = approved_members
       @collabspace_presenter = build_collabspace_presenter(
         collabspace:,
-        memberships: @memberships,
-        load_tpa: true
+        memberships: @memberships
       )
 
       set_page_title the_course.title, t(:'courses.nav.learning_rooms')
@@ -61,7 +60,7 @@ module Collabspace
       if member? || current_user.allowed?('course.course.teaching_anywhere')
         render layout: LAYOUTS[:course_area_two_cols]
       else
-        render 'request_membership', layout: LAYOUTS[:course_area]
+        render 'join', layout: LAYOUTS[:course_area]
       end
     end
 
@@ -85,8 +84,7 @@ module Collabspace
       @members = all_members
       @collabspace_presenter = build_collabspace_presenter(
         collabspace:,
-        memberships: @memberships,
-        load_tpa: true
+        memberships: @memberships
       )
 
       @collabspace = Collabspace::CollabspacesForm.new(collabspace)

@@ -30,10 +30,11 @@ module Gamification
       selftests: %i[selftest_master take_selftest],
       communication: %i[upvote_answer upvote_question accepted_answer answered_question],
     }.freeze
+    private_constant :CATEGORIES
 
     def sum_per_category(scores)
       scores.each_with_object(
-        Hash.new {|h, k| h[k] = columns.to_h { [_1, 0] } }
+        Hash.new {|h, k| h[k] = columns.index_with { 0 } }
       ) do |(key, points), memo|
         course_id, rule = key
         category = lookup_category(rule)

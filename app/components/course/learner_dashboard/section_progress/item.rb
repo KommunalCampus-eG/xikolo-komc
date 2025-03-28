@@ -18,8 +18,8 @@ module Course
 
         def css_classes
           [].tap do |cls|
-            cls << "section-material__item--#{state}" if state.present?
-            cls << 'section-material__item--optional' if optional?
+            cls << "section-progress__material-item--#{state}" if state.present?
+            cls << 'section-progress__material-item--optional' if optional?
           end
         end
 
@@ -84,7 +84,7 @@ module Course
         def completed?
           return false unless graded_or_submitted?
 
-          @item['max_points'].zero? || @percentage > 95
+          @item['max_points'].nil? || @item['max_points'].zero? || @percentage > 95
         end
 
         def warning?
@@ -94,10 +94,9 @@ module Course
         end
 
         def critical?
-          return false unless graded_or_submitted? || visited?
+          return false unless graded_or_submitted?
 
-          (@item['max_points'].zero? && visited?) ||
-            @percentage < 50
+          @percentage < 50
         end
 
         private

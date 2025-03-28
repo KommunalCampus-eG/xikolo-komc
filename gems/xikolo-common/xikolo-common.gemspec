@@ -14,11 +14,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) {|f| File.basename(f) }
   spec.require_paths = %w[lib]
 
-  spec.required_ruby_version = '>= 3.3'
+  spec.required_ruby_version = '>= 3.4'
 
   spec.add_dependency 'activesupport'
   spec.add_dependency 'addressable', '~> 2'
-  spec.add_dependency 'lograge', '~> 0.3.5'
   spec.add_dependency 'railties'
   spec.add_dependency 'restify', '~> 1.6'
   spec.add_dependency 'telegraf'

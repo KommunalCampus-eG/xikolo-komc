@@ -91,7 +91,7 @@ Rails.application.configure do
       password: smtp['password'].presence,
       authentication: smtp['authentication'].presence&.to_sym,
       tls: smtp['tls'].presence,
-      enable_starttls_auto: true,
+      enable_starttls_auto: false,
     }.compact
   end
 

@@ -71,4 +71,8 @@ class AdminNavigation < MenuWithPermissions
       Xikolo.config.voucher['enabled'] && user.allowed?('course.vouchers.issue', context: :root)
     },
     route: :vouchers
+
+  item 'header.navigation.admin.organizations', 'city',
+    if: ->(user, _course) { user.allowed? 'account.organizations.manage', context: :root },
+    route: :admin_organizations
 end

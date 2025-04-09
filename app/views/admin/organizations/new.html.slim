@@ -1,0 +1,9 @@
+- content_for :page_header_slim
+= render Global::PageHeader.new(t(:'admin.organizations.headline'), subtitle: t(:'admin.page_header'), type: :slim)
+
+.container
+  .row
+    .col-md-12
+      h2
+        = t(:'admin.organizations.add')
+      = render 'admin/organizations/form', organization: @organization

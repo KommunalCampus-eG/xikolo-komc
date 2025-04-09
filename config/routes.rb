@@ -395,6 +395,11 @@ Rails.application.routes.draw do
         resource :sync, only: %i[create], controller: 'video_provider_sync', as: :sync_video_provider
       end
     end
+    resources :organizations, except: [:show] do
+      collection do
+        get :export
+      end
+    end
   end
 
   # all routes for go, the shortcut for redirects etc.

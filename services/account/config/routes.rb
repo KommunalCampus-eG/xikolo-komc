@@ -48,6 +48,8 @@ Xikolo::Account::Application.routes.draw do
       get    'profile_field_stats/:id', to: 'profile_field_stats#show', as: 'profile_field_stats'
     end
 
+    resources :organizations, only: %i[create update destroy]
+
     resources :memberships, only: %i[create show destroy]
     delete 'memberships' => 'memberships#delete'
 

@@ -39,6 +39,8 @@ describe API::RootController, type: :request do
         user
         user_ban
         users
+        organization
+        organizations
       ]
     end
   end
@@ -191,6 +193,18 @@ describe API::RootController, type: :request do
     subject { super().rel(:users).template.variables }
 
     it { is_expected.to eq %w[search query archived confirmed id permission context auth_uid] }
+  end
+
+  context 'rel(organization)' do
+    subject { super().rel(:organization).template.variables }
+
+    it { is_expected.to eq %w[id] }
+  end
+
+  context 'rel(organizations)' do
+    subject { super().rel(:organizations).template.variables }
+
+    it { is_expected.to eq %w[] }
   end
 
   describe 'response' do

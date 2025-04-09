@@ -38,6 +38,7 @@ class User < ApplicationRecord
   has_many :grants, as: :principal, dependent: :destroy, inverse_of: :principal
   has_many :features, as: :owner, dependent: :destroy, inverse_of: :owner
   has_many :tokens, dependent: :destroy
+  belongs_to :organization, optional: true
 
   has_one :primary_email, -> { primary }, class_name: 'Email', inverse_of: false
 

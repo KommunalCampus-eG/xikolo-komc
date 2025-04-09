@@ -3030,6 +3030,7 @@ en:
       new_password: "New password"
       password_confirmation: "Confirm password"
       birthdate: "Date of birth"
+      organization: Organization
       select_birthdate: "Please select"
       show_birthdate_on_record: "You can decide in your <a href='%{url}'>certificates page</a> if you want your certificates to show your date of birth."
       combodate_format: "YYYY-MM-DD"

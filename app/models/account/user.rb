@@ -24,6 +24,10 @@ module Account
       class_name: '::Certificate::Record',
       dependent: :destroy
 
+    belongs_to :organization,
+      class_name: 'Account::Organization',
+      optional: true
+
     def self.with_authorization(uid)
       joins(:authorizations).where(authorizations: {uid:})
     end

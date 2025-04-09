@@ -31,6 +31,7 @@ describe UserDecorator, type: :decorator do
         affiliated
         affiliation
         password_digest
+        organization_id
         created_at
         updated_at
 
@@ -66,6 +67,7 @@ describe UserDecorator, type: :decorator do
     it { is_expected.to include 'full_name' => user.full_name }
     it { is_expected.to include 'affiliated' => user.affiliated? }
     it { is_expected.to include 'password_digest' => user.password_digest }
+    it { is_expected.to include 'organization_id' => user.organization_id }
     it { is_expected.to include 'created_at' => user.created_at.iso8601 }
     it { is_expected.to include 'updated_at' => user.updated_at.iso8601 }
 

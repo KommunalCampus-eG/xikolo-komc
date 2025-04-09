@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_04_04_104555) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_09_083831) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
   enable_extension "pg_trgm"
@@ -1646,6 +1646,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_04_104555) do
     t.string "avatar_uri"
     t.string "full_name", null: false
     t.date "last_access"
+    t.uuid "organization_id"
     t.index ["archived"], name: "index_users_on_archived"
     t.index ["confirmed"], name: "index_users_on_confirmed"
     t.index ["created_at", "id"], name: "index_users_pagination"
@@ -1656,6 +1657,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_04_104555) do
     t.index ["full_name"], name: "index_users_on_full_name"
     t.index ["full_name"], name: "index_users_on_full_name_gin_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["last_access"], name: "index_users_on_last_access"
+    t.index ["organization_id"], name: "index_users_on_organization_id"
   end
 
   create_table "versions", id: :uuid, default: -> { "uuid_generate_v7ms()" }, force: :cascade do |t|
@@ -1767,6 +1769,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_04_104555) do
   add_foreign_key "nodes", "sections"
   add_foreign_key "question_statistics", "quiz_questions", column: "question_id", on_delete: :cascade
   add_foreign_key "section_progresses", "sections"
+  add_foreign_key "users", "organizations"
 
   create_view "embed_courses", sql_definition: <<-SQL
       SELECT ARRAY( SELECT hstore(classifiers.*) AS hstore

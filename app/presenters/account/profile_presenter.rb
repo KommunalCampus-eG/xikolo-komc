@@ -41,6 +41,16 @@ class Account::ProfilePresenter < Presenter
     @user.born_at
   end
 
+  def organization_id
+    @user.organization_id
+  end
+
+  def organizations_json
+    Account::Organization.all.map do |organization|
+      {value: organization.id, text: organization.name}
+    end.to_json
+  end
+
   def unconfirmed_emails?
     unconfirmed_emails.any?
   end

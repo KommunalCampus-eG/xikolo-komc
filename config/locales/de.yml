@@ -2269,6 +2269,7 @@ de:
       new_password: "Neues Passwort"
       password_confirmation: "Passwort bestätigen"
       birthdate: "Geburtsdatum"
+      organization: Organisation
       select_birthdate: "Bitte wählen"
       show_birthdate_on_record: "Sie können in Ihren <a href='%{url}'>Zertifikatseite</a> angeben, ob Ihr Geburtsdatum auf Ihren Leistungsnachweisen angezeigt werden soll."
       combodate_format: "YYYY-MM-DD"

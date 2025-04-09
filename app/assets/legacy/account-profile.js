@@ -213,6 +213,19 @@ ready(() => {
         );
       },
     });
+    $('#organization_id').editable({
+      success: function (msg, newValue) {
+        return doAjaxRequest(
+          $('#organization_id'),
+          {
+            organization_id: newValue,
+          },
+          function (msg) {
+            return $('#organization_id').html(msg.organization_id);
+          },
+        );
+      },
+    });
 
     $('#secondary-emails-list').hide();
     $('#secondary-emails-hide-button').hide();

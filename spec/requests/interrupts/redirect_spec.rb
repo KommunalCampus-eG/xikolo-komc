@@ -16,48 +16,99 @@ describe 'Interrupts: Redirect targets / messages', type: :request do
       interrupts:
     )
   end
-  let(:interrupts) { %w[mandatory_profile_fields] }
+  let(:interrupts) { %w[] }
 
-  context 'on another page where interrupts are checked' do
-    let(:page) { '/dashboard' }
+  context 'with mandatory_profile_fields' do
+    let(:interrupts) { %w[mandatory_profile_fields] }
 
-    it 'redirects to interrupt target' do
-      request
-      expect(response).to redirect_to '/dashboard/profile'
+    context 'on another page where interrupts are checked' do
+      let(:page) { '/dashboard' }
+
+      it 'redirects to interrupt target' do
+        request
+        expect(response).to redirect_to '/dashboard/profile'
+      end
+    end
+
+    context 'on target page of interrupt' do
+      let(:page) { '/dashboard/profile' }
+
+      before do
+        Stub.request(:account, :get, "/users/#{user[:id]}")
+          .to_return Stub.json(user)
+        Stub.request(:account, :get, "/users/#{user[:id]}/emails")
+          .to_return Stub.json([])
+        Stub.request(:account, :get, "/users/#{user[:id]}/consents")
+          .to_return Stub.json([])
+        Stub.request(:account, :get, "/users/#{user[:id]}/profile")
+          .to_return Stub.json({fields: []})
+        Stub.request(
+          :account, :get, '/authorizations',
+          query: {user: user[:id]}
+        ).to_return Stub.json([])
+      end
+
+      it 'stays on the page' do
+        request
+        expect(response).to have_http_status :ok
+      end
+    end
+
+    context 'on target page of a less important interrupt' do
+      let(:page) { '/dashboard/profile' }
+      let(:interrupts) { %w[new_consents mandatory_profile_fields] }
+
+      it 'redirects to most important interrupt target' do
+        request
+        expect(response).to redirect_to '/treatments'
+      end
     end
   end
 
-  context 'on target page of interrupt' do
-    let(:page) { '/dashboard/profile' }
+  context 'with unselected_organization' do
+    let(:interrupts) { %w[unselected_organization] }
 
-    before do
-      Stub.request(:account, :get, "/users/#{user[:id]}")
-        .to_return Stub.json(user)
-      Stub.request(:account, :get, "/users/#{user[:id]}/emails")
-        .to_return Stub.json([])
-      Stub.request(:account, :get, "/users/#{user[:id]}/consents")
-        .to_return Stub.json([])
-      Stub.request(:account, :get, "/users/#{user[:id]}/profile")
-        .to_return Stub.json({fields: []})
-      Stub.request(
-        :account, :get, '/authorizations',
-        query: {user: user[:id]}
-      ).to_return Stub.json([])
+    context 'on another page where interrupts are checked' do
+      let(:page) { '/dashboard' }
+
+      it 'redirects to interrupt target' do
+        request
+        expect(response).to redirect_to '/dashboard/profile'
+      end
     end
 
-    it 'stays on the page' do
-      request
-      expect(response).to have_http_status :ok
+    context 'on target page of interrupt' do
+      let(:page) { '/dashboard/profile' }
+
+      before do
+        Stub.request(:account, :get, "/users/#{user[:id]}")
+          .to_return Stub.json(user)
+        Stub.request(:account, :get, "/users/#{user[:id]}/emails")
+          .to_return Stub.json([])
+        Stub.request(:account, :get, "/users/#{user[:id]}/consents")
+          .to_return Stub.json([])
+        Stub.request(:account, :get, "/users/#{user[:id]}/profile")
+          .to_return Stub.json({fields: []})
+        Stub.request(
+          :account, :get, '/authorizations',
+          query: {user: user[:id]}
+        ).to_return Stub.json([])
+      end
+
+      it 'stays on the page' do
+        request
+        expect(response).to have_http_status :ok
+      end
     end
-  end
 
-  context 'on target page of a less important interrupt' do
-    let(:page) { '/dashboard/profile' }
-    let(:interrupts) { %w[new_consents mandatory_profile_fields] }
+    context 'on target page of a less important interrupt' do
+      let(:page) { '/dashboard/profile' }
+      let(:interrupts) { %w[new_consents unselected_organization] }
 
-    it 'redirects to most important interrupt target' do
-      request
-      expect(response).to redirect_to '/treatments'
+      it 'redirects to most important interrupt target' do
+        request
+        expect(response).to redirect_to '/treatments'
+      end
     end
   end
 end

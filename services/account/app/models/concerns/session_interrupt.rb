@@ -9,6 +9,7 @@ module SessionInterrupt
     @interrupts ||= [
       new_consents,
       new_policy,
+      unselected_organization,
       mandatory_profile_fields,
     ].compact
   end
@@ -21,6 +22,10 @@ module SessionInterrupt
 
   def new_policy
     'new_policy' unless user.policy_accepted?
+  end
+
+  def unselected_organization
+    'unselected_organization' unless user.organization
   end
 
   def mandatory_profile_fields

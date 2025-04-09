@@ -480,6 +480,7 @@ de:
 
   interrupts:
     mandatory_profile_fields: Bitte helfen Sie uns dabei, Ihre Lernerfahrung weiter zu verbessern. Füllen Sie dafür die erforderlichen Felder aus, bevor Sie mit Ihren Kursen fortfahren.
+    unselected_organization: Um Ihr Lernerlebnis zu verbessern, wählen Sie bitte eine Organisation aus, bevor Sie mit Ihren Kursen fortfahren.
 
   browser_warning:
     headline: Ihr Browser wird nicht unterstützt!

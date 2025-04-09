@@ -24,6 +24,7 @@ module Interruptible
   INTERRUPT_LOCATIONS = {
     'new_consents' => {controller: 'account/treatments', action: 'index'},
     'new_policy' => {controller: 'account/policies', action: 'show'},
+    'unselected_organization' => {controller: 'account/profiles', action: 'show'},
     'mandatory_profile_fields' => {controller: 'account/profiles', action: 'show'},
   }.freeze
 
@@ -50,7 +51,7 @@ module Interruptible
 
   def known_interrupts
     @known_interrupts ||= INTERRUPT_LOCATIONS.keys & current_user.interrupts.select do |i|
-      i != 'mandatory_profile_fields' || current_user.feature?('profile')
+      (i != 'mandatory_profile_fields' && i != 'unselected_organization') || current_user.feature?('profile')
     end
   end
 

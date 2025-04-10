@@ -1,1 +1,6 @@
 production:
+  # Sends send all pending emails once a day at 9:00 AM.
+  send_pending_emails:
+    cron: "0 9 * * *"
+    class: SendPendingEmailsWorker
+    queue: default

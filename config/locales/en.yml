@@ -393,7 +393,7 @@ en:
       sync_initiated: The synchronization has been initiated.
       logged_out: You successfully logged out.
       teacher_information_created: Teacher information has been successfully saved!
-      announcement_saved: Announcement has successfully been saved!
+      announcement_saved: Announcement has been successfully saved!
       cache_flush: Deleted %{deleted_items} Cache entries
       confirmation_successful: Thank you for confirming your e-mail address.
       auth_added: "You can login to %{brand} using your %{provider} account from now."

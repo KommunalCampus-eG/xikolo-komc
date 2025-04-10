@@ -10,16 +10,16 @@ class Email < ApplicationRecord
     foreign_key: 'news_id',
     inverse_of: :emails
 
-  after_commit :schedule_sending!, on: :create
+  def send!
+    return if !pending? || announcement.publish_at&.future?
 
-  private
-
-  def schedule_sending!
     Msgr.publish announcement.decorate.as_event.tap {|data|
       if test_recipient
         data[:test] = true
         data[:receiver_id] = test_recipient
       end
     }, to: 'xikolo.news.announcement.create'
+
+    update!(status: :sent)
   end
 end

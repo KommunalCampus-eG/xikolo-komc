@@ -1,3 +1,6 @@
+- content_for :head_assets
+  = javascript_include_tag 'admin', crossorigin: 'anonymous', integrity: true, async: true, debug: false
+
 = simple_form_for(channel) do |f|
   = f.error_notification
   = f.input :code

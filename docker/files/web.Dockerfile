@@ -5,7 +5,7 @@
 #
 # * Compile and bundle web assets
 #
-FROM timbru31/ruby-node:3.4-slim-22@sha256:c1d9ad4b7e31673e2dd39e96753939697cddc4a0012fd465dfaa86436a20bf64 AS assets
+FROM timbru31/ruby-node:3.4-slim-22@sha256:57e337e08dedb6c1882f2b0002a3f6c2bbea18e8577789d3847d6dc5cf510a4a AS assets
 
 ARG BRAND=xikolo
 ARG TARGETARCH
@@ -15,6 +15,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
+ENV SECRET_KEY_BASE_DUMMY=true
 ENV CPPFLAGS="-DPNG_ARM_NEON_OPT=0"
 
 RUN mkdir --parents /app/
@@ -69,7 +70,7 @@ EOF
 # * Collect required native dependencies for gems
 # * Clean up application directory
 #
-FROM ruby:3.4.2-slim@sha256:98e208daf93d40485edf2f5e1a1527202ae0824cdc1619b6659674a84aa197ba AS build
+FROM ruby:3.4.3-slim@sha256:fcbc3577e23cb188d769e496e7afe639b9946a2bf47c3deac7a38ad58187f6a9 AS build
 
 ARG BRAND=xikolo
 ARG TARGETARCH
@@ -79,6 +80,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
+ENV SECRET_KEY_BASE_DUMMY=true
 
 RUN mkdir --parents /app/
 WORKDIR /app/
@@ -140,7 +142,7 @@ EOF
 #
 # Runtime image
 #
-FROM docker.io/ruby:3.4.2-slim@sha256:98e208daf93d40485edf2f5e1a1527202ae0824cdc1619b6659674a84aa197ba
+FROM docker.io/ruby:3.4.3-slim@sha256:fcbc3577e23cb188d769e496e7afe639b9946a2bf47c3deac7a38ad58187f6a9
 
 ARG BRAND=xikolo
 ARG BUILD_REF_NAME
@@ -153,7 +155,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
-ENV RAILS_LOG_TO_STDOUT=1
 
 ENV BUILD_REF_NAME=$BUILD_REF_NAME
 ENV BUILD_COMMIT_SHA=$BUILD_COMMIT_SHA
@@ -188,6 +189,12 @@ EOF
 
 # Copy application files from build stage
 COPY --from=build /app/ /app/
+
+# Ensure temp directory is writable
+RUN <<EOF
+  mkdir -p /app/tmp/
+  chown 1000:1000 /app/tmp/
+EOF
 
 USER 1000:1000
 

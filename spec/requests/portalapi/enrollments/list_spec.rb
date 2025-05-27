@@ -10,11 +10,12 @@ describe 'Portal API: List enrollments', type: :request do
   let(:headers) { {} }
   let(:params) { {} }
   let(:json) { JSON.parse response.body }
+  let(:user_id) { '00000001-3100-4444-9999-000000000099' }
   let(:courses) { create_list(:course, 3) }
   let(:enrollments) do
     courses.map do |c|
       build(:'course:enrollment',
-        user_id: authorization['user_id'],
+        user_id:,
         course_id: c.id,
         created_at: 1.day.ago,
         completed: false,
@@ -27,15 +28,11 @@ describe 'Portal API: List enrollments', type: :request do
         })
     end
   end
-  let(:authorization) { build(:'account:authorization') }
-  let(:uid) { authorization['uid'] }
 
   before do
-    Stub.service(:account, build(:'account:root'))
-    Stub.service(:course, build(:'course:root'))
+    stub_user_request id: user_id
 
-    Stub.request(:account, :get, '/authorizations', query: {uid:})
-      .to_return Stub.json([authorization])
+    Stub.service(:course, build(:'course:root'))
   end
 
   context 'without Authorization header' do
@@ -135,61 +132,18 @@ describe 'Portal API: List enrollments', type: :request do
       end
 
       context 'with an unknown user' do
-        let(:uid) { 'unkown-saml-uid' }
-        let(:params) { super().merge(user_id: uid, course_id: generate(:course_id)) }
-
-        before do
-          Stub.request(:account, :get, '/authorizations', query: {uid:})
-            .to_return Stub.json([])
-        end
-
-        it 'responds with HTTP 404 Not Found' do
-          request
-          expect(response).to have_http_status :not_found
-          expect(response.headers['Content-Type']).to eq 'application/problem+json'
-          expect(json).to eq(
-            'type' => 'https://openhpi.stoplight.io/docs/portal-api/068d6638d8e0b-errors#course_or_user_not_found',
-            'title' => 'Course or user not found.',
-            'status' => 404
+        let(:params) do
+          super().merge(
+            user_id: '00000001-3100-4444-9999-000000000100',
+            course_id: generate(:course_id)
           )
         end
-      end
-
-      context 'with an unknown course' do
-        let(:unknown_course_id) { generate(:course_id) }
-        let(:params) { super().merge(user_id: uid, course_id: unknown_course_id) }
 
         before do
           Stub.request(
             :course, :get, '/enrollments',
             query: {
-              user_id: authorization['user_id'],
-              course_id: params[:course_id],
-              learning_evaluation: true,
-            }
-          ).to_return Stub.response(status: 404)
-        end
-
-        it 'responds with HTTP 404 Not Found' do
-          request
-          expect(response).to have_http_status :not_found
-          expect(response.headers['Content-Type']).to eq 'application/problem+json'
-          expect(json).to eq(
-            'type' => 'https://openhpi.stoplight.io/docs/portal-api/068d6638d8e0b-errors#course_or_user_not_found',
-            'title' => 'Course or user not found.',
-            'status' => 404
-          )
-        end
-      end
-
-      context 'without an enrollment for the user in the specified course' do
-        let(:params) { super().merge(user_id: uid, course_id: generate(:course_id)) }
-
-        before do
-          Stub.request(
-            :course, :get, '/enrollments',
-            query: {
-              user_id: authorization['user_id'],
+              user_id: '00000001-3100-4444-9999-000000000100',
               course_id: params[:course_id],
               learning_evaluation: true,
             }
@@ -206,14 +160,17 @@ describe 'Portal API: List enrollments', type: :request do
 
       context 'with an enrollment for the user in the specified course' do
         let(:params) do
-          super().merge(user_id: uid, course_id: enrollments.first['course_id'])
+          super().merge(
+            user_id: enrollments.first['user_id'],
+            course_id: enrollments.first['course_id']
+          )
         end
 
         before do
           Stub.request(
             :course, :get, '/enrollments',
             query: {
-              user_id: authorization['user_id'],
+              user_id: enrollments.first['user_id'],
               course_id: enrollments.first['course_id'],
               learning_evaluation: true,
             }
@@ -241,13 +198,13 @@ describe 'Portal API: List enrollments', type: :request do
       end
 
       context 'when requesting all enrollments of the user' do
-        let(:params) { super().merge(user_id: uid) }
+        let(:params) { super().merge(user_id:) }
 
         before do
           Stub.request(
             :course, :get, '/enrollments',
             query: {
-              user_id: authorization['user_id'],
+              user_id:,
               learning_evaluation: true,
             }
           ).to_return Stub.json(enrollments)

@@ -51,18 +51,18 @@ module PortalAPI
       end
 
       enrollment = course_api.rel(:enrollments)
-        .post({user_id: authorization['user_id'], course_id: params[:course_id]})
+        .post({user_id: params[:user_id], course_id: params[:course_id]})
         .value!
 
       response.headers['Content-Type'] = 'application/vnd.openhpi.enrollment+json;v=1.0'
-      render(json: enrollment.slice('id', 'course_id').merge('user_id' => authorization['uid']), status: :created)
+      render(json: enrollment.slice('id', 'user_id', 'course_id'), status: :created)
     rescue Restify::UnprocessableEntity
       problem_details(
         'internal_server_error',
         'Internal server error, please try again later.',
         status: :internal_server_error
       )
-    rescue CourseNotFound, UserNotFound
+    rescue Restify::NotFound
       problem_details(
         'course_or_user_not_found',
         'Course or user not found.',
@@ -73,19 +73,13 @@ module PortalAPI
     private
 
     def enrollments
-      raise UserNotFound if authorization.blank?
-
       course_api.rel(:enrollments).get(
         {
-          user_id: authorization['user_id'],
+          user_id: params[:user_id],
           course_id: params[:course_id].presence,
           learning_evaluation: true,
         }.compact
       ).value!
-    rescue Restify::NotFound
-      # If the user is unknown, the call for `authorization` will fail.
-      # Therefore, it can be assumed that the course is unknown.
-      raise CourseNotFound
     end
 
     def serialize_enrollment(enrollment)
@@ -98,14 +92,6 @@ module PortalAPI
       ).merge(
         'achievements' => enrollment['certificates']
       )
-    end
-
-    def authorization
-      @authorization ||= account_api.rel(:authorizations).get({uid: params[:user_id]}).value!.first
-    end
-
-    def account_api
-      @account_api ||= Xikolo.api(:account).value!
     end
 
     def course_api

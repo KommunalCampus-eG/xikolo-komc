@@ -4,13 +4,30 @@ require 'spec_helper'
 
 describe 'Quiz: Submissions: Show', type: :request do
   subject(:show) do
-    get "/courses/the_course/items/#{item['id']}/quiz_submission/#{submission_id}",
+    get "/courses/the_course/items/#{item_resource['id']}/quiz_submission/#{submission_id}",
       headers: {'Authorization' => "Xikolo-Session session_id=#{stub_session_id}"}
   end
 
-  let(:submission_id) { UUID4.new(requested_submission['id']).to_s(format: :base62) }
+  let(:user_id) { requested_submission['user_id'] }
+  let(:request_context_id) { course.context_id }
+  let(:course) { create(:course, :active, course_code: 'the_course') }
+  let(:section) { create(:section, course:) }
+  let(:section_resource) { build(:'course:section', id: section.id, course_id: course.id) }
+  let(:item) { create(:item, section:) }
+  let(:item_resource) do
+    build(:'course:item', :quiz, :exam,
+      id: item.id, section_id: section.id, course_id: course.id, content_id: quiz['id'])
+  end
+  let(:my_enrollment) { create(:enrollment, course:, user_id:) }
+
+  let(:quiz) { build(:'quiz:quiz', :exam) }
+  let(:quiz_question) { build(:'quiz:question', quiz_id: quiz['id']) }
+  let(:quiz_answer) do
+    build(:'quiz:answer', question_id: quiz_question['id'], quiz_id: quiz['id'])
+  end
+
+  let(:submission_id) { short_uuid(requested_submission['id']) }
   let(:requested_submission) { build(:'quiz:submission', **submission_attrs) }
-  let(:submissions_for_dropdown) { [requested_submission] }
   let(:submission_attrs) do
     {
       course_id: course.id,
@@ -19,23 +36,7 @@ describe 'Quiz: Submissions: Show', type: :request do
       quiz_submission_time: 1.hour.ago.iso8601,
     }
   end
-  let(:user_id) { requested_submission['user_id'] }
-  let(:request_context_id) { course.context_id }
-  let(:course) { create(:course, :active, course_code: 'the_course') }
-  let!(:my_enrollment) { create(:enrollment, course:, user_id:) }
-  let(:section) { build(:'course:section', course_id: course.id) }
-  let(:item) do
-    build(:'course:item', :quiz, :exam,
-      section_id: section['id'],
-      course_id: course.id,
-      content_id: quiz['id'])
-  end
-
-  let(:quiz) { build(:'quiz:quiz', :exam) }
-  let(:quiz_question) { build(:'quiz:question', quiz_id: quiz['id']) }
-  let(:quiz_answer) do
-    build(:'quiz:answer', question_id: quiz_question['id'], quiz_id: quiz['id'])
-  end
+  let(:submissions_for_dropdown) { [requested_submission] }
   let(:submission_question) do
     build(:'quiz:submission_question',
       quiz_submission_id: requested_submission['id'],
@@ -45,6 +46,9 @@ describe 'Quiz: Submissions: Show', type: :request do
     build(:'quiz:submission_answer',
       quiz_submission_question_id: submission_question['id'],
       quiz_answer_id: quiz_answer['id'])
+  end
+  let(:visit_stub) do
+    Stub.request(:course, :post, "/items/#{item.id}/users/#{user_id}/visit")
   end
 
   before do
@@ -61,13 +65,13 @@ describe 'Quiz: Submissions: Show', type: :request do
     Stub.request(:course, :get, '/enrollments', query: {course_id: course.id, user_id:})
       .to_return Stub.json([my_enrollment.as_json])
     Stub.request(:course, :get, '/sections', query: hash_including(course_id: course.id))
-      .to_return Stub.json([section])
-    Stub.request(:course, :get, "/sections/#{section['id']}")
-      .to_return Stub.json(section)
-    Stub.request(:course, :get, '/items', query: hash_including(section_id: section['id']))
-      .to_return Stub.json([item])
-    Stub.request(:course, :get, "/items/#{item['id']}", query: hash_including({}))
-      .to_return Stub.json(item)
+      .to_return Stub.json([section_resource])
+    Stub.request(:course, :get, "/sections/#{section.id}")
+      .to_return Stub.json(section_resource)
+    Stub.request(:course, :get, '/items', query: hash_including(section_id: section.id))
+      .to_return Stub.json([item_resource])
+    Stub.request(:course, :get, "/items/#{item.id}", query: hash_including({}))
+      .to_return Stub.json(item_resource)
     Stub.request(:course, :get, '/next_dates', query: hash_including({}))
       .to_return Stub.json([])
 
@@ -106,14 +110,16 @@ describe 'Quiz: Submissions: Show', type: :request do
       :quiz, :get, '/quiz_submission_answers',
       query: hash_including(quiz_submission_question_id: submission_question['id'])
     ).to_return Stub.json([submission_answer])
+    visit_stub
   end
 
   describe 'proctored submission' do
     let(:course) { create(:course, :active, :offers_proctoring, course_code: 'the_course') }
     let(:my_enrollment) { create(:enrollment, :proctored, course:, user_id:) }
-    let(:item) do
+    let(:item_resource) do
       build(:'course:item', :quiz, :exam, :proctored,
-        section_id: section['id'],
+        id: item.id,
+        section_id: section.id,
         course_id: course.id,
         content_id: quiz['id'])
     end
@@ -126,6 +132,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'No issues detected'
       end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
+      end
     end
 
     context 'user passed proctoring (SMOWL v2)' do
@@ -135,6 +146,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         show
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'No issues detected'
+      end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
       end
     end
 
@@ -146,6 +162,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'There have been some minor issues during the proctoring for this assignment.'
       end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
+      end
     end
 
     context 'user passed proctoring (SMOWL v2) with a few violations' do
@@ -155,6 +176,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         show
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'There have been some minor issues during the proctoring for this assignment.'
+      end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
       end
     end
 
@@ -166,6 +192,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'There have been issues during the proctoring for this assignment. A certificate will not be issued.'
       end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
+      end
     end
 
     context 'user failed proctoring (SMOWL v2) b/c of too many violations' do
@@ -176,6 +207,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'There have been issues during the proctoring for this assignment. A certificate will not be issued.'
       end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
+      end
     end
 
     context 'proctoring results have not yet been processed' do
@@ -185,6 +221,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         show
         expect(response.body).to include 'Online proctoring results'
         expect(response.body).to include 'The proctoring data is still being processed.'
+      end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
       end
     end
   end
@@ -210,6 +251,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(response).to be_successful
         expect(Capybara.string(response.body)).to have_content '5.0 of 10.0 points achieved'
       end
+
+      it 'creates a visit' do
+        show
+        expect(visit_stub).to have_been_requested
+      end
     end
 
     context 'when the requested submission does not belong to the current user' do
@@ -220,6 +266,11 @@ describe 'Quiz: Submissions: Show', type: :request do
         expect(flash['error'].first).to eq 'You do not have sufficient permissions for this action.'
         expect(response).to redirect_to root_url
       end
+
+      it 'does not create a visit' do
+        show
+        expect(visit_stub).not_to have_been_requested
+      end
     end
   end
 
@@ -228,6 +279,7 @@ describe 'Quiz: Submissions: Show', type: :request do
 
     it 'responds with 404 Not Found' do
       expect { show }.to raise_error Status::NotFound
+      expect(visit_stub).not_to have_been_requested
     end
   end
 end

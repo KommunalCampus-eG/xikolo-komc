@@ -17,7 +17,7 @@ describe API::UsersController, type: :controller do
     describe '#headers' do
       subject { response.headers.to_h }
 
-      it { is_expected.to include 'X-Cache-Xikolo' => 'shared' }
+      it { is_expected.to include 'x-cache-xikolo' => 'shared' }
     end
 
     describe '#links' do
@@ -71,9 +71,9 @@ describe API::UsersController, type: :controller do
     context 'with partial update' do
       subject(:payload) { JSON.parse(response.body) }
 
-      let(:params) { {**super(), language: 'cn'} }
+      let(:params) { {**super(), language: 'de'} }
 
-      it { is_expected.to include 'language' => 'cn' }
+      it { is_expected.to include 'language' => 'de' }
     end
   end
 
@@ -105,7 +105,7 @@ describe API::UsersController, type: :controller do
       describe '#headers' do
         subject { response.headers.to_h }
 
-        it { is_expected.to include 'Location' => user_url(user) }
+        it { is_expected.to include 'location' => user_url(user) }
       end
 
       describe 'payload' do
@@ -278,12 +278,7 @@ describe API::UsersController, type: :controller do
       let!(:matches) do
         users[3].update! full_name: 'Jack'
         users[4].update! full_name: 'Jackson'
-        users[5].update! display_name: 'Jacky James', preferences: {
-          'social.allow_detection_via_name' => 'false',
-        }
-        users[6].update! preferences: {
-          'social.allow_detection_via_email' => 'false',
-        }
+        users[5].update! display_name: 'Jacky James'
         users[6].emails.primary.take.update! address: 'jack.smith@example.de'
         users[3..6]
       end

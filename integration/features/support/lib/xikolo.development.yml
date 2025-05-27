@@ -14,10 +14,8 @@ s3:
     lti: xikolo-public
     news: xikolo-public
     pages: xikolo-public
-    peerassessment: xikolo-peerassessment
     pinboard: xikolo-pinboard
     quiz: xikolo-public
     scientist: xikolo-scientist
-    sitemaps: xikolo-public
     uploads: xikolo-uploads
     video: xikolo-video

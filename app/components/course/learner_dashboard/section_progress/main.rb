@@ -47,18 +47,50 @@ module Course
           calc_progress(selftest_statistic['submitted_points'], selftest_statistic['max_points'])
         end
 
-        def visits_percentage
-          return if @section_progress['visits'].blank? || items_available.zero?
+        def completed_items_percentage
+          return if completed_items_count.zero? || items_available.zero?
 
-          @section_progress['visits']['percentage']
+          calc_progress(completed_items_count, items_available)
         end
 
-        def items_visited
-          @section_progress.dig('visits', 'user').presence || 0
+        def completed_items_count
+          items.count {|item| completed_item?(item) }
         end
 
         def items_available
           @section_progress.dig('visits', 'total').presence || 0
+        end
+
+        def legend_items
+          [
+            {class_modifier: 'completed', text: t(:'course.progress.legend.completed')},
+            {class_modifier: 'warning', text: t(:'course.progress.legend.warning')},
+            {class_modifier: 'critical', text: t(:'course.progress.legend.critical')},
+            {class_modifier: '', text: t(:'course.progress.legend.not_completed')},
+            {class_modifier: 'optional', text: t(:'course.progress.legend.optional')},
+          ]
+        end
+
+        def section_statistics?
+          main_statistic.present? || bonus_statistic.present? || selftest_statistic.present?
+        end
+
+        private
+
+        def completed_item?(item)
+          if gradable_item?(item)
+            %w[graded submitted].include?(item['user_state'])
+          else
+            item['user_state'] == 'visited'
+          end
+        end
+
+        def gradable_item?(item)
+          %w[lti_exercise peer_assessment quiz].include?(item['content_type'])
+        end
+
+        def render?
+          @section_progress['alternative_state'] != 'parent'
         end
       end
     end

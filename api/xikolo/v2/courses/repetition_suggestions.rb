@@ -12,7 +12,7 @@ module Xikolo
         }
 
         attribute('content_type') {
-          description 'The type of item: one of quiz, video, rich_text, lti_exercise, peer_assessment'
+          description 'The type of item: one of quiz, video, rich_text, lti_exercise'
           type :string
         }
 
@@ -59,11 +59,11 @@ module Xikolo
           suggestions = []
           if current_user.logged_in?
             suggestions = Xikolo.api(:course).value!.rel(:repetition_suggestions).get(
-              filters.merge(
-                user_id: current_user.id,
-                exercise_type: 'selftest',
-                limit: 3
-              )
+              filters.merge({
+                'user_id' => current_user.id,
+                'exercise_type' => 'selftest',
+                'limit' => 3,
+              })
             ).value!
           end
           suggestions

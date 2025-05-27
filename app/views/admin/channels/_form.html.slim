@@ -1,3 +1,6 @@
+- content_for :head_assets
+  = javascript_include_tag 'admin', crossorigin: 'anonymous', integrity: true, async: true, debug: false
+
 = simple_form_for(channel) do |f|
   = f.error_notification
   = f.input :code
@@ -7,9 +10,8 @@
 
   = advanced_settings do
     - Xikolo.config.locales['available'].each do |locale|
-      = f.input :"info_link_url_#{locale}"
-    - Xikolo.config.locales['available'].each do |locale|
       = f.input :"info_link_label_#{locale}"
+      = f.input :"info_link_url_#{locale}"
 
   = f.input :logo_upload_id
   - if channel.logo_url

@@ -56,6 +56,8 @@ class CourseStatsConsumer < Msgr::Consumer
   end
 
   EMAIL_NOTIFICATION_TYPES = %w[notification.email.global notification.email.stats].freeze
+  private_constant :EMAIL_NOTIFICATION_TYPES
+
   def disabled_notifications?(preferences)
     # Make sure the user has not disabled these notifications (or all types)
     EMAIL_NOTIFICATION_TYPES.any? do |pref|
@@ -76,9 +78,9 @@ class CourseStatsConsumer < Msgr::Consumer
   end
 
   def course_admins(course)
-    account_service.value!.rel(:group).get(
-      id: "course.#{course.course_code}.admins"
-    ).value!.rel(:members).get.value!
+    account_service.value!.rel(:group).get({
+      id: "course.#{course.course_code}.admins",
+    }).value!.rel(:members).get.value!
   end
 
   def account_service

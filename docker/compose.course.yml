@@ -13,8 +13,8 @@ x-course: &course
   networks:
     - xikolo
   volumes:
-    - ./config/xikolo.yml:/etc/xikolo.yml:ro
-    - ./config/xikolo/course.yml:/app/config/xikolo.yml:ro
+    - ./config/xikolo.yml:/local/xikolo.yml:ro
+    - ./config/xikolo/course.yml:/local/config/xikolo.yml:ro
   restart: always
   depends_on:
     - init-database

@@ -97,13 +97,14 @@
                 = t(:'.timestamps.submit', time: l(submission['quiz_submission_time'].to_datetime, format: :quiz_submission))
               - else
                 = t(:'.timestamps.not_submitted')
-          td(id="points-#{submission.id}")
+          td(id="points-#{submission['id']}")
             .points
               span = submission['points']
               - if current_user.allowed? 'course.course.teaching'
                 = render partial: 'fudge_points', locals: {submission:, course: @course}
 
-            - if (proctoring = submission['proctoring'])
+            - proctoring = submission['proctoring']
+            - if proctoring.present?
               - if proctoring.results.empty?
                 span.label.label-warning = t(:'admin.course_management.submissions.proctoring.processing')
               - elsif proctoring.results.perfect?
@@ -114,14 +115,9 @@
                 span.label.label-danger = t(:'admin.course_management.submissions.proctoring.failed')
           td
             = render Global::ActionsDropdown.new(menu_side: 'right') do |c|
-              - if current_user.allowed?('quiz.submission.manage.proctoring') && submission['proctoring']
-                - c.with_destructive_action
-                  = link_to t(:'admin.course_management.submissions.proctoring.exclude'),
-                    exclude_from_proctoring_path(course_id: @course.id, id: submission['id']),
-                    method: :post
               - if current_user.allowed?('course.course.teaching')
                 - c.with_action
-                  = link_to t(:'quiz_submission.add_fudge_points'), '#', class: 'js-show-fudge', data: {submission: submission.id}
+                  = link_to t(:'quiz_submission.add_fudge_points'), '#', class: 'js-show-fudge', data: {submission: submission['id']}
               - if current_user.allowed?('quiz.submission.manage') && submission['snapshot_id'] && submission['question_count'] == 0
                 - c.with_action
                   = link_to t(:'admin.course_management.submissions.convert_manually'), convert_submission_path(submission_id: submission['id'], snapshot_id: submission['snapshot_id']), method: :post

@@ -21,7 +21,7 @@ div class='course-card #{"course-card--#{css_modifiers}" if css_modifiers}' data
             .course-card__teacher = @course.teacher_text
           - if @course.abstract.present?
             .course-card__description
-              == HtmlTruncator.new(strip_lists: true).truncate(helpers.render_markdown(@course.abstract), tags: %w[p br])
+              == course_abstract
 
     ul.course-card__datapoints
       - if date_label.present?
@@ -37,7 +37,11 @@ div class='course-card #{"course-card--#{css_modifiers}" if css_modifiers}' data
         span class="#{'course-card__empty-datapoint-text' if highest_achievable_certificate.blank?}" = highest_achievable_certificate
       li.course-card__language aria-label=t(:'course.card.language')
         = render Global::FaIcon.new('globe')
-        span = languages_preview
+        span = @course.lang
+      - if subtitles_for_course.present?
+        li.course-card__subtitles aria-label=t(:'course.card.available_subtitles')
+          = render Global::FaIcon.new('closed-captioning')
+          span = subtitles_for_course
 
     .course-card__actions
       - if actions_dropdown?
@@ -55,7 +59,7 @@ div class='course-card #{"course-card--#{css_modifiers}" if css_modifiers}' data
         = render Home::Course::DetailsButton.new(@course)
 
       - if show_additional_buttons?
-        - if @course.policy_url.present?
+        - if @course.policy_url.present? && !@enrollment
           button.course-card__action-btn type='button' data-behavior='open-enrollment-dialog'
             = t(:'course.card.button_enroll')
         - else
@@ -66,4 +70,5 @@ div class='course-card #{"course-card--#{css_modifiers}" if css_modifiers}' data
           = render Home::Course::ReactivationButton.new(@course, enrollment: @enrollment, user: @user)
 
 - if @course.policy_url.present?
-  = render Course::EnrollmentDialog.new(@course.course_code, target_id: "course-card-#{@course.course_code}")
+  = render Global::Dialog.new("enrollment-dialog-#{@course.course_code}")
+    = render Course::EnrollmentPolicyForm.new(@course.course_code)

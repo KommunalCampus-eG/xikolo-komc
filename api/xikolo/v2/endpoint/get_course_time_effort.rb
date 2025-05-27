@@ -9,14 +9,14 @@ module Xikolo
           requires :course_id, type: String, desc: 'The course UUID'
         end
         get do
-          published_items = Xikolo.api(:course).value!.rel(:items).get(
+          published_items = Xikolo.api(:course).value!.rel(:items).get({
             course_id: params[:course_id],
             published: true,
             available: true,
-            state_for: current_user.id
-          ).value!
+            state_for: current_user.id,
+          }).value!
 
-          exercises = %w[quiz peer_assessment lti_exercise]
+          exercises = %w[quiz lti_exercise]
           completed_items = published_items.select do |i|
             (exercises.include?(i['content_type']) &&
               %w[new visited].exclude?(i['user_state'])) ||

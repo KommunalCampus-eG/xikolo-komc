@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-require 'pry'
-
 module Steps
   module AccountRegistration
     def account_details
       {
-        email: 'john@xikolo.de',
-        password: 'secret123',
-        full_name: 'John Smith',
+        'email' => 'john@xikolo.de',
+        'password' => 'secret123',
+        'full_name' => 'John Smith',
       }
     end
 
@@ -16,10 +14,10 @@ module Steps
       data = account_details
       context.assign :user, data
 
-      fill_in 'Name', with: data[:full_name]
-      fill_in 'E-mail address', with: data[:email]
-      fill_in 'Password', with: data[:password], match: :prefer_exact
-      fill_in 'Repeat password', with: data[:password]
+      fill_in 'Name', with: data['full_name']
+      fill_in 'E-mail address', with: data['email']
+      fill_in 'Password', with: data['password'], match: :prefer_exact
+      fill_in 'Repeat password', with: data['password']
       click_on 'Register for'
     end
 
@@ -27,10 +25,10 @@ module Steps
       data = account_details
       context.assign :user, data
 
-      fill_in 'Ihr Name', with: data[:full_name]
-      fill_in 'Ihre E-Mail-Adresse', with: data[:email]
-      fill_in 'Passwort', with: data[:password], match: :prefer_exact
-      fill_in 'Passwort (Wiederholung)', with: data[:password]
+      fill_in 'Ihr Name', with: data['full_name']
+      fill_in 'Ihre E-Mail-Adresse', with: data['email']
+      fill_in 'Passwort', with: data['password'], match: :prefer_exact
+      fill_in 'Passwort (Wiederholung)', with: data['password']
       click_on 'registrieren'
     end
 
@@ -50,7 +48,7 @@ module Steps
 
     def visit_email_view
       user  = context.fetch :user
-      email = fetch_emails(to: user[:email]).last
+      email = fetch_emails(to: user.fetch('email')).last
 
       open_email email
     end
@@ -91,7 +89,8 @@ module Steps
       send :'When I submit my account details'
 
       user = context.fetch :user
-      open_email fetch_emails(to: user[:email]).last
+      open_email fetch_emails(to: user.fetch('email')).last
+
       send :'When I follow the email confirmation link'
     end
 

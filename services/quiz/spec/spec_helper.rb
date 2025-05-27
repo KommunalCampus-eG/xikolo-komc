@@ -4,14 +4,12 @@
 ENV['RAILS_ENV'] ||= 'test'
 
 require 'simplecov'
-require 'simplecov-teamcity-summary'
+require 'simplecov-cobertura'
 
-if ENV['TEAMCITY_VERSION']
-  SimpleCov.formatters = [
-    SimpleCov::Formatter::HTMLFormatter,
-    SimpleCov::Formatter::TeamcitySummaryFormatter,
-  ]
-end
+SimpleCov.formatters = [
+  SimpleCov::Formatter::HTMLFormatter,
+  SimpleCov::Formatter::CoberturaFormatter,
+]
 
 require File.expand_path('../config/environment', __dir__)
 require 'rspec/rails'
@@ -44,7 +42,7 @@ RSpec.configure do |config|
   # config.mock_with :rr
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{Rails.root}/spec/fixtures"
+  config.fixture_paths = [Rails.root.join('spec/fixtures')]
 
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of

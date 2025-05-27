@@ -2,14 +2,14 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.3.0'
+ruby '~> 3.4.0'
 
 # Rails
 gem 'rails', '~> 7.2.0'
 gem 'rails-i18n'
 gem 'slim'
-gem 'sprockets', '~> 3.2'
-gem 'sprockets-rails', '~> 3.2'
+gem 'sprockets', '~> 4.2'
+gem 'sprockets-rails', '~> 3.5'
 
 gem 'drb'
 gem 'json'
@@ -18,9 +18,10 @@ gem 'syslog'
 
 gem 'concurrent-ruby', '~> 1.0'
 gem 'mnemosyne-ruby', '~> 2.0'
-gem 'sentry-rails', '~> 5.22.0'
-gem 'sentry-ruby', '~> 5.22.0'
-gem 'sentry-sidekiq', '~> 5.22.0'
+gem 'sentry-rails', '~> 5.23.0'
+gem 'sentry-ruby', '~> 5.23.0'
+gem 'sentry-sidekiq', '~> 5.23.0'
+gem 'stackprof'
 gem 'telegraf', '~> 3.0'
 
 # API
@@ -29,7 +30,7 @@ gem 'draper', '~> 4.0'
 gem 'paginate-responder', '~> 2.0'
 gem 'rails-rfc6570', '~> 3.0'
 gem 'responders'
-gem 'restify', '~> 1.15'
+gem 'restify', '~> 2.0'
 gem 'will_paginate'
 
 gem 'hashie'
@@ -40,13 +41,14 @@ gem 'bcrypt', '~> 3.1'
 gem 'msgr', '~> 1.5'
 
 gem 'activerecord-postgres_enum', '~> 2.0'
-gem 'fx', '~> 0.8.0'
+gem 'fx', '~> 0.9.0'
 gem 'pg', '~> 1.0', '> 1.1.2'
 gem 'redis', '~> 5.0'
 gem 'scenic', '~> 1.5'
 
 # App servers
 gem 'puma'
+gem 'thruster'
 
 gem 'xikolo-common', path: './gems/xikolo-common'
 gem 'xikolo-config', path: './gems/xikolo-config'
@@ -62,28 +64,29 @@ gem 'premailer-rails'
 gem 'sass-rails'
 
 group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+
   gem 'letter_opener'
   gem 'listen', '~> 3.9.0'
-  gem 'pry'
-  gem 'pry-byebug'
-  gem 'rspec', '~> 3.10'
-  gem 'rspec-rails', '~> 6.0'
-  gem 'rspec-teamcity', require: false
 end
 
 group :test do
   gem 'accept_values_for'
-  # https://github.com/thoughtbot/factory_bot_rails/pull/432
   gem 'factory_bot_rails', '~> 6.0'
-  # Needed for Restify request specs
   gem 'typhoeus', '~> 1.0'
   gem 'webmock'
+
+  gem 'rspec', '~> 3.10'
+  gem 'rspec-github', '~> 3.0', require: false
+  gem 'rspec_junit_formatter', '~> 0.6.0', require: false
+  gem 'rspec-rails', '~> 7.0'
 end
 
 group :test, :integration do
   gem 'database_cleaner', '~> 2.0'
   gem 'simplecov', require: false
-  gem 'simplecov-teamcity-summary', require: false
+  gem 'simplecov-cobertura', require: false
 end
 
 group :integration do

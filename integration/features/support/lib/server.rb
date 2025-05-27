@@ -5,14 +5,12 @@ require 'pathname'
 require 'active_support'
 require 'active_support/core_ext'
 require 'restify'
-require 'pry'
 require 'mkmf'
+require 'erb'
 require 'net/http'
 require 'aws-sdk-s3'
 
 ChildProcess.posix_spawn = true
-
-S3_STORAGE_DIR = Pathname.new "/tmp/xikolo-#{ENV.fetch('RAILS_ENV', 'integration')}-s3"
 
 class Server < MultiProcess::Process
   include MultiProcess::Process::Rails
@@ -32,8 +30,9 @@ class Server < MultiProcess::Process
 
     dir = ::File.join(Server.base, opts.fetch(:subpath))
     env = {
-      'RAILS_ENV' => 'integration',
       'GURKE' => 'true',
+      'RAILS_ENV' => 'integration',
+      'SECRET_KEY_BASE_DUMMY' => '1',
     }
 
     super(dir:, env:, title: id.to_s)
@@ -62,6 +61,9 @@ class Server < MultiProcess::Process
     opts = command.last.is_a?(Hash) ? command.pop : {}
     opts = opts.merge(dir:, title: id)
     command.map!(&:to_s)
+
+    opts[:env] ||= {}
+    opts[:env]['BUNDLE_PATH'] = ENV['BUNDLE_PATH'] if ENV.key?('BUNDLE_PATH')
 
     MultiProcess::Process.new(*command, opts)
   end
@@ -171,7 +173,6 @@ class Server < MultiProcess::Process
         opts = opts.merge receiver: MultiProcess::Logger.new($stdout, $stderr,
           sys: opts.fetch(:sys, true))
       end
-      opts = opts.merge partition: 2 if ENV['TEAMCITY_VERSION'] && !opts[:partition]
 
       timout = opts.delete(:timeout) || 240
 
@@ -181,17 +182,10 @@ class Server < MultiProcess::Process
     end
 
     def start
-      if ENV['TEAMCITY_VERSION']
-        group.start delay: 0.5
-        delayed_group.start delay: 0.5
-        sidekiq_group.start delay: 0.5
-        group.available! timeout: 240
-      else
-        group.start delay: 0.1
-        delayed_group.start delay: 0.1
-        sidekiq_group.start delay: 0.1
-        group.available! # default timeout
-      end
+      group.start delay: 0.1
+      delayed_group.start delay: 0.1
+      sidekiq_group.start delay: 0.1
+      group.available! # default timeout
     end
 
     def config_all
@@ -202,9 +196,6 @@ class Server < MultiProcess::Process
       config_services
       config_service_urls
       config_s3
-
-      # Adjust simplecov coverage results from unit tests to have correct file names
-      adjust_coverage_results if ENV['TEAMCITY_VERSION']
     end
 
     def config_initializers
@@ -241,39 +232,22 @@ class Server < MultiProcess::Process
     end
 
     def config_s3
-      conf = YAML.load_file(Gurke.root.join('support/lib/xikolo.yml').to_s)
+      conf = Xikolo.config.parse_file(Gurke.root.join('support/lib/xikolo.yml').to_s)
       conf['domain'] = BASE_URI.host
       conf['domain'] += ":#{BASE_URI.port}" if BASE_URI.port
       conf['base_url'] = BASE_URI.to_s
 
-      if ENV['S3_CONFIG_FILE']
-        s3_config = YAML.safe_load_file(ENV['S3_CONFIG_FILE'])
-        Xikolo.config['s3'] = s3_config['web']
-        # already build resource object (the credentials might be overwritten
-        # later on)
-        Xikolo::S3.resource
-      end
+      # Merge integration defaults into current S3 config so that S3
+      # buckets can be set up:
+      Xikolo.config.merge(conf)
+
+      # Create buckets with needed policies
+      Minio.setup
 
       Server.each :config do |app|
         dest = app.file('config', 'xikolo.integration.yml')
         dest.unlink if dest.exist?
-        if s3_config
-          conf.delete('s3')
-          conf['s3'] = s3_config[app.id.to_s] if s3_config.key? app.id.to_s
-        end
         dest.write YAML.dump conf
-      end
-    end
-
-    def adjust_coverage_results
-      Server.each do |app|
-        resultfile = app.file('coverage', '.resultset.json')
-        next unless resultfile.exist?
-
-        system 'sed',
-          '--in-place',
-          "--expression=s|/var/lib/teamcity-agent/work/[^/]*/|#{File.realpath(app.dir)}/|",
-          app.file('coverage', '.resultset.json').to_s
       end
     end
 
@@ -289,7 +263,6 @@ class Server < MultiProcess::Process
       $stdout.flush
 
       config_all
-      Server.util(:minio)&.setup
 
       $stdout.puts '(~)> Starting applications...'
       $stdout.flush
@@ -307,15 +280,6 @@ class Server < MultiProcess::Process
       processes = [utils_group, delayed_group, sidekiq_group].flat_map(&:processes)
 
       $stdout.puts '(~)> Stopping processes ...'
-      processes.each do |app|
-        ::Process.kill 'QUIT', app.childprocess.pid
-      end
-      Server.each do |app|
-        ::Process.kill 'QUIT', app.childprocess.pid
-      end
-      sleep 2
-
-      $stdout.puts '(~)> Killing processes ...'
       Server.each(&:stop)
       processes.each(&:stop)
 
@@ -325,8 +289,6 @@ class Server < MultiProcess::Process
 
       $stdout.puts '(~)> Application stopped.'
       $stdout.flush
-
-      FileUtils.rmtree S3_STORAGE_DIR.to_s if S3_STORAGE_DIR.to_s.starts_with? '/tmp'
     end
   end
 
@@ -379,161 +341,3 @@ class SidekiqProcess < Server
     cmd
   end
 end
-
-class MinioProcess < MultiProcess::Process
-  def initialize
-    super(*server_command, title: 'minio')
-  end
-
-  def id
-    :minio
-  end
-
-  def server_command
-    cmd = %w[minio server]
-    cmd << '--address' << '127.0.0.1:8099'
-    cmd << '--config-dir' << File.expand_path('../../../tmp/.minio', __dir__)
-    cmd << '--quiet'
-    cmd << S3_STORAGE_DIR.to_s
-    cmd
-  end
-
-  def url
-    'http://127.0.0.1:8099'
-  end
-
-  def available?
-    return false unless alive?
-
-    Typhoeus.get(url).code == 403
-  rescue StandardError
-    false
-  end
-
-  def setup
-    self.class.setup
-  end
-
-  def self.delete_all
-    Xikolo::S3.resource.buckets.each do |bucket|
-      # First, delete all objects inside the bucket
-      bucket.objects.each(&:delete)
-
-      # Then, delete the empty bucket
-      bucket.delete
-    end
-  end
-
-  def self.setup
-    uploads = Xikolo::S3.resource.bucket 'xikolo-uploads'
-    uploads.create unless uploads.exists?
-    uploads.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: uploads
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-            - 's3:DeleteObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-uploads/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    xipublic = Xikolo::S3.resource.bucket 'xikolo-public'
-    xipublic.create unless xipublic.exists?
-    xipublic.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: public
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-public/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    certificates = Xikolo::S3.resource.bucket 'xikolo-certificate'
-    certificates.create unless certificates.exists?
-
-    collab = Xikolo::S3.resource.bucket 'xikolo-collabspace'
-    collab.create unless collab.exists?
-    collab.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: collabspace
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-collabspace/collabspaces/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    pas = Xikolo::S3.resource.bucket 'xikolo-peerassessment'
-    pas.create unless pas.exists?
-    pas.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: peerassessment
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-peerassessment/assessments/*/attachments/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    pinboard = Xikolo::S3.resource.bucket 'xikolo-pinboard'
-    pinboard.create unless pinboard.exists?
-    pinboard.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: pinboard
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-pinboard/courses/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    scientist = Xikolo::S3.resource.bucket 'xikolo-scientist'
-    scientist.create unless scientist.exists?
-    scientist.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: scientist
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:PutObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-scientist/experiments/*'
-          Principal: {'AWS': '*'}
-    POLICY
-
-    video = Xikolo::S3.resource.bucket 'xikolo-video'
-    video.create unless video.exists?
-    video.policy.put policy: JSON.dump(YAML.safe_load(<<~POLICY))
-      Id: video
-      Version: '2012-10-17'
-      Statement:
-        - Sid: content
-          Action:
-            - 's3:GetObject'
-          Effect: Allow
-          Resource:
-            - 'arn:aws:s3:::xikolo-video/*'
-          Principal: {'AWS': '*'}
-    POLICY
-  end
-end
-
-Server.utils_group << MinioProcess.new if !ENV['S3_CONFIG_FILE'] && find_executable('minio')

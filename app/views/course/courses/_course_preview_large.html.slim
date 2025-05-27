@@ -7,9 +7,6 @@
     - else
       = render Course::CourseVisual.new(course.visual_url, width: 550, alt_text: course.title, css_classes: 'full-width')
   .col-md-6.course-info
-    - if course.show_social_media_buttons?
-      = render 'shared/social_sharing', social_sharing:, services: %w[facebook twitter mail]
-
     .row
       .col-md-12.course-description.mt20 lang=course.lang
         == course.abstract_html
@@ -47,8 +44,6 @@
             = render Global::FaIcon.new('medal', css_classes: 'vmiddle em1-5 fa-fw')
             span.ml5.vmiddle
               = t(:'courses.preview.proctoring.booked')
-              - if course.show_smowl_registration_notice?
-                =< link_to t(:'courses.preview.proctoring.register_with_smowl'), proctoring_registration_details_path(course_id: course.course_code)
         - elsif course.show_proctoring_impossible_message?
           br
           span.shortinfo
@@ -74,21 +69,16 @@
           = link_to t(:'course.courses.show.button_register'), course.external_registration_url, class: 'course-action-button action course-action-enroll mr10', target: '_blank', rel: 'noopener'
         - elsif !course.invite_only?
           - if course.enrollment_policy?
-            = render Course::EnrollmentDialog.new(course.course_code, target_id: 'course_preview_large')
-            button.course-action-button.action.course-action-enroll.mr10 type='button' aria-controls='course_preview_large'
+            button.course-action-button.action.course-action-enroll.mr10 type='button' aria-controls='course_preview_large' data-behavior='open-enrollment-dialog'
               = t(:'courses.preview.button_enroll')
+            = render Global::Dialog.new('course_preview_large') do
+              = render Course::EnrollmentPolicyForm.new(course.course_code)
+            end
           - else
             = link_to enrollments_path(course_id: course.course_code), method: :get, data: {behavior: 'disable-after-click'}, class: 'course-action-button action course-action-enroll mr10' do
               = t(:'courses.preview.button_enroll')
         - if course.reactivate?
           = link_to course_redeem_voucher_path(course_id: course.course_code, product: 'course_reactivation'), class: 'course-action-button action course-action-reactivate mr10' do
             = t(:'courses.preview.button_reactivate_course')
-        - if course.upgrade_proctoring?
-          - if course.proctoring_upgrade_possible?
-            = link_to course_redeem_voucher_path(course_id: course.course_code, product: 'proctoring_smowl'), class: 'course-action-button action course-action-proctoring' do
-              = t(:'proctoring.book_certificate')
-          - else
-            a class='course-action-button action course-action-proctoring inactive'
-              = t(:'proctoring.book_certificate')
         - if course.enrolled? && !course.unenrollment_enabled?
           p.mt10 = t(:'courses.preview.unenrollment_disabled')

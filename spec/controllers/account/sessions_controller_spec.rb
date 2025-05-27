@@ -91,7 +91,7 @@ describe Account::SessionsController, type: :controller do
 
     let(:params) { {} }
 
-    context 'with native login enabled' do
+    context 'with native login (email / password) enabled' do
       let(:anonymous_session) do
         super().merge(features: {'account.login' => true})
       end
@@ -291,7 +291,7 @@ describe Account::SessionsController, type: :controller do
           end
         end
 
-        context '(external login enabled)' do
+        context 'with external login page configured' do
           before do
             xi_config <<~YML
               portal_mode:
@@ -380,7 +380,7 @@ describe Account::SessionsController, type: :controller do
 
             # Includes link to request new confirmation email
             # The `request` query parameter is a time-dependent signed blob
-            expect(msg).to match %r{href='/account/confirm/new\?request=[\w-]*'}
+            expect(msg).to match %r{href='/account/confirm/new\?request=[\w%-]*'}
           end
         end
 
@@ -461,38 +461,69 @@ describe Account::SessionsController, type: :controller do
   describe '#destroy' do
     subject(:action) { -> { delete :destroy, params: {id: session_id} } }
 
-    before { stub_user }
-
     let(:session_id) { session[:id] }
-    let!(:destroy_session_stub) do
-      Stub.request(
-        :account, :delete, "/sessions/#{session_id}"
-      ).to_return Stub.json({})
-    end
 
-    it 'redirects the user' do
-      action.call
-      expect(response).to redirect_to root_url
-    end
-
-    it 'displays a message' do
-      action.call
-      expect(flash[:notice].first).to eq I18n.t(:'flash.success.logged_out')
-    end
-
-    it 'destroys the session' do
-      action.call
-      expect(destroy_session_stub).to have_been_requested
-    end
-
-    context 'when the user is logged in via SAML' do
-      before do
-        session.merge!(saml_provider: 'test_saml', saml_uid: 'A987654321', saml_session_index: 'A456789')
+    shared_examples 'a destroyed session' do |slo = false|
+      let(:redirect_url) { slo ? "#{auth_path(session[:saml_provider])}/spslo" : root_url }
+      let(:destroy_session_stub) do
+        Stub.request(:account, :delete, "/sessions/#{session_id}").to_return Stub.json({})
       end
 
-      it 'clears the SAML session' do
-        expect(session).to receive(:clear).twice.and_call_original
+      before do
+        stub_user
+        destroy_session_stub
+        redirect_url
+      end
+
+      it 'redirects the user' do
         action.call
+        expect(response).to redirect_to redirect_url
+      end
+
+      it 'displays a message' do
+        action.call
+        expect(flash[:notice].first).to eq I18n.t(:'flash.success.logged_out')
+      end
+
+      it 'destroys the session' do
+        action.call
+        expect(destroy_session_stub).to have_been_requested
+      end
+    end
+
+    it_behaves_like 'a destroyed session'
+
+    context 'when the user was logged in via SAML' do
+      context 'without SLO support' do
+        before do
+          session.merge!(saml_provider: 'test_saml', saml_uid: 'A987654321', saml_session_index: 'A456789')
+        end
+
+        it 'clears the SAML session' do
+          # Clear the session twice,
+          # the first time to clear everything except the SAML session
+          # the second time to clear the SAML session because SLO is not supported
+          expect(session).to receive(:clear).twice.and_call_original
+          action.call
+          expect(session).to match hash_excluding saml_session_index: 'A456789'
+        end
+
+        it_behaves_like 'a destroyed session'
+      end
+
+      context 'with SLO support' do
+        before do
+          session.merge!(saml_provider: 'test_saml_with_slo', saml_uid: 'A987654321', saml_session_index: 'A456789')
+        end
+
+        it 'clears the SAML session' do
+          # When clearing the session once, the SAML session is preserved
+          expect(session).to receive(:clear).once.and_call_original
+          action.call
+          expect(session).to match hash_including saml_session_index: 'A456789'
+        end
+
+        it_behaves_like 'a destroyed session', true
       end
     end
   end

@@ -54,6 +54,7 @@ class Home::CoursesController < Abstract::FrontendController
   private
 
   Category = Struct.new(:title, :courses, :callout)
+  private_constant :Category
 
   def categorize(scope)
     categories = [
@@ -99,7 +100,7 @@ class Home::CoursesController < Abstract::FrontendController
 
   def filtered_list?
     filters = Course::Cluster.ids + %w[channel lang q]
-    filters.any? { params[_1].present? }
+    filters.any? { params[it].present? }
   end
 
   def featured_course_from(scope)

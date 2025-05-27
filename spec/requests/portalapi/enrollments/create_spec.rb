@@ -8,16 +8,10 @@ describe 'Portal API: Create enrollment', type: :request do
   let(:headers) { {} }
   let(:params) { {} }
   let(:json) { JSON.parse response.body }
-  let(:enrollment) { build(:'course:enrollment', user_id: authorization['user_id']) }
-  let(:authorization) { build(:'account:authorization') }
-  let(:uid) { authorization['uid'] }
+  let(:enrollment) { build(:'course:enrollment') }
 
   before do
-    Stub.service(:account, build(:'account:root'))
     Stub.service(:course, build(:'course:root'))
-
-    Stub.request(:account, :get, '/authorizations', query: {uid:})
-      .to_return Stub.json([authorization])
   end
 
   context 'without Authorization header' do
@@ -92,9 +86,8 @@ describe 'Portal API: Create enrollment', type: :request do
       let(:headers) { super().merge('Accept' => 'application/vnd.openhpi.enrollment+json;v=1.0') }
 
       context 'without a user ID' do
-        let(:params) do
-          super().merge(course_id: enrollment['course_id'])
-        end
+        let(:course_id) { generate(:course_id) }
+        let(:params) { super().merge(course_id:) }
 
         it 'responds with HTTP 422' do
           request
@@ -109,43 +102,27 @@ describe 'Portal API: Create enrollment', type: :request do
       end
 
       context 'with an unknown user' do
-        let(:uid) { 'unkown-saml-uid' }
-        let(:params) do
-          super().merge(user_id: uid, course_id: enrollment['course_id'])
-        end
-
-        before do
-          Stub.request(:account, :get, '/authorizations', query: {uid:})
-            .to_return Stub.response(status: 404)
-        end
-
-        it 'responds with HTTP 404 Not Found' do
-          request
-          expect(response).to have_http_status :not_found
-          expect(response.headers['Content-Type']).to eq 'application/problem+json; charset=utf-8'
-          expect(json).to eq(
-            'type' => 'https://openhpi.stoplight.io/docs/portal-api/068d6638d8e0b-errors#course_or_user_not_found',
-            'title' => 'Course or user not found.',
-            'status' => 404
-          )
-        end
-      end
-
-      context 'with an unknown course' do
-        let(:unknown_course_id) { generate(:course_id) }
-        let(:params) do
-          super().merge(user_id: uid, course_id: unknown_course_id)
-        end
+        let(:unknown_user_id) { SecureRandom.uuid }
+        let(:unknown_course_id) { SecureRandom.uuid }
+        let(:params) { super().merge(user_id: unknown_user_id, course_id: unknown_course_id) }
 
         before do
           Stub.request(
             :course, :get, '/enrollments',
             query: {
-              user_id: authorization['user_id'],
-              course_id: params[:course_id],
+              user_id: unknown_user_id,
+              course_id: unknown_course_id,
               learning_evaluation: true,
             }
-          ).to_return Stub.response(status: 404)
+          ).to_return Stub.json([])
+
+          Stub.request(
+            :course, :post, '/enrollments',
+            body: {
+              user_id: unknown_user_id,
+              course_id: unknown_course_id,
+            }
+          ).to_return status: 404
         end
 
         it 'responds with HTTP 404 Not Found' do
@@ -161,9 +138,7 @@ describe 'Portal API: Create enrollment', type: :request do
       end
 
       context 'with valid parameters' do
-        let(:params) do
-          super().merge(user_id: uid, course_id: enrollment['course_id'])
-        end
+        let(:params) { super().merge(user_id: enrollment['user_id'], course_id: enrollment['course_id']) }
         let(:enrollments_response) { [] }
 
         let!(:create_enrollment_stub) do
@@ -195,7 +170,7 @@ describe 'Portal API: Create enrollment', type: :request do
           expect(json).to eq({
             'id' => enrollment['id'],
             'course_id' => enrollment['course_id'],
-            'user_id' => authorization['uid'],
+            'user_id' => enrollment['user_id'],
           })
         end
 

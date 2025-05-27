@@ -26,8 +26,8 @@ module Locale
     end
   end
 
-  # Return value of the query parameter that contains a locale
-  # value top change to.
+  # Return value of the query parameter that contains a locale value top
+  # change to.
   #
   # This currently must be public API as it is overriden in some
   # controllers to disable query parameter based locale switching.
@@ -39,10 +39,10 @@ module Locale
 
   # Check if a query parameter `locale` is set.
   #
-  # This happends primarly when a user clicks on a language link in
-  # the language menu. If the locale is available it will be saved
-  # to the session (important for anonymous users). If the current user
-  # is logged in their preferred language will be changed too.
+  # This happens primarily when a user clicks on a language link in the
+  # language menu. If the locale is available it will be saved to the
+  # session (important for anonymous users). If the current user is
+  # logged in their preferred language will be changed too.
   #
   def load_query_locale
     return unless (locale = sanitize_locale(locale_param))
@@ -52,9 +52,10 @@ module Locale
 
     # Update logged in users language preference
     if current_user.logged_in?
-      Xikolo.api(:account).value!.rel(:user).patch({
-        language: locale,
-      }, {id: current_user.id}).value!
+      Xikolo.api(:account).value!.rel(:user).patch(
+        {language: locale},
+        params: {id: current_user.id}
+      ).value!
     end
 
     locale
@@ -68,8 +69,8 @@ module Locale
   # Check if current user has a preferred language.
   #
   # Make sure to use `User#preferred_language` and not `User#language`.
-  # The latter is always filled in by the account service and used
-  # by service backends.
+  # The latter is always filled in by the account service and used by
+  # service backends.
   #
   def load_user_locale
     sanitize_locale current_user.preferred_language

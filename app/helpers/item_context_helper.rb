@@ -37,8 +37,15 @@ module ItemContextHelper
 
   def create_item_presenter!
     Acfs.on the_item, the_section, the_course do |item, section, course|
-      presenter_class = Module.const_get "#{item.content_type}_item_presenter".camelize
+      presenter_class = ItemPresenter.lookup(item)
       @item_presenter = presenter_class.build item, section, course, current_user, params:
     end
+  end
+
+  def create_visit!
+    return if current_user.masqueraded? || !current_user.authenticated?
+    return if @in_app || @item_presenter.required_items.present?
+
+    Xikolo::Course::Visit.create user_id: current_user.id, item_id: the_item.id
   end
 end

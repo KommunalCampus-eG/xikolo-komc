@@ -14,7 +14,7 @@ class Course::LaunchController < ApplicationController
       unless Login.external?
         add_flash_message :notice, t(:'flash.notice.login_to_enroll', course: course['title'])
       end
-      return redirect_to login_url
+      return redirect_external login_url
     end
 
     redirect_to auth_path(params[:auth])
@@ -26,7 +26,7 @@ class Course::LaunchController < ApplicationController
     @course ||= Xikolo.api(:course)
       .value!
       .rel(:course)
-      .get(id: params[:course_id])
+      .get({id: params[:course_id]})
       .value
   end
 end

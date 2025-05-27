@@ -34,6 +34,7 @@ Xikolo.brand = ENV['BRAND'] if ENV.key?('BRAND')
 module Xikolo::NotificationService
   class Application < Rails::Application
     include Xikolo::Common::Secrets
+    include Xikolo::Common::Nomad
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
@@ -67,26 +68,12 @@ module Xikolo::NotificationService
     # CSRF tokens on POST requests.
     config.action_controller.default_protect_from_forgery = false
 
-    config.i18n.available_locales = %i[cn de en es fr nl pt-BR ru uk zh]
+    config.i18n.available_locales = %i[de en es fr nl uk]
     config.i18n.default_locale = :en
     config.i18n.fallbacks = %i[en]
 
-    # Use brand specific manifest for sprockets because assets can be overridden
-    # in the brand specific path added further down
-    config.assets.manifest = Rails.public_path.join('assets', ".sprockets.#{Xikolo.brand}.json")
-
-    # Add brand specific path *before* the regular `app/assets` directory to be
-    # able to override specific assets such as brand specific stylesheets
-    config.paths['app/assets'] = [
-      "brand/#{Xikolo.brand}/assets",
-      'app/assets',
-    ]
-    config.assets.enabled = true
-    config.assets.digest = true
-    config.assets.version = '1.0'
-    config.assets.precompile += ['foundation_*.css', "#{Xikolo.brand}.css"]
-
     # Configure Telegraf event collection
+    config.telegraf.connect = ENV.fetch('TELEGRAF_CONNECT', nil)
     config.telegraf.tags = {application: 'notification'}
 
     initializer 'configure-mailer' do

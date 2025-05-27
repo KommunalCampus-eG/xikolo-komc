@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.3.0'
+ruby '~> 3.4.0'
 
 # Rails
 gem 'rails', '~> 7.2.0'
@@ -19,9 +19,10 @@ gem 'syslog'
 gem 'concurrent-ruby', '~> 1.0'
 gem 'mnemosyne-ruby', '~> 2.0'
 gem 'scientist', '~> 1.0'
-gem 'sentry-rails', '~> 5.22.0'
-gem 'sentry-ruby', '~> 5.22.0'
-gem 'sentry-sidekiq', '~> 5.22.0'
+gem 'sentry-rails', '~> 5.23.0'
+gem 'sentry-ruby', '~> 5.23.0'
+gem 'sentry-sidekiq', '~> 5.23.0'
+gem 'stackprof'
 gem 'telegraf', '~> 3.0'
 
 # API
@@ -44,50 +45,51 @@ gem 'uuid4', '~> 1.4'
 # Messaging via RabbitMQ
 gem 'msgr', '~> 1.5'
 
-gem 'restify', '~> 1.15'
+gem 'restify', '~> 2.0'
 gem 'xikolo-common', path: './gems/xikolo-common'
 gem 'xikolo-config', path: './gems/xikolo-config'
 gem 'xikolo-s3', path: './gems/xikolo-s3'
 gem 'xikolo-sidekiq', path: './gems/xikolo-sidekiq'
 
 # Versioning of ActiveRecords
-gem 'paper_trail', '~> 15.0'
+gem 'paper_trail', '~> 16.0'
 
 # Data storage
 gem 'activerecord-postgres_enum', '~> 2.0'
-gem 'fx', '~> 0.8.0'
+gem 'fx', '~> 0.9.0'
 gem 'pg', '~> 1.0'
 gem 'redis', '~> 5.0'
 gem 'scenic', '~> 1.5'
 
 # App servers
 gem 'puma'
+gem 'thruster'
 
 group :development, :test do
+  # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+  gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
   gem 'listen', '~> 3.9.0'
-  gem 'pry'
-  gem 'pry-byebug'
-  gem 'rspec', '~> 3.10'
-  gem 'rspec-collection_matchers'
-  gem 'rspec-its'
-  gem 'rspec-rails', '~> 6.0'
-  gem 'rspec-teamcity', require: false
-  gem 'uuidtools'
-  gem 'wirble'
 end
 
 group :test do
   gem 'accept_values_for'
-  # https://github.com/thoughtbot/factory_bot_rails/pull/432
   gem 'factory_bot_rails', '~> 6.0'
   gem 'timecop'
+  gem 'uuidtools'
   gem 'webmock'
+
+  gem 'rspec', '~> 3.10'
+  gem 'rspec-collection_matchers'
+  gem 'rspec-github', '~> 3.0', require: false
+  gem 'rspec-its'
+  gem 'rspec_junit_formatter', '~> 0.6.0', require: false
+  gem 'rspec-rails', '~> 7.0'
 end
 
 group :test, :integration do
   gem 'database_cleaner', '~> 2.0'
   gem 'simplecov', require: false
-  gem 'simplecov-teamcity-summary', require: false
+  gem 'simplecov-cobertura', require: false
 end
 
 group :integration do

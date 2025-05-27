@@ -239,7 +239,7 @@ module Certificate
 
     def prerequisite_status
       @prerequisite_status ||= Xikolo.api(:course).value!.rel(:prerequisite_status)
-        .get(id: @record.course_id, user_id: @record.user_id)
+        .get({id: @record.course_id, user_id: @record.user_id})
         .value!
     end
 
@@ -247,7 +247,7 @@ module Certificate
       return unless @template.certificate_type == ::Certificate::Record::TOR
 
       prerequisite_status['prerequisites']
-        .filter_map { _1['score'].to_f if _1['required_certificate'] == 'roa' }
+        .filter_map { it['score'].to_f if it['required_certificate'] == 'roa' }
         .then {|scores| scores.sum.fdiv(scores.count) }
     end
 

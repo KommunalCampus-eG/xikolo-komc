@@ -3,7 +3,7 @@
 Server.base = ENV['SERVICES_DIR'] if ENV.key? 'SERVICES_DIR'
 
 # When running integration tests, only start the services we need.
-Server.required_roles << :integration if ENV.key?('GURKE') || ENV.key?('TEAMCITY_VERSION')
+Server.required_roles << :integration if ENV.key?('GURKE')
 
 ##
 # CONFIGURE ALL SERVICES
@@ -46,9 +46,6 @@ Server.add :news,               name: 'news',
 Server.add :notification,       name: 'notification',
   roles: %i[rails db srv msgr sidekiq config integration],
   subpath: 'services/notification'
-Server.add :peerassessment,     name: 'peerassessment',
-  roles: %i[rails db srv sidekiq config integration],
-  subpath: 'services/peerassessment'
 Server.add :pinboard,           name: 'pinboard',
   roles: %i[rails db srv msgr sidekiq config integration],
   subpath: 'services/pinboard'

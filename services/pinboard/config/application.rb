@@ -25,6 +25,7 @@ require 'telegraf/rails'
 module Xikolo::PinboardService
   class Application < Rails::Application
     include Xikolo::Common::Secrets
+    include Xikolo::Common::Nomad
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
@@ -54,10 +55,8 @@ module Xikolo::PinboardService
     # CSRF tokens on POST requests.
     config.action_controller.default_protect_from_forgery = false
 
-    # Restify: Do not wrap hashes with object-like accessors
-    Restify::Processors::Json.indifferent_access = false
-
     # Configure Telegraf event collection
+    config.telegraf.connect = ENV.fetch('TELEGRAF_CONNECT', nil)
     config.telegraf.tags = {application: 'pinboard'}
   end
 end

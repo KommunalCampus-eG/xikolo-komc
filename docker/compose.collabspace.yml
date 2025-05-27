@@ -13,8 +13,8 @@ x-collabspace: &collabspace
   networks:
     - xikolo
   volumes:
-    - ./config/xikolo.yml:/etc/xikolo.yml:ro
-    - ./config/xikolo/collabspace.yml:/app/config/xikolo.yml:ro
+    - ./config/xikolo.yml:/local/xikolo.yml:ro
+    - ./config/xikolo/collabspace.yml:/local/config/xikolo.yml:ro
   restart: always
   depends_on:
     init-database:

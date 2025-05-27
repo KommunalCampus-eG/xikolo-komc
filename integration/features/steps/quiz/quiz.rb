@@ -94,6 +94,7 @@ module Steps
     Then 'I see the split navigation on the quiz intro page' do
       send :'Then I see the quiz intro page information'
       expect(page).to have_content 'Results'
+      expect(page).to have_content 'Retake quiz'
     end
 
     Then 'I see the quiz intro page information' do
@@ -148,10 +149,12 @@ module Steps
 
     Then 'I see the result of the submission with the correct answer' do
       expect(page).to have_content '3.0 / 3.0'
+      expect(page).to have_content '100%'
     end
 
     Then 'I see the result of the submission with the wrong answer' do
       expect(page).to have_content '0.0 / 3.0'
+      expect(page).to have_content '0%'
     end
 
     Then 'I should see the result of the first submission' do

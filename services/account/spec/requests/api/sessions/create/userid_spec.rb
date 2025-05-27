@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe 'Sessions: Create with User ID', type: :request do
-  subject(:resource) { api.rel(:sessions).post(**payload).value! }
+  subject(:resource) { api.rel(:sessions).post(payload).value! }
 
   let(:api) { Restify.new(:test).get.value! }
   let(:user) { create(:user) }
@@ -38,7 +38,7 @@ describe 'Sessions: Create with User ID', type: :request do
       before { user.update! archived: true }
 
       it 'responds with 422 Unprocessable Entity' do
-        expect(response).to respond_with :unprocessable_entity
+        expect(response).to respond_with :unprocessable_content
       end
 
       it 'does not create session record' do

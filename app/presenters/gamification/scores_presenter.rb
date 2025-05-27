@@ -19,9 +19,9 @@ module Gamification
       @by_course ||= @user.gamification_scores
         .where(rule: CATEGORIES.values.flatten).where('points > 0')
         .group(:course_id, :rule).total
-        .then { sum_per_category(_1) }
-        .then { sum_total_per_category(_1) }
-        .then { load_courses(_1) }
+        .then { sum_per_category(it) }
+        .then { sum_total_per_category(it) }
+        .then { load_courses(it) }
     end
 
     private
@@ -30,10 +30,11 @@ module Gamification
       selftests: %i[selftest_master take_selftest],
       communication: %i[upvote_answer upvote_question accepted_answer answered_question],
     }.freeze
+    private_constant :CATEGORIES
 
     def sum_per_category(scores)
       scores.each_with_object(
-        Hash.new {|h, k| h[k] = columns.to_h { [_1, 0] } }
+        Hash.new {|h, k| h[k] = columns.index_with { 0 } }
       ) do |(key, points), memo|
         course_id, rule = key
         category = lookup_category(rule)
@@ -46,7 +47,7 @@ module Gamification
     def sum_total_per_category(result)
       result.merge(
         total: columns.index_with do |category|
-          result.values.sum { _1[category] }
+          result.values.sum { it[category] }
         end
       )
     end

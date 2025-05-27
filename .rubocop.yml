@@ -1,4 +1,4 @@
-require:
+plugins:
   - rubocop-capybara
   - rubocop-factory_bot
   - rubocop-performance
@@ -21,9 +21,8 @@ inherit_from:
   - .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 3.3
-  TargetRailsVersion: 6.1
-  UseCache: True
+  TargetRailsVersion: 7.2
+  TargetRubyVersion: 3.4
   NewCops: enable
   Exclude:
     - ".cache/**/*"

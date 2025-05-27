@@ -23,16 +23,20 @@ module Collabspace
       @course = the_course
       Restify::Promise.new [
         collabspace_api.rel(:collab_spaces)
-          .get(user_id: current_user.id,
+          .get({
+            user_id: current_user.id,
             course_id: @course.id,
             with_membership: 'false',
             per_page: PER_PAGE,
             page: current_page,
-            sort: 'name'),
+            sort: 'name',
+          }),
         collabspace_api.rel(:collab_spaces)
-          .get(user_id: current_user.id,
+          .get({
+            user_id: current_user.id,
             course_id: @course.id,
-            with_membership: 'true'),
+            with_membership: 'true',
+          }),
       ] do |unjoined_collabspaces, my_collabspaces|
         @my_collabspace_presenters = wrap_in_presenters my_collabspaces
         @unjoined_collabspaces = unjoined_collabspaces
@@ -52,8 +56,7 @@ module Collabspace
       @members = approved_members
       @collabspace_presenter = build_collabspace_presenter(
         collabspace:,
-        memberships: @memberships,
-        load_tpa: true
+        memberships: @memberships
       )
 
       set_page_title the_course.title, t(:'courses.nav.learning_rooms')
@@ -61,7 +64,7 @@ module Collabspace
       if member? || current_user.allowed?('course.course.teaching_anywhere')
         render layout: LAYOUTS[:course_area_two_cols]
       else
-        render 'request_membership', layout: LAYOUTS[:course_area]
+        render 'join', layout: LAYOUTS[:course_area]
       end
     end
 
@@ -85,8 +88,7 @@ module Collabspace
       @members = all_members
       @collabspace_presenter = build_collabspace_presenter(
         collabspace:,
-        memberships: @memberships,
-        load_tpa: true
+        memberships: @memberships
       )
 
       @collabspace = Collabspace::CollabspacesForm.new(collabspace)
@@ -179,7 +181,7 @@ module Collabspace
     def course_memberships
       @course_memberships ||= collabspace_api
         .rel(:memberships)
-        .get(user_id: current_user.id, course_id: @course.id)
+        .get({user_id: current_user.id, course_id: @course.id})
         .value!
     end
 
@@ -240,7 +242,7 @@ module Collabspace
     end
 
     def collabspace
-      @collabspace ||= collabspace_api.rel(:collab_space).get(id: collabspace_id).value!
+      @collabspace ||= collabspace_api.rel(:collab_space).get({id: collabspace_id}).value!
     end
 
     def collabspace_api

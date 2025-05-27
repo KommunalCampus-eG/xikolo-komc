@@ -1,10 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
-//
 import { join } from 'path';
 
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import webpack from 'webpack';
-import WebpackAssetsManifest from 'webpack-assets-manifest';
+import { WebpackAssetsManifest } from 'webpack-assets-manifest';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 import makeEntries from './entries.mjs';
@@ -25,7 +23,7 @@ export default async (settings) => {
   console.log(`  Default path: ${defaultPath}`);
   console.log(`  Entries:`);
   const nameMax = Math.max(...Object.keys(entry).map((x) => x.length));
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const [name, files] of Object.entries(entry)) {
     console.log(`    ${name.padEnd(nameMax)}: ${files}`);
   }
@@ -63,8 +61,16 @@ export default async (settings) => {
         'browser',
         'main',
       ],
-      modules: [brandPath, defaultPath, join(root, 'node_modules')],
-      extensions: ['.ts', '.js', '.mjs', '.sass', '.scss', '.css'],
+      modules: [
+        brandPath,
+        defaultPath,
+        join(root, 'node_modules'),
+        // Load generated i18n-js files containing the exported locale strings. These
+        // files are created when running `rake assets:i18n:export`, which is also part
+        // of `make assets`.
+        join(root, 'tmp', 'cache', brand),
+      ],
+      extensions: ['.ts', '.js', '.mjs', '.sass', '.scss', '.css', '.json'],
     },
 
     module: {
@@ -119,6 +125,7 @@ export default async (settings) => {
         statsFilename: `.stats.${brand}.json`,
       }),
     ],
+
     optimization: {
       // Always do tree shaking to avoid issues in production only and to be
       // able to analyze module usage while in development environment.
@@ -132,6 +139,11 @@ export default async (settings) => {
       // page we want a single runtime chunk to be loaded first, instead of
       // having one runtime embedded in each bundle.
       runtimeChunk: 'single',
+    },
+
+    cache: {
+      type: 'filesystem',
+      cacheDirectory: join(root, '.cache', 'webpack', brand),
     },
   };
 };

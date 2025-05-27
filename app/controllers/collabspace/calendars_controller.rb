@@ -20,8 +20,7 @@ module Collabspace
 
       @collabspace_presenter = build_collabspace_presenter(
         collabspace:,
-        memberships: user_memberships,
-        load_tpa: true
+        memberships: user_memberships
       )
     end
 
@@ -39,7 +38,7 @@ module Collabspace
     def collabspace
       @collabspace ||= Xikolo.api(:collabspace).value!
         .rel(:collab_space)
-        .get(id: collabspace_id)
+        .get({id: collabspace_id})
         .value!
     end
   end

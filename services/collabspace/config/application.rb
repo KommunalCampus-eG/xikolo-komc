@@ -32,6 +32,7 @@ Xikolo.brand = ENV['BRAND'] if ENV.key?('BRAND')
 module Xikolo::CollabSpace
   class Application < Rails::Application
     include Xikolo::Common::Secrets
+    include Xikolo::Common::Nomad
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
@@ -58,10 +59,8 @@ module Xikolo::CollabSpace
     # Prepend all log lines with the following tags.
     config.log_tags = [:request_id]
 
-    # Restify: Do not wrap hashes with object-like accessors
-    Restify::Processors::Json.indifferent_access = false
-
     # Configure Telegraf event collection
+    config.telegraf.connect = ENV.fetch('TELEGRAF_CONNECT', nil)
     config.telegraf.tags = {application: 'collabspace'}
   end
 end

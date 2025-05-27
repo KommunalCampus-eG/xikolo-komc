@@ -49,12 +49,11 @@ class ItemsController < Abstract::FrontendController
   def show
     Acfs.run
 
-    if current_user.authenticated?
-      store_progress
-    end
-
     return render('error') if @item_presenter.error
     return @item_presenter.redirect(self) if @item_presenter.redirect?
+
+    # The QuizSubmissionController takes care of creating visits for quizzes
+    create_visit! unless @item_presenter.content_type == 'quiz'
 
     meta = @item_presenter.meta_tags
     set_page_title(*meta.delete(:title))
@@ -79,7 +78,6 @@ class ItemsController < Abstract::FrontendController
     @rich_text ||= Course::Richtext.new
     @quiz ||= Xikolo::Quiz::Quiz.new
     @lti_exercise ||= Lti::Exercise.new
-    @peer_assessment ||= Xikolo::PeerAssessment::PeerAssessment.new
 
     # for nav and stuff
     @course ||= the_course
@@ -93,8 +91,6 @@ class ItemsController < Abstract::FrontendController
 
       @lti_providers_global ||= Lti::Provider.global
       @lti_providers_course ||= Lti::Provider.where(course_id: course.id)
-
-      @peer_assessments ||= Xikolo::PeerAssessment::PeerAssessment.where(course_id: course.id)
     end
 
     @navsec ||= Xikolo::Course::Section.find(params[:section_id]) do |section|
@@ -185,19 +181,6 @@ class ItemsController < Abstract::FrontendController
         @content = @quiz = Xikolo::Quiz::Quiz.new content_quiz_params
       when 'lti_exercise'
         @content = @lti_exercise = Lti::Exercise::Store.call(Lti::Exercise.new, content_lti_params)
-      when 'peer_assessment'
-        if params[:existing_assessment] == 'new'
-          Acfs.on the_course do |course|
-            # Create the assessment and redirect to the configuration later
-            @assessment = Xikolo::PeerAssessment::PeerAssessment.new
-            @assessment.title = @item.title
-            @assessment.course_id = course.id
-
-            @content = @assessment
-          end
-        else
-          @content = Xikolo::PeerAssessment::PeerAssessment.find params[:existing_assessment]
-        end
     end
 
     # Make sure both the course and section are loaded
@@ -244,15 +227,6 @@ class ItemsController < Abstract::FrontendController
       return redirect_to edit_course_section_item_path id: item.id
     end
 
-    if (item_params[:content_type] == 'peer_assessment') &&
-       (params[:existing_assessment] == 'new')
-      # The backwards reference is only needed for internal computing,
-      # any item of a course linking to the assessment would suffice.
-      @assessment.item_id = item.id
-      @assessment.save
-      return redirect_to edit_peer_assessment_path short_uuid(@assessment.id)
-    end
-
     redirect_to course_sections_path
   end
 
@@ -285,8 +259,6 @@ class ItemsController < Abstract::FrontendController
 
       @lti_providers_global ||= Lti::Provider.global
       @lti_providers_course ||= Lti::Provider.where(course_id: course.id)
-
-      @peer_assessments ||= Xikolo::PeerAssessment::PeerAssessment.where(course_id: course.id)
     end
 
     # Check whether the content type supports open mode and featured
@@ -413,16 +385,15 @@ class ItemsController < Abstract::FrontendController
     end
     Acfs.run
 
-    # Destroy the item via `xi-course` (ItemsController#destroy) to trigger
-    # callbacks on destroy that are only available in the service model.
-    # Once, `xi-quiz` and `xi-peerassessment` are part of the monolith,
-    # we can destroy the `Course::Item` record in `xi-web`, which also triggers
+    # Destroy the item via `xi-course` (ItemsController#destroy) to
+    # trigger callbacks on destroy that are only available in the
+    # service model. Once, `xi-quiz` are part of the monolith, we can
+    # destroy the `Course::Item` record in `xi-web`, which also triggers
     # the destruction of the content.
     item.delete!
 
     # Quizzes are destroyed by `xi-quiz`.
-    # Peer assessment are not destroyed upon item destruction (yet).
-    unless item.content_type == 'quiz' || item.content_type == 'peer_assessment'
+    unless %w[quiz].include?(item.content_type)
       @content.destroy!
       @notice = I18n.t('items.deleted_item')
     end
@@ -436,15 +407,6 @@ class ItemsController < Abstract::FrontendController
   end
 
   private
-
-  def store_progress
-    return if @in_app
-    return if current_user.instrumented?
-    return if @item_presenter.required_items.present?
-
-    Xikolo::Course::Visit.create user_id: current_user.id,
-      item_id: the_item.id
-  end
 
   def check_course_eligibility
     return super unless params[:action] == 'show'

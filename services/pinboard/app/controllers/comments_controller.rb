@@ -10,7 +10,7 @@ class CommentsController < ApplicationController
   # GET /comments
   # GET /comments.xml
   def index
-    comments = Comment.default_order
+    comments = Comment.default_order.includes(:abuse_reports)
     comments.where! deleted: false unless params[:deleted]
     comments.where! user_id: params[:user_id] if params[:user_id]
     comments = comments.unblocked unless [true, 'true'].include? params[:blocked]
@@ -61,7 +61,7 @@ class CommentsController < ApplicationController
     @comment = Comment::Store.call @comment, comment_params.slice(:text)
 
     # check for previous errors directly, as `.valid?` would clear all previously errors:
-    if @comment.errors.empty? && (params[:notification] && params[:notification][:notify]) && !@comment.blocked?
+    if @comment.errors.empty? && params[:notification] && params[:notification][:notify] && !@comment.blocked?
       notify_subscribers commentable, @comment, params[:notification]
     end
 
@@ -79,17 +79,17 @@ class CommentsController < ApplicationController
       event_key = 'pinboard.question.answer.comment.new'
     end
 
-    user = Xikolo.api(:account).value.rel(:user).get(id: comment.user_id)
-    answer_author = Xikolo.api(:account).value.rel(:user).get(id: commentable.user_id)
+    user = Xikolo.api(:account).value.rel(:user).get({id: comment.user_id})
+    answer_author = Xikolo.api(:account).value.rel(:user).get({id: commentable.user_id})
 
-    course = Xikolo.api(:course).value.rel(:course).get(id: question.course_id).value!
+    course = Xikolo.api(:course).value.rel(:course).get({id: question.course_id}).value!
 
     collab_space = {}
     if question.learning_room_id.present?
-      collab_space = Xikolo.api(:collabspace).value.rel(:collab_space).get(id: question.learning_room_id).value!
+      collab_space = Xikolo.api(:collabspace).value.rel(:collab_space).get({id: question.learning_room_id}).value!
     end
 
-    Xikolo.api(:notification).value.rel(:events).post(
+    Xikolo.api(:notification).value.rel(:events).post({
       key: event_key,
       payload: {
         user_id: comment.user_id,
@@ -113,8 +113,8 @@ class CommentsController < ApplicationController
       course_id: question.course_id,
       learning_room_id: question.learning_room_id,
       link: opts[:question_url],
-      subscribers: question.subscriptions.pluck(:user_id)
-    ).value!
+      subscribers: question.subscriptions.pluck(:user_id),
+    }).value!
   end
 
   # PUT /comments/1

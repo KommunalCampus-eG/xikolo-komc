@@ -105,24 +105,6 @@ module Xikolo::Common::Auth::CurrentUser
       preferred_language.present?
     end
 
-    def jwt
-      return if anonymous?
-      # Check "should be" redundant as there is one in both places this is called from:
-      return unless feature?('integration.external_booking')
-
-      payload = {
-        '_id' => session_id, # TODO: find final value to pass on here.
-        'userID' => id,
-        'exp' => 2.days.from_now.to_i, # TODO: Expiration check in booking? Duration to config?
-        'iat' => Time.current.to_i,
-        'fullname' => full_name,
-        'email' => email,
-        'organization_name' => affiliation,
-      }
-
-      JWT.encode(payload, Rails.application.secrets.jwt_hmac_secret, 'HS256')
-    end
-
     private
 
     def permissions_for(context)
@@ -130,7 +112,7 @@ module Xikolo::Common::Auth::CurrentUser
 
       @permission_map.fetch(context) do
         @permission_map[context] = Restify.new(@user['permissions_url'])
-          .get(context:).value!
+          .get({context:}).value!
       end
     end
   end

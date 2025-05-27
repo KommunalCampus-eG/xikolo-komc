@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 describe 'Channel: create with stage visual', type: :request do
-  subject(:action) { api.rel(:channels).post(create_params).value! }
+  subject(:action) { api.rel(:channels).post(data).value! }
 
   let(:api) { Restify.new(:test).get.value }
-  let(:create_params) do
+  let(:data) do
     {
       name: 'group',
       code: 'code',
@@ -33,7 +33,7 @@ describe 'Channel: create with stage visual', type: :request do
     before do
       stub_request(:get,
         'https://s3.xikolo.de/xikolo-uploads?list-type=2&' \
-        "prefix=uploads%2F#{upload_id}") \
+        "prefix=uploads%2F#{upload_id}")
         .to_return(
           status: 200,
           headers: {'Content-Type' => 'Content-Type: application/xml'},
@@ -81,7 +81,7 @@ describe 'Channel: create with stage visual', type: :request do
     before do
       stub_request(:get,
         'https://s3.xikolo.de/xikolo-uploads?list-type=2&' \
-        "prefix=uploads%2F#{upload_id}") \
+        "prefix=uploads%2F#{upload_id}")
         .to_return(
           status: 200,
           headers: {'Content-Type' => 'Content-Type: application/xml'},

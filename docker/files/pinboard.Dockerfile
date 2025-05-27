@@ -1,12 +1,13 @@
-# syntax = docker/dockerfile:1.12@sha256:93bfd3b68c109427185cd78b4779fc82b484b0b7618e36d0f104d4d801e66d25
+# syntax = docker/dockerfile:1.14@sha256:4c68376a702446fc3c79af22de146a148bc3367e73c25a5803d453b6b3f722fb
 
-FROM docker.io/ruby:3.3.6-slim@sha256:655ed7e1f547cfe051ec391e5b55a8cb5a1450f56903af9410dd31a6aedc5681 AS build
+FROM docker.io/ruby:3.4.3-slim@sha256:fcbc3577e23cb188d769e496e7afe639b9946a2bf47c3deac7a38ad58187f6a9 AS build
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
+ENV SECRET_KEY_BASE_DUMMY=true
 
 RUN mkdir --parents /app/
 WORKDIR /app/
@@ -22,6 +23,7 @@ RUN <<EOF
     libidn11-dev \
     libpq-dev \
     libsodium23 \
+    libyaml-dev \
     pax-utils \
     shared-mime-info \
     tzdata
@@ -62,8 +64,12 @@ EOF
 #
 # Runtime image
 #
-FROM docker.io/ruby:3.3.6-slim@sha256:655ed7e1f547cfe051ec391e5b55a8cb5a1450f56903af9410dd31a6aedc5681
+FROM docker.io/ruby:3.4.3-slim@sha256:fcbc3577e23cb188d769e496e7afe639b9946a2bf47c3deac7a38ad58187f6a9
 
+ARG BRAND=xikolo
+ARG BUILD_REF_NAME
+ARG BUILD_COMMIT_SHA
+ARG BUILD_COMMIT_SHORT_SHA
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -71,7 +77,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV BRAND=${BRAND}
 ENV MALLOC_ARENA_MAX=2
 ENV RAILS_ENV=production
-ENV RAILS_LOG_TO_STDOUT=1
+ENV SECRET_KEY_BASE_DUMMY=true
+
+ENV BUILD_REF_NAME=$BUILD_REF_NAME
+ENV BUILD_COMMIT_SHA=$BUILD_COMMIT_SHA
+ENV BUILD_COMMIT_SHORT_SHA=$BUILD_COMMIT_SHORT_SHA
 
 RUN mkdir --parents /app/
 WORKDIR /app/
@@ -83,19 +93,12 @@ RUN useradd --create-home --shell /bin/bash xikolo
 RUN <<EOF
   apt-get --yes --quiet update
   apt-get --yes --quiet --no-install-recommends install \
-    curl \
-    git \
     libcurl4 \
     libsodium23 \
-    nginx \
     shared-mime-info \
     tzdata \
     xz-utils
 EOF
-
-COPY docker/rootfs/pinboard/ /
-COPY docker/bin/ /docker/bin
-RUN /docker/bin/install-s6-overlay
 
 # Copy installed gems and config from `build` stage above
 COPY --from=build /usr/local/bundle /usr/local/bundle
@@ -109,7 +112,15 @@ EOF
 # Copy application files from build stage
 COPY --from=build /app/ /app/
 
+# Ensure temp directory is writable
+RUN <<EOF
+  mkdir -p /app/tmp/
+  chown 1000:1000 /app/tmp/
+EOF
+
+USER 1000:1000
+
 EXPOSE 80/tcp
 
 CMD [ "server" ]
-ENTRYPOINT [ "/init", "with-contenv", "/app/bin/entrypoint" ]
+ENTRYPOINT [ "/app/bin/entrypoint" ]

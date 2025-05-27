@@ -3,15 +3,14 @@
 module Account
   class PoliciesController < Abstract::FrontendController
     before_action :ensure_logged_in
-    skip_auto_login!
 
     def show
       @policy = PolicyPresenter.new(policy)
     end
 
     def update
-      user = account_api.rel(:user).get(id: current_user.id).value!
-      user.rel(:self).patch(accepted_policy_version: policy.version)
+      user = account_api.rel(:user).get({id: current_user.id}).value!
+      user.rel(:self).patch({accepted_policy_version: policy.fetch('version')})
 
       redirect_to redirect_url
     end

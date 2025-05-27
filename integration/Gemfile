@@ -2,11 +2,11 @@
 
 source 'https://rubygems.org'
 
-ruby '~> 3.3.0'
+ruby '~> 3.4.0'
 
 # Libraries
-gem 'activesupport', '< 7'
-gem 'restify', '~> 1.15'
+gem 'activesupport', '~> 7.2'
+gem 'restify', '~> 2.0'
 gem 'uuid4'
 
 gem 'bigdecimal'
@@ -17,14 +17,14 @@ gem 'xikolo-config', path: './gems/xikolo-config'
 gem 'xikolo-s3', path: './gems/xikolo-s3'
 
 # Test frameworks
-gem 'gurke', '~> 3.4'
+gem 'gurke', '~> 3.6'
 gem 'rspec', '~> 3.10'
 
 gem 'capybara', '~> 3.36'
 gem 'selenium-webdriver', '~> 4.11'
 
-gem 'simplecov'
-gem 'simplecov-teamcity-summary'
+gem 'simplecov', require: false
+gem 'simplecov-cobertura', require: false
 
 # Test utilities
 gem 'childprocess', '~> 5.1.0'
@@ -36,6 +36,8 @@ gem 'webmock'
 gem 'webrick'
 
 # Development
-gem 'pry'
-gem 'pry-byebug'
+
+# See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
+gem 'debug', platforms: %i[mri windows], require: 'debug/prelude'
+
 gem 'rake'

@@ -14,12 +14,12 @@ module Course
       course_api = Xikolo.api(:course).value
       return unless course_api&.rel?(:next_dates)
 
-      @promise = course_api.rel(:next_dates).get(
+      @promise = course_api.rel(:next_dates).get({
         course_id: course.id,
         user_id: @user.id,
         all: true,
-        type: 'item_submission_deadline,on_demand_expires'
-      )
+        type: 'item_submission_deadline,on_demand_expires',
+      })
     end
 
     def show?
@@ -39,14 +39,14 @@ module Course
     end
 
     def each
-      deadlines.each { yield _1 }
+      deadlines.each { yield it }
     end
 
     private
 
     def deadlines
       @deadlines ||= if @promise&.value
-                       @promise.value.map { Deadline.new _1 }
+                       @promise.value.map { Deadline.new it }
                      else
                        []
                      end

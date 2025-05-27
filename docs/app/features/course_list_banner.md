@@ -77,7 +77,7 @@ You can speed up showing / removing a banner by deleting the corresponding Rails
 3. Delete the caching key for the course list banner.
 
     ```ruby
-    Rails.cache.delete('web/courses/banners/current')
+    Rails.cache.delete('web/banners/current')
     ```
 
     !!! tip
@@ -91,6 +91,6 @@ Due to caching, the current banner information will be available for at least 30
 The referenced S3 file will be deleted asynchronously, so this usually should not cause issues.
 However, deleting a currently displayed banner is not recommended as it may lead to a corrupted banner image on the course list page.
 
-!!! warning
+!!! danger
 
     Make sure to only delete expired banners or clean up the Rails cache for the current banner.

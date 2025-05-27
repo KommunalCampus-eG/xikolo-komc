@@ -135,7 +135,7 @@ describe 'Course Announcement Mail', type: :feature do
       id: '00000001-3100-4444-9999-000000000101',
       name: 'U_1 Smith',
       email: 'john.smith1@example.com',
-      language: 'cn',
+      language: 'fr',
       archived: false,
       emails_url: '/users/00000001-3100-4444-9999-000000000101/emails',
       features_url: '/users/00000001-3100-4444-9999-000000000101/features',
@@ -200,7 +200,7 @@ describe 'Course Announcement Mail', type: :feature do
         id: '00000001-3100-4444-9999-000000000404',
         name: 'Deleted User',
         email: nil,
-        language: 'cn',
+        language: 'fr',
         archived: true,
         emails_url: '/users/00000001-3100-4444-9999-000000000404/emails',
         features_url: '/users/00000001-3100-4444-9999-000000000404/features',
@@ -224,7 +224,7 @@ describe 'Course Announcement Mail', type: :feature do
 
       api = Restify.new(:test).get.value!
 
-      stats = api.rel(:mail_log_stats).get(news_id: announcement_id).value!
+      stats = api.rel(:mail_log_stats).get({news_id: announcement_id}).value!
       expect(stats['count']).to eq 4
       expect(stats['success_count']).to eq 3
       expect(stats['disabled_count']).to eq 1
@@ -304,13 +304,13 @@ describe 'Course Announcement Mail', type: :feature do
 
       english_mail = mails.find {|m| m.to[0].eql? 'kevin.cool@example.com' }
       german_mail = mails.find {|m| m.to[0].eql? 'tom@example.com' }
-      chinese_mail = mails.find {|m| m.to[0].eql? 'john.smith1@example.com' }
+      french_mail = mails.find {|m| m.to[0].eql? 'john.smith1@example.com' }
 
       expect(english_mail.subject).to eq 'Test Title: A Course'
       expect(german_mail.subject).to eq 'Test Titel: A Course'
-      # chinese is not in available locales,
+      # french is not in available locales,
       # so should fallback to default_locale (en)
-      expect(chinese_mail.subject).to eq 'Test Title: A Course'
+      expect(french_mail.subject).to eq 'Test Title: A Course'
     end
   end
 
@@ -356,13 +356,13 @@ describe 'Course Announcement Mail', type: :feature do
 
     api = Restify.new(:test).get.value!
 
-    stats = api.rel(:mail_log_stats).get(news_id: announcement_id).value!
+    stats = api.rel(:mail_log_stats).get({news_id: announcement_id}).value!
     expect(stats['count']).to eq 0
 
     # Trigger notification events (page 1)
     Msgr::TestPool.run count: 1
 
-    stats = api.rel(:mail_log_stats).get(news_id: announcement_id).value!
+    stats = api.rel(:mail_log_stats).get({news_id: announcement_id}).value!
     expect(stats['count']).to eq 2
     expect(stats['success_count']).to eq 0
     expect(stats['disabled_count']).to eq 0
@@ -371,7 +371,7 @@ describe 'Course Announcement Mail', type: :feature do
     # Send the queued notification mails from page 1 and load page 2
     Msgr::TestPool.run count: 3
 
-    stats = api.rel(:mail_log_stats).get(news_id: announcement_id).value!
+    stats = api.rel(:mail_log_stats).get({news_id: announcement_id}).value!
     expect(stats['count']).to eq 3
     expect(stats['success_count']).to eq 2
     expect(stats['disabled_count']).to eq 0
@@ -380,7 +380,7 @@ describe 'Course Announcement Mail', type: :feature do
     # Send the remaining queued notification mail from page 2
     Msgr::TestPool.run count: 1
 
-    stats = api.rel(:mail_log_stats).get(news_id: announcement_id).value!
+    stats = api.rel(:mail_log_stats).get({news_id: announcement_id}).value!
     expect(stats['count']).to eq 3
     expect(stats['success_count']).to eq 3
     expect(stats['disabled_count']).to eq 0

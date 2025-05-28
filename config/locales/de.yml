@@ -1443,9 +1443,10 @@ de:
     form:
       translations: Übersetzungen
       translation_hint: Falls gewünscht, können Sie hier Übersetzungen für Nutzer, die andere Sprachen bevorzugen, einstellen. Wenn Sie die Felder leer lassen, wird das System automatisch auf die obige Standard-Sprache zurückfallen.
-      save: Speichern
+      save: Speichern ohne zu senden
       save_and_send: Speichern und senden
       save_and_test: Speichern und Testmail senden
+      confirm_send: Diese Aktion erstellt eine E-Mail für jeden Kursteilnehmer.
     no_news: Es gibt an dieser Stelle noch keine Beiträge. Probieren Sie es später noch einmal.
     see_older: Ältere Ankündigungen ansehen
     older: Ältere Ankündigungen

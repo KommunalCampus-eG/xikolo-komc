@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_25_101640) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_10_075653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
   enable_extension "pg_trgm"
@@ -852,6 +852,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_25_101640) do
     t.uuid "test_recipient"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.integer "status", default: 0, null: false
   end
 
   create_table "news_translations", id: :uuid, default: -> { "uuid_generate_v7ms()" }, force: :cascade do |t|

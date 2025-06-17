@@ -88,6 +88,13 @@ describe 'Sessions: Show', type: :request do
       end
     end
 
+    context 'with unselected organization' do
+      let(:session) { create(:session, user: create(:user, with_organization: false)) }
+
+      it { expect(resource['interrupt']).to be true }
+      it { expect(resource['interrupts']).to eq ['unselected_organization'] }
+    end
+
     context 'with incomplete profile' do
       let(:session) { create(:session, user: create(:user, completed_profile: false)) }
 

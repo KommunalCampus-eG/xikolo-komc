@@ -1,0 +1,6 @@
+= simple_form_for(organization, url: organization.persisted? ? admin_organization_path(id: organization.id) : admin_organizations_path) do |f|
+  = f.error_notification
+  = f.input :id, as: :hidden
+  = f.input :name, autofocus: true
+  = f.submit class: 'btn btn-primary'
+  = link_to t(:'global.cancel'), admin_organizations_path, class: 'btn btn-default ml10'

@@ -18,6 +18,7 @@ class Xikolo::Account::User < Acfs::Resource
   attribute :timezone, :string
   attribute :avatar_url, :string
   attribute :born_at, :date_time
+  attribute :organization_id, :string
   attribute :created_at, :date_time
   attribute :updated_at, :date_time
 

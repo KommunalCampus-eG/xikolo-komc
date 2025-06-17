@@ -4,10 +4,20 @@ require 'xikolo/common/rspec'
 
 FactoryBot.define do
   factory :user, class: 'Account::User' do
+    transient do
+      with_organization { true }
+    end
+
     id { generate(:user_id) }
     sequence(:full_name) {|n| "User Fullname #{n}" }
     sequence(:display_name) {|n| "User Displayname #{n}" }
     language { 'en' }
+
+    after(:create) do |user, evaluator|
+      if evaluator.with_organization
+        user.organization = create(:organization)
+      end
+    end
 
     trait :with_email do
       after(:create) do |user|
@@ -178,5 +188,9 @@ FactoryBot.define do
     trait :refused do
       value { false }
     end
+  end
+
+  factory :organization, class: 'Account::Organization' do
+    name { 'Organization' }
   end
 end

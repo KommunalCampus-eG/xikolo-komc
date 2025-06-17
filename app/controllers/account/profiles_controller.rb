@@ -7,7 +7,7 @@ class Account::ProfilesController < Abstract::FrontendController
   before_action :ensure_logged_in
   include Interruptible
 
-  USER_KEYS = %i[full_name display_name born_at].freeze
+  USER_KEYS = %i[full_name display_name born_at organization_id].freeze
 
   def show
     user = find_user

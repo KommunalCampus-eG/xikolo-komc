@@ -8,6 +8,7 @@ FactoryBot.define do
   factory :user do
     transient do
       completed_profile { true }
+      with_organization { true }
     end
 
     password { 'secret123' }
@@ -23,6 +24,10 @@ FactoryBot.define do
           value: 'true',
           context: Context.root
         )
+      end
+
+      if evaluator.with_organization
+        user.organization = create(:organization)
       end
 
       create(:email, user:, primary: true, confirmed: true)
@@ -237,5 +242,9 @@ FactoryBot.define do
     association :user
     value { true }
     created_at { 5.years.ago }
+  end
+
+  factory :organization do
+    name { 'Organization' }
   end
 end

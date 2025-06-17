@@ -381,6 +381,9 @@ en:
       classifier_created: The tag has been created.
       classifiers_order_updated: The tag order has been updated.
       cluster_updated: The category has been updated.
+      organization_created: The organization has been successfully created.
+      organization_updated: The organization has been successfully updated.
+      organization_deleted: The organization has been successfully deleted.
       offer_created: The offer has been created.
       offer_updated: The offer has been updated.
       offer_deleted: The offer has been deleted.
@@ -469,6 +472,9 @@ en:
       classifier_not_deleted: The tag was not deleted.
       classifier_not_updated: The tag was not updated.
       classifier_not_created: The tag was not created.
+      organization_not_created: The organization could not be created.
+      organization_not_updated: The organization could not be updated.
+      organization_not_deleted: The organization could not be deleted.
       poll_not_created: The poll has not been created.
       poll_not_updated: The poll has not been updated.
       poll_not_deleted: The poll has not been deleted.
@@ -564,6 +570,7 @@ en:
 
   interrupts:
     mandatory_profile_fields: To help us improve your learning experience, please fill out the required fields before proceeding on to your courses.
+    unselected_organization: To help us improve your learning experience, please select an organization before proceeding on to your courses.
 
   browser_warning:
     headline: Your browser is not supported!
@@ -719,6 +726,7 @@ en:
         user_tests: User Tests
         vouchers: Vouchers
         lti_providers: LTI Providers
+        organizations: Organizations
       masquerade:
         copy_user_id: User ID to Clipboard
         copy_email: E-Mail to Clipboard
@@ -1115,6 +1123,15 @@ en:
         info: You can sort the tags by drag and drop. The order is used everywhere tags are listed, e.g., in the category filters on the course list.
         back_to_list: Back to category
         empty_msg: There are currently no tags for this category.
+    organizations:
+      headline: Organizations
+      name: Name
+      add: Add new organization
+      export: Export organizations
+      edit: Edit
+      delete: Delete
+      confirm_delete: This action cannot be undone and will permanently delete the organization.
+      actions: Actions
     courses:
       new: Create course
       update: Update course
@@ -3014,6 +3031,7 @@ en:
       new_password: "New password"
       password_confirmation: "Confirm password"
       birthdate: "Date of birth"
+      organization: Organization
       select_birthdate: "Please select"
       show_birthdate_on_record: "You can decide in your <a href='%{url}'>certificates page</a> if you want your certificates to show your date of birth."
       combodate_format: "YYYY-MM-DD"

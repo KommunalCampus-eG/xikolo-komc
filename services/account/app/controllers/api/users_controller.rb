@@ -176,6 +176,7 @@ class API::UsersController < API::RESTController
       language
       password
       password_digest
+      organization_id
     ]
   end
 end

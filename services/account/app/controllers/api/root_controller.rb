@@ -44,6 +44,8 @@ class API::RootController < API::BaseController
         user_url: user_rfc6570,
         user_ban_url: user_ban_rfc6570,
         users_url: users_rfc6570,
+        organization_url: organization_rfc6570,
+        organizations_url: organizations_rfc6570,
       }
     end
   end
